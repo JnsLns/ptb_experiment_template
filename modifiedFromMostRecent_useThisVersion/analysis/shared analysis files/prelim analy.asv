@@ -1,0 +1,36 @@
+
+
+
+
+
+trajtemp = trajectories((results(:,resCols.correct) & results(:,resCols.typeFromTriallist) ==  1));
+restemp  = results((results(:,resCols.correct) & results(:,resCols.typeFromTriallist) ==  1),:);
+ss = get(0, 'screenSize');
+ss = ss(3:4);
+
+for j = 1:size(trajtemp,1)
+    
+    % cut off trajectory parts after moveOffset_pc (i.e., last data point
+    % is that at the border of the chosen stimulus).
+    tOffsetRelative = results(j,resCols.moveOffset_pc) - results(j,resCols.moveOnset_pc);
+    lastRelevantRow = find((min(trajtemp{j}(:,3) - tOffsetRelative) == trajtemp{j}(:,3)));
+    trajtemp{j} = trajtemp{j}(1:lastRelevantRow
+    
+
+end
+
+for i = 1:size(trajtemp,1)
+    
+    
+    
+    
+    % x-origin at starting point;
+    trajtemp{i}(:,1) = trajtemp{i}(:,1)-ss(1)/2;               
+    % flip x-axis in some trajectories, so that refrence is always right
+    trajtemp{1}(:,1) =  trajtemp{1}(:,2) * (restemp(i,resCols.tgt)-restemp(i,resCols.ref));
+        
+    %plot3(trajtemp{i}(:,1),trajtemp{i}(:,2),trajtemp{i}(:,3));
+    plot(trajtemp{i}(:,1),trajtemp{i}(:,3));
+    set(gca,'nextplot','add');
+    
+end

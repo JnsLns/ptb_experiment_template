@@ -1,0 +1,561 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                !!!THIS DOCUMENTATION IS OUTDATED!!!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(1) General settings
+(2) Component scripts
+(3) ivDefinition.m
+
+%% (1) ---------------- Documentation of General Settings
+%{
+
+
+interpMethod            string, method for trajectory interpolation
+samplingPeriodForInterp sampling interval [milliseconds] for trajInterMatch()
+nQueryPointsForInterp   number of query points for trajInter()
+padAlignedToLength      Final length of matrices output by alignedMean and
+                        alignedStd. Shorter output matrices will be padded
+                        to this length with NaNs, to allow computing mean
+                        of means, diffs, etc.
+
+discardCurvedTrajectories   Enable/disable (1/0) discarding trials where
+                            maximum curvature of trajectory exceeds threshold.
+                            Curvature is computed using method of osculating
+                            circle. To prevent the length of segments between
+                            vertices of a trajectory to differentially impact
+                            the circle radius and thus curvature, the
+                            trajectories are first interpolated such that
+                            the spatial distance between successive
+                            vertices is constant (see below).
+curvatureSegmentLength      Constant vertex distance for curvature measurement
+                            (Note that this interpolation setting applies
+                            only to curvature computation and impacts no
+                            other analyses).
+curvatureCutoff             trajectories are discarded if exceeding this
+                            curvature threshold (note that the meaning of
+                            the threshold value depends on curvatureSegmentLength;
+                            its effect should be tested before use, checking
+                            that (only) sharply curved trajectories are discarded.
+
+doRotation                  if 1, trajectories are rotated about their first 
+                            data point such that the "ideal path" (line from
+                            first to last data point or from first data point
+                            to center of chosen item, depending on
+                            chosenItemDefinedRefDir, see below) is parallel to the y-axis.
+doTranslation               if 1, trajectories are additionally translated
+                            such that the first data point is in the coordinate
+                            origin.
+
+chosenItemDefinesRefDir     W.r.t. the above rotation, this determines what
+                            is used as reference point to determine the
+                            the reference direction relative to which the 
+                            rotation angle is determined.
+                            If this is set to 0, the reference direction is
+                            determined as the line between each trajectory's
+                            first and last point.
+                            If set to 1, the reference direciton is deter-
+                            mined as the line between each trajectory's first
+                            point and the center of the item *selected as
+                            response* in that trial (this need not be the
+                            target). This also impacts computation of area
+                            under curve, max deviation, and mirroring, which
+                            are performed accordingly.
+
+plotTrajectories            enable/disable trajectory plots
+plotOtherResults            enable/disable results plots
+
+colors                      colors used for lines
+lineStyles                  line styles used for lines
+lineWidth                   well... width of lines    
+
+%}
+
+
+%% (2) ---------------- Documentation of component scripts
+%{
+
+--------- loadingAndMiscPreps
+
+Loads files defined at the outset of this script, containing trajectories,
+results, and trial lists. If multiple files from different participants are
+loaded, a participant column resCols.pts is added to results matrix. Data
+from all participants is merged into arrays: rs (results data, matrix), tr
+(trajectories, cell array), and trials (trial list, matrix; this matrix is 
+sorted to have the same row order as matrix rs, based on trialID).
+New results column numbers are defined (respective values will be computed
+in prepareResults.m). These columns can be used during analyses and for
+IV definition and include: 
+
+NOTE: In this script, inly the column numbers are defined - any computations
+to actually fill these columns with data are performed only in prepareResults!!!
+
+resCols.pts                         participant number
+resCols.distNonChosenToDirPath      distance of non-chosen item in target color from "ideal path" (neg: left, pos: right)
+resCols.sideNonChosenToDirPath      side non-chosen item in target color relative to "ideal path" (1: left, 2: right)
+resCols.tgtSlot                     tgtSlot code (1=top right, 2=top left, 3=bottom right, 4=bottom left )
+resCols.nTgts                       number of potential target items (items in target color = best-fitting item + main dtr + other dtr(s))
+resCols.constraintsCategory         constraints category of trial
+resCols.tgtFit                      fit value of target item (in this case not chosen item!) assessed through fitFun from generation script
+resCols.dtrFit                      fit value of main distracter assessed through fitFun from generation script
+resCols.tgtMinDtrFit                tgt fit minus distracter fit 
+resCols.refSide                     side of reference object relative to ideal path to CHOSEN ITEM (1 = left, 2 = right)
+resCols.comSide                     side of center of mass relative to ideal path to CHOSEN ITEM (1 = left, 2 = right)
+resCols.refComSame                  1 if reference and com are on same side of direct path to target, 0 otherwise
+resCols.refNciSame                  1 if reference and non-chosen item in tgt color are on same side of direct path to target, 0 otherwise
+resCols.comNciSame                  1 if COM and non-chosen item in tgt color are on same side of direct path to target, 0 otherwise
+
+From the above, three columns are computed. These hold categories for each of the three
+relevant positions in comparison to the other two, respectively. For considering
+the effect of COM or Ref or Nci (non-chosen item) side, a different one of these
+should be used to ensure "balancing" (i.e., the one that specifies the side of 
+the other items in comparison to the item of interest; these are used for
+"post hoc balancing"): 
+
+resCols.refVsComVsNciSide               for considering effects of reference side
+                                        1: com same, nci same
+                                        2: com same, nci oppo
+                                        3: com oppo, nci same
+                                        4: com oppo, nci oppo
+resCols.comVsRefVsNciSide               for considering effects of COM side
+                                        1: ref same, nci same
+                                        2: ref same, nci oppo
+                                        3: ref oppo, nci same
+                                        4: ref oppo, nci oppo
+resCols.nciVsRefVsComSide               for considering effects of NCI (non-chosen item in target color) side
+                                        1: ref same, com same
+                                        2: ref same, com oppo
+                                        3: ref oppo, com same
+                                        4: ref oppo, com oppo
+
+Finally, columns of cell array ivs (for ivDefinition, see below) are defined
+in loadingAndMiscPreps.
+
+
+--------- ivDefinition
+
+Settigs for defining independent variables, their levels, and treatment during
+analysis. See script for detailed doc.
+
+
+--------- prepareTrajs
+
+The coordinate frame is transformed such that its origin lies at the
+position of the the first data point of the trajectory at hand (the first
+data point is the first point after crossing velocity threshold). The last
+point of each trajectory (data point just before crossing radius of ultimately
+chosen item) lies on the positive y-axis. Start marker pos and item positions
+in matrix rs are transformed accordingly. Trajectories are trimmed based on
+movement onset/offset. Timestamps are converted to relative to movement onset.
+
+ Summin up: What's transfromed and thus usable in analysis from now on (and
+ all other position data IS NOT):
+
+ - Trajectories
+ - Stimulus item positions in results matrix
+       - rs(:,resCols.horzPosStart:resCols.horzPosEnd)
+       - rs(:,resCols.vertPosStart:resCols.vertPosEnd)
+ - Start position in results matrix
+       - rs(:,[resCols.startPosX,resCols.startPosY])
+
+               !!!!AND NOTHING ELSE!!!!     
+
+                 
+--------- prepareResults
+
+Compute additional values from data in raw results matrix. See above
+(loadingAndMiscPreps) or script itself for details.
+ 
+
+--------- discardSharplyCurvedTrajs
+
+Removes those trials from tr, rs, and trials (and thus from the the remaining
+analysis) in which the maximum curvature of the trajectory exceeds curvatureCutoff.
+Note that the meaning of curvatureCutoff is moderated by the value of
+curvatureSegmentLength: higher values of the latter tend to lead to overall
+higher curvature values. Generally, the effect of this script should be
+tested before use, verifying that (only) trajectories that are sharply curved
+are in fact identified.
+        
+            
+--------- mirrorSomeTrajectories 
+
+TODO 1 See warning
+TODO 2 Check that all relevant spatial data is flipped
+
+WARNING: Currently always mirrors across line from first to last data point,
+not acknowledging the value of chosenItemDefinesRefDir! This leads to problems
+if chosenItemDefinesRefDir == 1 (which is usually the case)!
+
+Flips those trajectories across the axis connecting first and last data
+point for which this has been enabled in ivs{:,ivsCols.doMirror}.
+
+For trials where trajectory is flipped, values in the following columns of
+matrix rs are flipped across the same axis as the corresponding trajectory
+to keep relative positioning constant:
+resCols.horzPosStart:resCols.horzPosEnd
+resCols.vertPosStart:resCols.vertPosEnd
+resCols.startPosX
+resCols.startPosY
+Note: This script operates only directly on individual trajectories in the
+base array tr and on individual rows of rs. Thus doesn't affect other steps.
+      
+                
+--------- generateSets
+
+Uses cell array ivs, which is set up in ivDefinition, as directive for
+generating sets of trajectory indices that adress into trajectory and
+results arrays (see below).
+Also, sets values to 1 in ivsCols.useVal that are not selected
+for plotting (etc.) by user directly, but which are needed for one of
+the user-requested differences of means. ivs{:,ivsCols.tmpValsDiff}
+keeps track of these temporary values to be able to remove them later.
+Removes rows of ivs in which all ivsCols.useVal are 0;
+Removes from rowsets trials set to 0 in useVal (if not all are 0).
+Generates cell array rowSets using the remaining set of
+dimensions and values in ivs (rowSets contains only logical
+indices indexing into tr and rs rows, not actual data).
+     
+          
+--------- discardForBalancing
+
+This balances trials in each cell of rowSets such that each unique number
+present in the results matrix' colum relevantBalancingColumn (defined in
+ivDefinition) occurs the same number of times afterwards in the set. This
+is achieved by randomly discarding trials from the row set that have an
+over-represented code value by setting to zero the elements corresponding
+to those trials in rowSets. The number of each type of trial is reduced to
+that of the least frequently occuring trial category in the set. Note:
+Balancing is achieved WITHIN each set of trials (i.e., within each IV-level). 
+
+
+--------- combineRowSets
+
+Note: needs to be done BEFORE any statistics! Realizes ivsCols.joinVals,
+i.e., combines sets of trials from different IV-levels if desired and adds 
+it as a new page to the array rowSets, so that it is plotted as an
+additional line.
+Description of ivsCols.joinVals:
+Provide sets of IV-level code values (same coding as ivsCols.values) that
+should be joined into and treated as a single condition. The combination
+is represented by a separate line/subplot/figure, which appears *in addition*
+to any IV-levels enabled in ivsCols.useVal.
+joinVals and useVal are independent: An IV-level that is part of a
+set defined in ivsCols.joinVals may or may not be set to 1 in ivsCols.useVal
+without affecting the computation/plotting of a combination including that
+level.      
+                
+                        
+--------- computeStatistics
+
+Loops through the individual cells of rowSets (does not change rowSets,
+however, or touch or use anything else); Generates arrays containing sets of
+either trajectories, results (rows), or that contain descriptive statistics
+over these trajectory/results sets. All of these arrays are of the same size
+and dimensionality as rowSets.
+Note: Adding a new statistic to this script may make it necessary to also
+add it to computeDiffsBtwMeans.
+Generated outputs are all put into the a-struct, with the following abbreviations
+(general form: a.dataType.interpolationType.measure.statistics; non-applying 
+categories are ommitted):
+
+res     results data (rows from a.rs or based on statistics over these).
+        If paired with .ind (individual rows), each cell holds a matrix of
+        rows from the results matrix, pertaining to the trials from the
+        combination of IV-levels corresponding to that cell of the array.
+        Note that the order of rows in each matrix is the same as that of
+        trajectories in the corresponding cells of the trajectory arrays.
+
+trj     trajectory data (cells from a.tr or based on statistics over these)
+
+raw     non-interpolated trajectories (or computed from these)
+wrp     "warped" trajectories interpolated to fixed *number* of timesteps
+        (or computed from these); number of steps is a.s.nQueryPointsForInterp
+        and they are separated by uniform duration.
+                  
+alg     "aligned", trajectories interpolated to fixed timestep *length*
+        (or computed from these), that is, these trajectories are resampled
+         to homogeneous time intervals between data points (through interpolation)
+         namely a.s.samplingPeriodForInterp 
+
+pos     columns a.s.trajCols.x and y hold spatial position data (or measure is computed from it)
+spd     columns a.s.trajCols.x (not y) holds speed at that timestep (or
+        measure is computed from it); for trajs, speed values replace column
+        a.s.trajCols.x!; row i gives speed for interval from time in row i
+        to time in row i+1. Trajectories have one row less than their
+        position (pos) counter parts (last row is removed).
+vel     columns a.s.trajCols.x and y hold componential velocity (or measure
+        is computed from it). For trajs, velocity replaces columns a.s.trajCols.x
+        and a.s.trajCols.y); row i gives velocity for interval from time in row i to
+        time in row i+1. Trajectories have one row less than their position
+        (pos) counterparts (last row is removed).
+acc     columns a.s.trajCols.x and y hold componential acceleration (or
+        measure is computed from it). For trajs, acceleration replaces
+        columns a.s.trajCols.x and a.s.trajCols.y; row i gives acceleration
+        for interval from time in row i to time in row i+1. Trajectories in
+        trIndivRawAcc have two rows less than their position counterparts
+        (last two rows are removed).   
+mDev    scalar "maximum deviation", that is, largest x-value (= deviation
+        orthogonal to direct path to chosen item) of trajectory 
+        x-values over time. Negative means deviation to the left,
+        positive means deviation to the right of the direct path.
+        Does take into account the setting of chosenItemDefinesRefDir.
+auc     scalar area under curve for x-values (= deviation orthogonal to
+        direct path to chosen item) over time. Deviation to the
+        left is counted as negative and deviation to the right is
+        counted as positive; the final value is the sum of both. 
+        The AUC computed here does take into account the setting
+        of chosenItemDefinesRefDir. 
+mCrv	scalar maximum curvature as assessed using curvatureOsc(), i.e.,
+        using the osculating circle method (curvature = 1/r of
+        osculating circle) on trajectories interpolated to uni-
+        form euclidean distance between successive vertices (this
+        distance is defined by curvatureSegmentLength).
+
+ind     struct holds individual results rows (a matrix) or a cell array of individual trajectories.
+avg     average (see note below), i.e., struct holds mean over results rows, a mean traj., or mean of other measure.
+std     the standard deviation (see note below) corresponding to respective avg 
+ncs     Matrix with same dimensionality and size as cell arrays
+        above, each element giving the number of trials within
+        he respective IV-level combination.
+
+NOTE that statistics are computed for *all* rows and columns (for simplicity)
+although many of the resulting values make no sense. For aligned means and
+aligned stds, trajectories are padded with NaNs to a fixed number of rows
+defined by padAlignedToLength. Generated arrays:
+
+The fields produced in computeStatistics within struct a are:
+a.res.ind
+a.res.avg
+a.res.std
+a.res.ncs
+a.res.flipped       Note: This cell holds logical matrices corresponding to
+                    linear indices of trajectories (= results rows) of trajec-
+                    tories that have been flipped.
+a.trj.raw.pos.ind
+a.trj.wrp.pos.ind
+a.trj.alg.pos.ind
+a.trj.raw.spd.ind
+a.trj.raw.vel.ind
+a.trj.raw.acc.ind
+a.trj.wrp.vel.ind
+a.trj.wrp.spd.ind
+a.trj.alg.vel.ind
+a.trj.alg.spd.ind
+a.trj.wrp.acc.ind
+a.trj.alg.acc.ind
+a.trj.wrp.mDev.ind
+a.trj.wrp.auc.ind
+a.trj.raw.mCrv.ind
+a.trj.wrp.pos.avg
+a.trj.wrp.pos.std
+a.trj.wrp.spd.avg
+a.trj.wrp.spd.std
+a.trj.wrp.vel.avg
+a.trj.wrp.vel.std
+a.trj.wrp.acc.avg
+a.trj.wrp.acc.std
+a.trj.alg.pos.avg
+a.trj.alg.pos.std
+a.trj.alg.spd.avg
+a.trj.alg.spd.std
+a.trj.alg.vel.avg
+a.trj.alg.vel.std
+a.trj.alg.acc.avg
+a.trj.alg.acc.std
+a.trj.wrp.mDev.avg
+a.trj.wrp.mDev.std
+a.trj.wrp.auc.avg
+a.trj.wrp.auc.std
+a.trj.raw.mCrv.avg
+a.trj.raw.mCrv.std       
+
+             
+--------- computeDiffsBtwMeans
+
+Compute differences between the means of individual IV-levels. Corresponding 
+standard deviation is computed as pooled standard deviation (see below).
+Results are concatenated as additional page(s) to the existing cell array,
+along the dimension (=IV) within which differences were computed. The label
+column of ivs (ivsCols.valLabels) is updated with an appropriate label for the
+diff(s). Diffs may be computed between IV-levels that were not included
+in ivsCols.useVal (i.e., intentionally excluded from plotting); in this
+case, the array pages referring to these IV-levels are removed after
+computing diffs.
+
+Standard deviations for the difference of means are computed as pooled standard
+deviations of the values from the arrays labelled "Std", according to the formula:
+ 
+    s_pooled = sqrt( ((s1.^2)*(n1-1) + (s2.^2)*(n2-1)) / ((n1-1)+(n2-1)) )
+
+where s1 and s2 are the individual standard deviations and n1 and n2 are 
+the individual number of cases. This is basically a weighted average of sample
+variances (weighted by each sample's degrees of freedom). In terms of the
+meaning of the pooled SD, note that the standard error in the denominator
+of a two-sample t-test (by which the mean difference is divided to obtain t)
+can be computed from the pooled SD by:
+
+    se = s_pooled * sqrt(1/n1 + 1/n2)    
+
+Also, the pooled SD is equivalent to the Mean Square Within Groups used in
+the denominator of an ANOVA (F = MS_between/MS_within).
+
+
+--------- plotSettings
+
+defines what data should be plotted, how axes should be scaled, labeled etc.
+
+
+--------- plotTrajData & plotResData
+
+plot trajectory data / plot results data
+    
+
+%}
+
+
+
+
+%% (3) ---------------- Documentation of ivDefinition
+%{
+
+Each IV corresponds to a column in the results matrix (rs). The different
+code values found in the respective column define the levels of the IV.
+Which rows from the results matrix should be used in the analysis and
+how the respective IV's levels should be dealt with is defined here. Each
+IV is defined through a block of code generating one row in the cell
+array ivs (i.e., each row in ivs holds information about one IV), e.g.:
+ 
+ivs{end+1,ivsCols.name } = 'dtr.side rel. to dir.path';
+ivs{end,ivsCols.style } = 'lineStyle';
+ivs{end,ivsCols.rsCol} = resCols.sideNonChosenToDirPath;
+ivs{end,ivsCols.values} = [1;2];
+ivs{end,ivsCols.valLabels} = {'nonselLEFT'; 'nonselRIGHT'};
+ivs{end,ivsCols.useVal} = [1;1];
+ivs{end,ivsCols.diffs} = [];
+ivs{end,ivsCols.doMirror} = [0; 0];
+ivs{end,ivsCols.joinVals} = {};
+
+
+------- Columns in cell array ivs:
+
+
+--- ivsCols.name:
+verbal label of the IV (char)
+
+--- ivsCols.style:
+what plotting aspect should reflect this iv? (subplotCols/subplotRows/lineColor/lineStyle/figures)
+Note: It is currently not possible to assign the same plotting style to more
+than one IV.
+
+--- ivsCols.rsCol:
+column in matrix rs differentiating trials w.r.t this IV
+
+--- ivsCols.values:
+possible values (defining levels) of that IV (column vector)
+
+--- ivsCols.valLabels:
+verbal label for each of the IV-level-codes specified in ivsCols.values (cell array)
+
+--- ivsCols.useVal:
+Include (0/1) IV-level in plots/averages? (column vector) Treatment of
+zeros in ivsCols.useVal:
+If ivs{x,ivsCols.useVal} contains only zeros:
+The entire row x of ivs is removed, so that the respective IV is disre-
+garded entirely (no trials are removed). This is equivalent to not
+defining that IV at all.
+If ivs{x,ivsCols.useVal} contains some zeros and more than one non-zero entry:
+Trials corresponding to the "zeroed" levels are removed from the basis
+rowSet (i.e., set to 0), that is, they are excluded from all analyses.
+Any verbal labels (etc.) specified in ivs for the discarded levels are
+as well removed from ivs. 
+If ivs{x,ivsCols.useVal} has only one non-zero entry:
+Row x is deleted from ivs (the row is deleted), so that it is not
+treated as an IV. However, trials from the IV-levels set to zero 
+are excluded from analyses. (If there are no IVs with more than one
+included value, the first IV in the matrix ivs that has one value is kept).
+
+--- ivsCols.diffs:
+desired differences to compute between IV-levels (n-by-2 matrix where n is
+number of desired differences, first column defines minuend IV-level,
+second column defines subtrahend IV-level; use same code values as in
+ivs{end,ivsCols.values} to denote IV-levels.                        
+
+--- ivsCols.doMirror:
+Logical(!) matrix indexing into same row and column ivsCols.values, deter-
+mining trajectories from which IV-levels, should be mirrored before analyses. 
+If an individual trajectory is flagged for mirroring multiple times via 
+more than one IV, MIRRORING STILL TAKES PLACE ONLY ONCE. Thus, no trajectory
+will ever be flipped back and forth.
+Mirroring takes place before any trials are removed, merged into categories
+or similar. Mirroring is indepenedent from settings regarding diffs,
+combinations, or mean of means or similar, that is, it is applied before
+any of this comes to bear.
+Importantly, it is also NOT AFFECTED BY IVSCOLS.USEVAL: Even with only
+zeros in ivsCols.useVal, meaning the IV is disregarded for other purposes,
+it is still possible to flip some trajectories based on the otherwise dis-
+regarded IV's levels.
+
+--- ivsCols.joinVals:
+provide sets of IV-level code values (same coding as ivsCols.values) that
+should be joined into and treated as a single condition. The combination
+is represented by a separate line/subplot/figure, which appears *in addition*
+to any IV-levels enabled in ivsCols.useVal.
+joinVals and useVal are independent: An IV-level that is part of a
+set defined in ivsCols.joinVals may or may not be set to 1 in ivsCols.useVal
+without affecting the computation/plotting of a combination including that
+level.
+
+------ Columns in ivs not to be set manually:
+
+--- ivsCols.tmpValsDiff:
+Used in generateSets.m to store values that were temporarily set to 1
+ivsCols.useVal for computation of differences, to later remove them before
+plotting.
+
+--- ivsCols.tmpValsJoin;
+this column is used in generateSets.m to store values set to 1 temporarily
+in ivsCols.useVal for computation of joined sets (and which are removed
+before plotting).
+                       
+
+%}
