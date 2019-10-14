@@ -1,4 +1,4 @@
-%%%% Pause execution
+%%%% Pause execution if desired
 
 % Check whether pause key is being pressed, if so, halt execution and
 % close PTB windows. Reopen if resumed.
@@ -6,8 +6,7 @@ pauseAndResume;
 
 
 
-
-%%  trial initialization
+%%%%  Re-initialize variables
 
 % TODO: Removed unused after adjusting rest of code
 
@@ -44,24 +43,24 @@ currentVelocity = [];
 phraseOnset_pc = [];
 phraseOffset_pc = [];
 clickTime_pc = [];
-durPhrase = e.s.durPhrase_base + e.s.durPhrase_rand * (rand*2-1); % determine random duration of phrase for this trial
 stimuliCenters_px = [];
 stimuli_rgb = [];
 
 
 % Clear offscreen windows
-for osw = fieldnames(winsOff)'        
+for osw = fieldnames(winsOff)'
     Screen('FillRect', winsOff.(osw), winsOff.(osw).bgColor);
-end     
+end
 
 
 %%%% Draw to offscreen windows)
 
 % Modify this file to draw whatever stimuli you need to winsOff.stims.h
-drawStimuli;
+drawStimuli; % TODO
 
 % Draw fixation cross to winsOff.fix.h
-drawFixation;
+drawFixation; % TODO
+
 
 
 % -------------------------------------------------------------------------
@@ -71,22 +70,36 @@ drawFixation;
 
 
 
-%% Wait for pts. to move pointer onto start marker
-% Wait for pointer to be within the start marker (distance of pointer
-% from center is checked). Go on when it has dwelled there for e.s.durOnStart.
-% If pointer not on marker within e.s.durWaitForStart abort trial (code 2).
+%%%% Wait for pts. to move to starting position
+
+% Wait for pointer to be in desired position (tip in x/y screen center, at
+% some fixed z position and marker on pointer are at some larger z)
+
+% Go on when pointer has dwelled there for e.s.durOnStart.
+
+% If pointer not in position within e.s.durWaitForStart abort trial (code 2).
+
+% Draw dot to mark x/y position; draw circle whose radius is equal to
+% z - z_start. Draw target pos in x/y. Some signal when pointer is in
+% position.
+
+
 
 % Copy start marker offscreen window to onscreen window
- Screen('CopyWindow', winsOff.empty.h, winOn.h);
+Screen('CopyWindow', winsOff.empty.h, winOn.h);
 % Present start marker
 Screen('Flip', winOn.h, []); % flip (backbuffer cleared)
 
 startMarkerOnset = GetSecs;
 while deltatOnStart <= e.s.durOnStart
     
-    % get position of pointer tip and check whether pointer is within start marker
-    [tipPos(1),tipPos(2)] = getMouseRemapped2(e.s.mouseRemappingFactor);
-    curRemapFac = e.s.mouseRemappingFactor;
+    
+
+    
+    
+    % get position of pointer tip
+    tipPos = transformedTipPosition(cfids, pids, cfs, vth, mps, eds, dth);
+        
     if dist3d(tipPos,[start_pos_px, 0],[0 0 1]) < start_r_px
         pointerOnStart = 1;
     else
@@ -309,172 +322,169 @@ if ~abortTrial
         
     end
     
-    %% Trial aftermath (feedback, correctness etc.)
+end
+
+
+%% Trial aftermath (feedback, correctness etc.)
+
+
+% retest for trial abortion, since it may have happened during
+% stimulus display through exceeding max display time
+if ~abortTrial
+       
+    Screen('Flip', winOn.h, []); % flip from backbuffer to onscreen window (backbuffer is cleared)
     
-    % If due to accidentally overlapping stimuli two items were
-    % registered as selected by the participant, discard trial
-    % data (normal abortion without feedback, trial will be redone later).
-    if numel(chosenItem) > 1
-        abortTrial = 4;
+    % Determine correctness of response
+    if % TODO: Correctness criterion here...
+        correctResponse = 1;
+    elseif ~isempty(chosenItem) % incorrect response
+        correctResponse = 0;
     end
+        
+end
     
-    % retest for trial abortion, since it may have happened during
-    % stimulus display through exceeding max display time
-    if ~abortTrial
-        
-        % Check whether final movementOffset_pc-arrayOnset (timespan from
-        % array presentation to crossing border of actually chosen item)is
-        % shorter than e.s.maxRT. (otherwise response is marked as too slow and
-        % appropriate feedback is presented later)
-        if movementOffset_pc - arrayOnset > e.s.maxRT
-            tooSlow = 1;
-        end
-        
-        Screen('Flip', winOn.h, []); % flip from backbuffer to onscreen window (backbuffer is cleared)
-        
-        % Determine correctness of response        
-        if (~isempty(chosenItem) && chosenItem == trials(curTrial,tg.triallistCols.tgt) && any(trials(curTrial,tg.triallistCols.type) == [1 3 4])) || ... % trialtypes 1 (standard relational), 3 (single-item), 4 (spatial cue)
-                (~isempty(chosenItem) && chosenItem == numel(pointerWithinStim) && trials(curTrial,tg.triallistCols.type) == 2)                                 % trialtype 2 (spatial catch-trial, phrase and display incongruent)
-            correctResponse = 1;
-        elseif ~isempty(chosenItem) % incorrect response
-            correctResponse = 0;
-        end
-        
-        % provide feedback        
-        if tooSlow && blockType ~= 0 % e.s.maxRT exceeded (overrides other feedback; not during practice)
-            feedbackStr = 'Zu langsam!';
-        elseif correctResponse
-            feedbackStr = 'Richtig! Sehr gut!';
-        elseif ~correctResponse
-            feedbackStr = 'Falsch!';
-        end
-        
-        % Show feedback and keep refreshing cursor
-        fbStart = GetSecs();
-        while GetSecs() - fbStart <= durFeedback
-            DrawFormattedText(winOn.h, feedbackStr, 'center', array_pos_px(2), tg.phraseColor);
-            [tipPos(1),tipPos(2)] = getMouseRemapped2(e.s.mouseRemappingFactor);
-            Screen('DrawDots', winOn.h, tipPos(1:2), cursorRad_px*2, tg.white, [], 1);
-            Screen('Flip', winOn.h, []);
-        end
-        
-        %% store in results matrix
-        
-        % NOTE: When adding any position data to results or trajectories,
-        % it should be converted to millimeters and be specified relative to
-        % origin at bottom left of presentation area, with x-axis increasing
-        % rightwards, y-axis increasing upwards (as this is expected in
-        % analysis).
-        
-        e.results(curTrial,e.s.resCols.chosen) = chosenItem; % item chosen by participant
-        e.results(curTrial,e.s.resCols.type) = trials(curTrial,tg.triallistCols.type); % trialtype
-        e.results(curTrial,e.s.resCols.phraseOnset_pc) = phraseOnset_pc; % onset of spatial phrase, pc time
-        e.results(curTrial,e.s.resCols.phraseOffset_pc) = phraseOffset_pc; % offset of spatial phrase, pc time
-        e.results(curTrial,e.s.resCols.stimOnset_pc) = arrayOnset; % onset of stimulus display, pc time
-        e.results(curTrial,e.s.resCols.moveOnset_pc) = movementOnset_pc; % start time of movement, pc time
-        e.results(curTrial,e.s.resCols.moveOffset_pc) = movementOffset_pc; % end time of movement, pc time
-        e.results(curTrial,e.s.resCols.reactionTime_pc) = movementOnset_pc - phraseOffset_pc;
-        e.results(curTrial,e.s.resCols.movementTime_pc) = movementOffset_pc - movementOnset_pc;
-        e.results(curTrial,e.s.resCols.responseTime_pc) = movementOffset_pc - phraseOffset_pc;
-        e.results(curTrial,e.s.resCols.clickTime_pc) = clickTime_pc;
-        e.results(curTrial,e.s.resCols.passed) = passedOtherItems; % if 1, pts. passed over a stimulus but did not stay on this item
-        e.results(curTrial,e.s.resCols.correct) = correctResponse; % if response correct 1, else 0
-        e.results(curTrial,e.s.resCols.horzPosStart:e.s.resCols.horzPosEnd) = (stimuliCenters_px(:,1)' - presMargins_px(1))/e.s.pxPerMm(1);
-        e.results(curTrial,e.s.resCols.vertPosStart:e.s.resCols.vertPosEnd) = (presArea_px(2)-(stimuliCenters_px(:,2)' - presMargins_px(2)))/e.s.pxPerMm(2);
-        e.results(curTrial,e.s.resCols.itemRadiiStart:e.s.resCols.itemRadiiEnd) = stimuliCenters_px(:,3)'/mean(e.s.pxPerMm);
-        e.results(curTrial,e.s.resCols.startPosX) = (start_pos_px(1)-presMargins_px(1))/e.s.pxPerMm(1);
-        e.results(curTrial,e.s.resCols.startPosY) = (presArea_px(2)-(start_pos_px(2)-presMargins_px(2)))/e.s.pxPerMm(2);
-        % copy relevant parameters of current trial to results matrix
-        e.results(curTrial,e.s.resCols.trialID)  = trials(curTrial,tg.triallistCols.trialID);
-        e.results(curTrial,e.s.resCols.tgt) = trials(curTrial,tg.triallistCols.tgt);
-        e.results(curTrial,e.s.resCols.ref) = trials(curTrial,tg.triallistCols.ref);
-        e.results(curTrial,e.s.resCols.spt) = trials(curTrial,tg.triallistCols.spt);
-        e.results(curTrial,e.s.resCols.colorsStart:e.s.resCols.colorsEnd) = trials(curTrial,tg.triallistCols.colorsStart:tg.triallistCols.colorsEnd);
-        e.results(curTrial,e.s.resCols.wordOrder) = trials(curTrial,tg.triallistCols.wordOrder);
-        e.results(curTrial,e.s.resCols.dtr) = trials(curTrial,tg.triallistCols.dtr);
-        e.results(curTrial,e.s.resCols.tgtSlot) = trials(curTrial,tg.triallistCols.tgtSlot); % tgtSlot code (1=top right, 2=top left, 3=bottom right, 4=bottom left )
-        e.results(curTrial,e.s.resCols.nTgts) = trials(curTrial,tg.triallistCols.nTgts); % Number of target items (items in target color)
-        e.results(curTrial,e.s.resCols.nItems) = trials(curTrial,tg.triallistCols.nItems); % Total number of items
-        e.results(curTrial,e.s.resCols.fitsStart:e.s.resCols.fitsEnd) = trials(curTrial,tg.triallistCols.fitsStart:tg.triallistCols.fitsEnd);
-        
-        %% trim and store trajectory
-        
-        % remove unfilled rows
-        trajectory(loopsSincePhraseOffset+1:end,:) = [];
-        
-        % remove rows with duplicate (2d) mouse positions (due to
-        % for-loop rate being higher than mouse polling); never re-
-        % move rows with movement onset time and movement offset time.
-        % (Note that this also removes data points where mouse was
-        % not moved relative to the preceding data point)
-        if e.s.dontRecordConstantTrajData
-            m = 2;
-            while m < size(trajectory,1)
-                if all(trajectory(m,[e.s.trajCols.x,e.s.trajCols.y]) == trajectory(m-1,[e.s.trajCols.x,e.s.trajCols.y])) && ...
-                        trajectory(m,e.s.trajCols.t) ~= movementOnset_pc && ...
-                        trajectory(m,e.s.trajCols.t) ~= movementOffset_pc
-                    trajectory(m,:) = [];
-                else
-                    m = m+1;
-                end
+
+if ~abortTrial
+    
+    %%%% store results
+    
+    % NOTE: Any position data in 'results' and 'trajectories' should first
+    % be converted to the presentation-area-based coordinate frame (in
+    % millimeters), Use ptbPxToPaMm() for this.
+    
+    e.results(curTrial,e.s.resCols.correct) = correctResponse; % if response correct 1, else 0
+    e.results(curTrial,e.s.resCols.chosen) = chosenItem; % item chosen by participant
+    e.results(curTrial,e.s.resCols.type) = trials(curTrial,tg.triallistCols.type); % trialtype    
+    e.results(curTrial,e.s.resCols.stimOnset_pc) = arrayOnset; % onset of stimulus display, pc time
+    e.results(curTrial,e.s.resCols.moveOnset_pc) = movementOnset_pc; % start time of movement, pc time
+    e.results(curTrial,e.s.resCols.moveOffset_pc) = movementOffset_pc; % end time of movement, pc time
+    e.results(curTrial,e.s.resCols.reactionTime_pc) = movementOnset_pc - phraseOffset_pc;
+    e.results(curTrial,e.s.resCols.movementTime_pc) = movementOffset_pc - movementOnset_pc;
+    e.results(curTrial,e.s.resCols.responseTime_pc) = movementOffset_pc - phraseOffset_pc;        
+    
+    e.results(curTrial,e.s.resCols.horzPosStart:e.s.resCols.horzPosEnd) = (stimuliCenters_px(:,1)' - presMargins_px(1))/e.s.pxPerMm(1);
+    e.results(curTrial,e.s.resCols.vertPosStart:e.s.resCols.vertPosEnd) = (presArea_px(2)-(stimuliCenters_px(:,2)' - presMargins_px(2)))/e.s.pxPerMm(2);
+    e.results(curTrial,e.s.resCols.itemRadiiStart:e.s.resCols.itemRadiiEnd) = stimuliCenters_px(:,3)'/mean(e.s.pxPerMm);
+    e.results(curTrial,e.s.resCols.startPosX) = (start_pos_px(1)-presMargins_px(1))/e.s.pxPerMm(1);
+    e.results(curTrial,e.s.resCols.startPosY) = (presArea_px(2)-(start_pos_px(2)-presMargins_px(2)))/e.s.pxPerMm(2);
+    
+    % copy relevant parameters of current trial to results matrix
+    e.results(curTrial,e.s.resCols.trialID)  = trials(curTrial,tg.triallistCols.trialID);
+    e.results(curTrial,e.s.resCols.tgt) = trials(curTrial,tg.triallistCols.tgt);
+    e.results(curTrial,e.s.resCols.ref) = trials(curTrial,tg.triallistCols.ref);
+    e.results(curTrial,e.s.resCols.spt) = trials(curTrial,tg.triallistCols.spt);
+    e.results(curTrial,e.s.resCols.colorsStart:e.s.resCols.colorsEnd) = trials(curTrial,tg.triallistCols.colorsStart:tg.triallistCols.colorsEnd);
+    e.results(curTrial,e.s.resCols.wordOrder) = trials(curTrial,tg.triallistCols.wordOrder);
+    e.results(curTrial,e.s.resCols.dtr) = trials(curTrial,tg.triallistCols.dtr);
+    e.results(curTrial,e.s.resCols.tgtSlot) = trials(curTrial,tg.triallistCols.tgtSlot); % tgtSlot code (1=top right, 2=top left, 3=bottom right, 4=bottom left )
+    e.results(curTrial,e.s.resCols.nTgts) = trials(curTrial,tg.triallistCols.nTgts); % Number of target items (items in target color)
+    e.results(curTrial,e.s.resCols.nItems) = trials(curTrial,tg.triallistCols.nItems); % Total number of items
+    e.results(curTrial,e.s.resCols.fitsStart:e.s.resCols.fitsEnd) = trials(curTrial,tg.triallistCols.fitsStart:tg.triallistCols.fitsEnd);
+    
+    
+    
+    
+    %%%% trim and store trajectory
+    
+    % remove unfilled rows
+    trajectory(loopsSincePhraseOffset+1:end,:) = [];
+    
+    % remove rows with duplicate (2d) mouse positions (due to
+    % for-loop rate being higher than mouse polling); never re-
+    % move rows with movement onset time and movement offset time.
+    % (Note that this also removes data points where mouse was
+    % not moved relative to the preceding data point)
+    if e.s.dontRecordConstantTrajData
+        m = 2;
+        while m < size(trajectory,1)
+            if all(trajectory(m,[e.s.trajCols.x,e.s.trajCols.y]) == trajectory(m-1,[e.s.trajCols.x,e.s.trajCols.y])) && ...
+                    trajectory(m,e.s.trajCols.t) ~= movementOnset_pc && ...
+                    trajectory(m,e.s.trajCols.t) ~= movementOffset_pc
+                trajectory(m,:) = [];
+            else
+                m = m+1;
             end
         end
-        
-        % convert to millimeter data and flip y-axis to get from PTB's
-        % to a "normal" coordinate frame (also make relative to presentation area)
-        trajectory(:,e.s.trajCols.x) = (trajectory(:,e.s.trajCols.x)-presMargins_px(1))/e.s.pxPerMm(1);
-        trajectory(:,e.s.trajCols.y) = (presArea_px(2)-(trajectory(:,e.s.trajCols.y)-presMargins_px(2)))/e.s.pxPerMm(2);
-        
-        % store in cell
-        e.trajectories{curTrial} = trajectory;
-        
-        % save everything to file (append)
-        if doSave
-            save(savePath, 'e', '-append');
-        end
-        
-    end % belongs to second (inner) if, checking for trial abortion
+    end
     
-end % belongs to first (outer) if, checking for trial abortion
+    % convert to millimeter data and flip y-axis to get from PTB's
+    % to a "normal" coordinate frame (also make relative to presentation area)
+    trajectory(:,e.s.trajCols.x) = (trajectory(:,e.s.trajCols.x)-presMargins_px(1))/e.s.pxPerMm(1);
+    trajectory(:,e.s.trajCols.y) = (presArea_px(2)-(trajectory(:,e.s.trajCols.y)-presMargins_px(2)))/e.s.pxPerMm(2);
+    
+    % store in cell
+    e.trajectories{curTrial} = trajectory;
+    
+    % save everything to file (append)
+    if doSave
+        save(savePath, 'e', '-append');
+    end
+    
+end
 
-%% In case of trial being aborted: Feedback & trial reordering
 
-% if the current trial was aborted, show appropriate feedback, move trial to end to be redone
+
+
+
+
+%%%% Feedback
+
+if ~abortTrial
+
+    % provide feedback
+    if tooSlow % e.s.maxRT exceeded (supersedes other feedback)
+        feedbackStr = e.s.tooSlowString;
+    elseif correctResponse
+        feedbackStr = e.s.correctString;
+    elseif ~correctResponse
+        feedbackStr = e.s.incorrectString;
+    end
+
+    durFeedback = e.s.Feedback_nonAbort;
+    
+end
+
 if abortTrial
     
     if  abortTrial == 1 % did not start moving after maxSecsToMove seconds following phrase onset
-        abortString = e.s.noMoveString;
+        feedbackStr = e.s.noMoveString;
     elseif abortTrial == 2 % did not move pointer on start marker
-        abortString = e.s.noResponseString;
+        feedbackStr = e.s.noResponseString;
     elseif abortTrial == 3 % did not choose a stimulus
-        abortString = e.s.noResponseString;
+        feedbackStr = e.s.noResponseString;
     elseif abortTrial == 5 % left start marker before spatial phrase was removed
-        abortString = e.s.earlyMoveString;
+        feedbackStr = e.s.earlyMoveString;
     end
     
-    % show feedback
-    Screen('Flip',winOn.h,[]);
-    [abortString_x, abortString_y] = centerTextOnPoint(abortString, winOn.h, array_pos_px(1), array_pos_px(2));
-    DrawFormattedText(winOn.h, abortString, 'center', abortString_y, tg.textColor, [], [], [], 2);
-    Screen('Flip',winOn.h,[]);
-    WaitSecs(e.s.durAbortFeedback)
+    durFeedback = e.s.Feedback_abort;        
+
+end
+
+ShowTextAndWait(feedbackStr, e.s.feedbackColor, winOn.h, durFeedback, false)
+
+
+
+%%%% Shuffle aborted trial into remaining triallist
+
+if abortTrial
     
-    % If it's not the last trial anyway, append current row to end
-    % of matrix and delete current row (do the same thing for
-    % non-pixel trial list, so that these trials are in the same
-    % order as the results matrix
     if curTrial ~= size(trials,1)
-        trials(end+1,:) = trials(curTrial,:);
-        trials(curTrial,:) = [];
-        if blockType == 1 % main trials
-            e.trials_main(end+1,:) = e.trials_main(curTrial,:);
-            e.trials_main(curTrial,:) = [];
-        end
+        
+        % Do reordering on vector of row indices
+        rowInds = 1:size(trials,1);        
+        newPos = randi([curTrial, numel(rowInds)]);        
+        abortedRow = rowInds(curTrial);        
+        rowInds(curTrial) = [];                         
+        upper = rowInds(1:newPos-1); 
+        lower = rowInds(newPos:end); 
+        rowInds = [upper, abortedRow, lower];
+        
+        % Apply to 'trials' and 'e.triallist' so both heed order of presentation        
+        trials = trials(rowInds, :);
+        e.triallist = e.triallist(rowInds, :);                
+                
     end
-    
-    % Set back curTrial by 1 (so that the trial that is now in
-    % the same row as the deleted one will be done next (since the
-    % following line in parent script increments the counter as usual).
-    curTrial = curTrial - 1;
+        
+    curTrial = curTrial - 1; % will be incremented again at trial outset.
     
 end

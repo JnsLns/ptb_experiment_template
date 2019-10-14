@@ -1,4 +1,4 @@
-% Draw fixation cross to offscreen window winsOff.fix.h
+% Draw fixation cross to center of offscreen window winsOff.fix.h
 
 % convert radius and line width of fixation cross from degrees visual angle
 % to pixels
