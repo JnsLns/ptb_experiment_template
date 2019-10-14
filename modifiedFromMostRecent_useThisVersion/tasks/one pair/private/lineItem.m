@@ -4,10 +4,11 @@ function [grid] = lineItem(win, size_xy, nGrid_xy, line_spec, lineWidth, color, 
 %
 % Draw lines specified as connected grid points to a Psychtoolbox window.
 %
-% Output grid just shows the grid point indices to use when composing
-% line_spec. This exists just to ease shape specification for the user.
-% Call lineItem with only one argument equivalent to nGrid_xy to obtain
-% 'grid' without drawing any lines.
+% Output 'grid' is just for convenience and shows the grid point indices to
+% use when composing line_spec. This exists just to ease shape
+% specification for the user. Call lineItem with only one argument
+% identical to the 'nGrid_xy' that will later be used, in order to obtain
+% 'grid' without drawing anything.
 %
 % win               PTB window to draw to
 % size_xy           [width, height] in pixels
@@ -17,23 +18,25 @@ function [grid] = lineItem(win, size_xy, nGrid_xy, line_spec, lineWidth, color, 
 %                   will be connected by a line. A vector may contain
 %                   more than two points, resulting in  a chain of lines.
 %                   Points are addressed as in MATLAB linear indexing
-%                   (i.e., first moving vertically); Look at output grid
-%                   for aid.
+%                   (i.e., moving from top to bottom, column by column);
+%                   Look at output 'grid' for aid.
 % lineWidth         in pixels
 % color             rgb vector
 % center_xy         position of grid center in PTB window coords, pixels.
 %
-% For instance, for 
+% __Example__
 %
-% lineItem(win, [100, 200], [3 4], {[1 9],[3 6 5]}, ...)
-%
-% the grid looks like this:     1 4 7  |
-%                               2 5 8  | 200 px
-%                               3 6 9  |
-%                               -----
-%                               100 px    
-%
-% and lines will be drawn from 1 to 9 and from 3 to 6 to 5.
+% For the call    lineItem(win, [100, 200], [3 4], {[1 9],[3 6 5]}, ...)
+% the grid looks as follows and lines will be drawn from gridpoint 1 to 9
+% and from 3 to 6 to 5:   
+%                                 1 5 9  |
+%                                 2 6 10 | 200 px
+%                                 3 7 11 |
+%                                 4 8 12 |
+%                                 ------
+%                                 100 px    
+
+
 
 % Just for help in specifying shapes...
 if nargin == 1
