@@ -1,4 +1,24 @@
 
+% Convert data from triallist to PTB coordinate frame BUT WITHOUT ALTERING
+% ANY TRIAL LIST. This code block has been taken from the previous central
+% position of conversion, so this needs to be heavily modifed to work in
+% the context of trial generation (and so that it does not modify the trial
+% list!)
+%
+%vps = tg.triallistCols.vertPosStart;
+%vpe = tg.triallistCols.vertPosEnd;
+%hps = tg.triallistCols.horzPosStart;
+%hpe = tg.triallistCols.horzPosEnd;
+%[e.trials(:, hps:hpe), ~] = ...
+%    paVaToPtbPx(e.trials(:, hps:hpe), zeros(size(e.trials,1),1), spatialConfig);
+%[~, e.trials(:, vps:vpe)] = ...
+%    paVaToPtbPx(zeros(size(e.trials,1),1), e.trials(:, vps:vpe), spatialConfig);
+%
+%circleLineWidth_px = vaToPx(e.s.circleLineWidth_va);
+
+
+
+
 % viewing distance [mm] is e.s.viewingDistance
 vd = e.s.viewingDistance;
 

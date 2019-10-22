@@ -68,10 +68,11 @@ drawFixation; % TODO (this can be its own offscreen window and thus be drawn in 
 
 
 
-%%%% Wait for pts. to assume starting position
+%%%% Wait for pts. to move to starting position
 
-% Go on when they have kept starting pos for e.s.durOnStart
-% If not in start pos within e.s.durWaitForStart, abort trial (code 2).
+% Wait for pointer to be in desired position 
+% Go on when pointer has dwelled there for e.s.durOnStart
+% If not at start within e.s.durWaitForStart, abort trial (code 2).
 
 % Copy start marker offscreen window to onscreen window & present
 Screen('CopyWindow', winsOff.empty.h, winOn.h);
@@ -171,7 +172,7 @@ if ~abortTrial
         end                                  
         
         % if start pos left, abort trial
-        if ~withinAngle || ~tipAtStart
+        if ~(distFromStart < e.s.startRadius_mm)
             abortTrial = 5;
             break; 
         end                
@@ -225,7 +226,7 @@ end
 
 %%%% Location response
 
-% If allowed response time exceeded, abort trial (code 3).
+% If max response time exceeded, abort trial (code 3).
 
 if ~abortTrial                               
         
@@ -260,8 +261,6 @@ end
 
 
 %%%% Target presence response
-
-% I AM HERE
 
 if ~abortTrial                               
         
@@ -300,8 +299,78 @@ end
 
 
 
+% TODO: This may probably be removed completely...
+%%%% Wait for movement onset
 
-%%%% Trial aftermath (feedback, correctness etc.)
+% Wait until participant moves the pointer with at least e.s.velocityThreshold mm/s.
+% If that does not happen within e.s.maxSecsUntilMove, abort trial (code 1).
+% Note: Mouse position is recorded here already to have a data margin
+% preceeding movement onset.
+
+if ~abortTrial
+    
+    % draw start marker and cursor to onscreen window
+    Screen('CopyWindow', offwin_smOn_noStims, winOn.h);
+    Screen('DrawDots', winOn.h, tipPos(1:2), cursorRad_px*2, tg.white, [], 1);
+    [~, phraseOffset_pc]  = Screen('Flip',winOn.h,[]);
+    
+    % get reference position & time for detecting movement onset
+    t_min1 = GetSecs;
+    [tipPos_old(1),tipPos_old(2)] = getMouseRemapped2(e.s.mouseRemappingFactor);
+    
+    % wait for movement onset
+    while 1
+        
+        t_current = GetSecs;
+        [tipPos_new(1),tipPos_new(2)] = getMouseRemapped2(e.s.mouseRemappingFactor);
+        
+        % start recording mouse position and counting loops
+        loopsSinceStimOffset = loopsSinceStimOffset + 1;
+        trajectory(loopsSinceStimOffset,[e.s.trajCols.x,e.s.trajCols.y,e.s.trajCols.t]) = ...
+            [tipPos_new(1:2), t_current];
+        
+        % check speed against threshold in regular intervals
+        if t_current - t_min1 >= e.s.velocitySamplingInterval
+            
+            % Compute pointer speed
+            deltaTipPos_mm = (tipPos_new - tipPos_old)./e.s.pxPerMm;
+            currentVelocity = sqrt(sum(deltaTipPos_mm.^2)) / (t_current - t_min1);
+            
+            % if thresh exceeded, store movement onset time and leave loop
+            if currentVelocity > e.s.velocityThreshold
+                movementOnset_pc = t_current;
+                break
+                % if time is up, abort trial
+            elseif t_current - phraseOffset_pc > e.s.maxSecsUntilMove
+                if blockType ~= 0 % not during practice
+                    abortTrial = 1;
+                    break
+                end
+            end
+            
+            % reset time and store new reference position
+            [tipPos_old(1),tipPos_old(2)] = getMouseRemapped2(e.s.mouseRemappingFactor);
+            t_min1 = GetSecs;
+            
+        end
+        
+        % Refresh display and draw pointer
+        if dist3d([tipPos_new, 0],[e.s.startPos_mm, 0],[0 0 1]) < e.s.startRadius_mm
+            Screen('CopyWindow', offwin_smOn_noStims, winOn.h);
+        else
+            Screen('CopyWindow', winsOff.empty.h, winOn.h);
+        end
+        Screen('DrawDots', winOn.h, tipPos_new(1:2), cursorRad_px*2, tg.white, [], 1);
+        Screen('Flip',winOn.h,[]);
+        
+    end
+    
+end
+
+
+
+
+%% Trial aftermath (feedback, correctness etc.)
 
 
 % retest for trial abortion, since it may have happened during

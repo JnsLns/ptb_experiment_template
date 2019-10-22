@@ -67,16 +67,11 @@ e.s.trajCols.t = 3;
 % Adjust trial abortion codes to the new phases
 
 % Experiment struct should be self-contained, so that struct tg is not
-% required for analysis (in other words, copy everything to that struct)
+% required for analysis (in other words, copy everything t
 
 % Add experiment/settings identifier to trial generation data and carry
 % that over to the experiment output data
 
-% The checks for starting position being assumed and held throughout
-% fixation phase may (didn't test) need some sluggishness over time to not
-% be disrupted by marker jumps. on the other hand, bad data should be
-% filtered out anyway and replaced by last good data, so that should do the
-% trick unless there are types of marker jumps that are not caught by this.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
