@@ -67,11 +67,21 @@ e.s.trajCols.t = 3;
 % Adjust trial abortion codes to the new phases
 
 % Experiment struct should be self-contained, so that struct tg is not
-% required for analysis (in other words, copy everything t
+% required for analysis (in other words, copy everything to that struct)
 
 % Add experiment/settings identifier to trial generation data and carry
 % that over to the experiment output data
 
+% The checks for starting position being assumed and held throughout
+% fixation phase may (didn't test) need some sluggishness over time to not
+% be disrupted by marker jumps. on the other hand, bad data should be
+% filtered out anyway and replaced by last good data, so that should do the
+% trick unless there are types of marker jumps that are not caught by this.
+
+% Prepare target response screen
+
+% TODO: Adjust for stimulus line width when defining size in trial
+% generation (stims should still be as large as defined by h and v).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -133,7 +143,53 @@ tg.presArea_va = [20, 15]; % size of presentation angle in degrees visual angle
 % tg.circleColor_Ok
 % tg.circleColor_notOk
 
-                        
+% tg.yesKeyName % should be 'return'
+% tg.noKeyName; % should be '.'
+
+% needed in 
+tg.triallistCols.vertPosStart;  % positions
+tg.triallistCols.vertPosEnd;
+tg.triallistCols.horzPosStart;
+tg.triallistCols.horzPosEnd;
+tg.triallistCols.vertExtStart;  % extent
+tg.triallistCols.vertExtEnd;
+tg.triallistCols.horzExtStart;
+tg.triallistCols.horzExtEnd;
+tg.triallistCols.stimIdentitiesStart;        
+tg.triallistCols.stimIdentitiesEnd;        
+tg.triallistCols.stimColorsEnd;        
+tg.triallistCols.stimColorsEnd;   
+
+
+
+% cell array with letter specifications for function lineItem
+%tg.stimShapes{1} = {[1,3,9]};             % 1  = L
+%tg.stimShapes{2} = {[1,9],[3,7]};         % 2  = X
+%tg.stimShapes{3} = {[4,6],[1,7],[3,6]};   % 3  = I
+%tg.stimShapes{4} = {[1,3,5,9,7]};         % 4  = W
+%tg.stimShapes{5} = {[7,1,3],[2,8]};       % 5  = F
+%tg.stimShapes{6} = {[3,1,5,7,9]};         % 6  = M
+%tg.stimShapes{7} = {[7,1,3,9],[2,8]};     % 7  = E
+%tg.stimShapes{8} = {[1,3],[2,8],[7,9]};   % 8  = H
+%tg.stimShapes{9} = {[1,6,7]};             % 9  = V
+%tg.stimShapes{10} = {[1,7,3,9]};          % 10 = Z
+%tg.stimShapes{11} = {[1,7],[4,6]};        % 11 = T
+%tg.stimShapes{12} = {[1,5,7],[5,6]};      % 12 = Y
+%tg.stimShapes{13} = {[3,1,9,7]};          % 13 = N
+                                           % 14 = O
+
+% stim color specification. color codes in triallist should correspond to
+% element number in this array. Adjust these to have the correct colors
+% used by Hazeltine!
+%tg.stimColors{1} = [1 0 0]; % red
+%tg.stimColors{2} = [0 1 0]; % green
+%tg.stimColors{3} = [0 0 1]; % blue
+%tg.stimColors{4} = [1 1 0]; % yellow
+%tg.stimColors{5} = [0 0 0]; % black
+%tg.stimColors{6} = [1 1 1]; % white                                               
+                                               
+% note: 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -182,7 +238,6 @@ pauseKey = 'Pause';
 % trials are assumed to be in variable tg.triallist
 % column number indices into trials assumed to be in struct triallistCols
 load('trials_main.mat');
-e.trials = tg.triallist;
 
 % Fields and number of columns for e.s.resCols (columns of results matrix)
 resColsFields = ...
@@ -267,6 +322,8 @@ e.s.spatialConfig.presArea_va = tg.presArea_va;
 % Transfer data from trial generation to experiment struct (so that it is
 % self-contained and not data from trial generation needs to be used during
 % analysis).
+e.trials = tg.triallist;
+e.s.triallistCols = tg.triallistCols;
 e.s.fixRadius_va = tg.fixRadius_va;
 e.s.fixLineWidth_va = tg.fixLineWidth_va;
 e.s.fixColor = tg.fixColor;
@@ -282,11 +339,13 @@ e.s.allowedLocResponseTime = tg.allowedLocResponseTime;
 e.s.allowedTgtResponseTime = tg.allowedTgtResponseTime;
 e.s.zZeroTolerance = tg.zZeroTolerance;
 e.s.pointerStartAngle = tg.pointerStartAngle;
-
 e.s.circleColor_notOk = tg.circleColor_notOk;
 e.s.circleColor_ok = tg.circleColor_ok;
-
-% 
+e.s.yesKeyName = tg.yesKeyName;
+e.s.noKeyName = tg.noKeyName;
+e.s.stimShapes = tg.stimShapes;
+e.s.stimColors = tg.stimColors;
+ 
 
 
 
@@ -388,7 +447,8 @@ winsOff.stims.rect = winOn.rect;
 [winsOff.stims.center(1), winsOff.stims.center(2)] = ...
     RectCenter(winsOff.stims.rect);
 [winsOff.stims.h, winsOff.stims.rect] = ...
-    Screen('OpenOffScreenWindow', winsOff.stims.screen, winsOff.stims.bgColor, winsOff.stims.rect);
+    Screen('OpenOffScreenWindow', winsOff.stims.screen, ...
+    winsOff.stims.bgColor, winsOff.stims.rect);
 
 % empty offscreen window
 winsOff.empty.bgColor = e.s.bgColor;
@@ -397,7 +457,8 @@ winsOff.empty.rect = winOn.rect;
 [winsOff.empty.center(1), winsOff.empty.center(2)] = ...
     RectCenter(winsOff.empty.rect);
 [winsOff.empty.h, winsOff.empty.rect] = ...
-    Screen('OpenOffScreenWindow', winsOff.empty.screen, winsOff.empty.bgColor, winsOff.empty.rect);
+    Screen('OpenOffScreenWindow', winsOff.empty.screen, ...
+    winsOff.empty.bgColor, winsOff.empty.rect);
 
 % offscreen window for fixation cross
 winsOff.fix.bgColor = e.s.bgColor;
@@ -406,17 +467,18 @@ winsOff.fix.rect = winOn.rect;
 [winsOff.fix.center(1), winsOff.fix.center(2)] = ...
     RectCenter(winsOff.fix.rect);
 [winsOff.fix.h, winsOff.fix.rect] = ...
-    Screen('OpenOffScreenWindow', winsOff.fix.screen, winsOff.fix.bgColor, winsOff.fix.rect);
+    Screen('OpenOffScreenWindow', winsOff.fix.screen, ...
+    winsOff.fix.bgColor, winsOff.fix.rect);
 
-% offscreen window to show when pointer is at starting position
-winsOff.pointerAtStart.bgColor = e.s.bgColor;
-winsOff.pointerAtStart.screen = expScreen;
-winsOff.pointerAtStart.rect = winOn.rect;
-[winsOff.pointerAtStart.center(1), winsOff.pointerAtStart.center(2)] = ...
-    RectCenter(winsOff.pointerAtStart.rect);
-[winsOff.pointerAtStart.h, winsOff.pointerAtStart.rect] = ...
-    Screen('OpenOffScreenWindow', winsOff.pointerAtStart.screen, winsOff.pointerAtStart.bgColor, winsOff.pointerAtStart.rect);
-
+% offscreen window for target presence response
+winsOff.targetResponse.bgColor = e.s.bgColor;
+winsOff.targetResponse.screen = expScreen;
+winsOff.targetResponse.rect = winOn.rect;
+[winsOff.targetResponse.center(1), winsOff.targetResponse.center(2)] = ...
+    RectCenter(winsOff.targetResponse.rect);
+[winsOff.targetResponse.h, winsOff.targetResponse.rect] = ...
+    Screen('OpenOffScreenWindow', winsOff.targetResponse.screen, ...
+    winsOff.targetResponse.bgColor, winsOff.targetResponse.rect);
 
 % Hide mouse cursor
 HideCursor;

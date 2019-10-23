@@ -1,20 +1,18 @@
 
 
 % abbreviations for columns in triallist (used in the following)
-vps = e.s.triallistCols.vertPosStart;  % positions
-vpe = e.s.triallistCols.vertPosEnd;
-hps = e.s.triallistCols.horzPosStart;
-hpe = e.s.triallistCols.horzPosEnd;
-ves = e.s.triallistCols.vertExtStart;  % extent
-vee = e.s.triallistCols.vertExtEnd;
-hes = e.s.triallistCols.horzExtStart;
-hee = e.s.triallistCols.horzExtEnd;
-sids = e.s.triallistCols.stimIdentitiesStart;        
-side = e.s.triallistCols.stimIdentitiesEnd;        
-scs  = e.s.triallistCols.stimColorsEnd;        
-sce  = e.s.triallistCols.stimColorsEnd;        
-lws  = e.s.triallistCols.stimLineWidthsStart;        
-lwe  = e.s.triallistCols.stimLineWidthsEnd;        
+vps = tg.triallistCols.vertPosStart;  % positions
+vpe = tg.triallistCols.vertPosEnd;
+hps = tg.triallistCols.horzPosStart;
+hpe = tg.triallistCols.horzPosEnd;
+ves = tg.triallistCols.vertExtStart;  % extent
+vee = tg.triallistCols.vertExtEnd;
+hes = tg.triallistCols.horzExtStart;
+hee = tg.triallistCols.horzExtEnd;
+sids = tg.triallistCols.stimIdentitiesStart;        
+side = tg.triallistCols.stimIdentitiesEnd;        
+scs  = tg.triallistCols.stimColorsEnd;        
+sce  = tg.triallistCols.stimColorsEnd;        
 
 % triallist row for current trial
 ct = e.trials(curTrial,:);
@@ -26,13 +24,12 @@ ct = e.trials(curTrial,:);
 x_ext = vaToPx(ct(hes:hee), spatialConfig);
 y_ext = vaToPx(ct(ves:vee), spatialConfig);
 
-% letter identities, colors, and linewidths
+% letter identities & colors
 shapeCodes = ct(sids:side);
 colorCodes = ct(scs:sce);
-lineWidths = ct(lws:lwe);
 
 % Draw items
-for i = 1:side-sids+1
+for i = 1:hpe-hps+1
 
     % skip nan entries in shapeCodes (i.e., stimIdentities)
     if ~isnan(shapeCodes(i))
@@ -44,7 +41,7 @@ for i = 1:side-sids+1
                      [x_ext(i) y_ext(i)], ...      
                      [3 3], ...
                      e.s.stimShapes{shapeCodes(i)}, ...
-                     lineWidths(i), ...
+                     e.s, ...
                      e.s.stimColors{colorCodes(i)}, ...
                      [x_pos(i), y_pos(i)]);
         
@@ -58,8 +55,8 @@ for i = 1:side-sids+1
                     y_pos(i) - y_ext(i)/2, ...
                     x_pos(i) + x_ext(i)/2, ...
                     y_pos(i) + y_ext(i)/2], ...
-                    lineWidths(i), ...
-                    lineWidths(i));
+                    lineWidth, ...
+                    lineWidth);
             
         end
         

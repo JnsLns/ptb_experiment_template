@@ -5,66 +5,34 @@
 pauseAndResume;
 
 
-%%%%  Re-initialize variables
 
-% TODO: Removed unused after adjusting rest of code
-
-% initialize/reset variables
-startScreenOnset = [];
-tOnStart = [];
-deltatOnStart = 0;
-phraseVisible = 0;
-tipAtStart = 0;
-abortTrial = 0;
-tArrayOnset_pc = 0;
-movementOnset_pc = [];
-movementOffset_pc = [];
-noResponse = 1;
-trajectory = zeros(20000,3);
-loopsSinceStimOffset = 0;
-currentTgtNum = [];
-currentRefNum = [];
-tgtString = [];
-refString = [];
-sptString = [];
-chosenItem = [];
-passedOtherItems = 0;
-tooSlow = 0;
-tipPos = [0,0,0];
-pcTime = [];
-correctResponse = [];
-t_min1 = [];
-tipPos_old = [];
-tipPos_new = [];
-t_current = [];
-deltaTipPos_mm = [];
-currentVelocity = [];
-tFixOnset_pc = [];
-phraseOffset_pc = [];
-clickTime_pc = [];
-stimuliCenters_px = [];
-stimuli_rgb = [];
-
+%%%% Initialize things
 
 % Clear offscreen windows
 for osw = fieldnames(winsOff)'
     Screen('FillRect', winsOff.(osw), winsOff.(osw).bgColor);
 end
 
+abortTrial = nan;
+trajectory = zeros(20000,3);
 
-%%%% Draw to offscreen windows)
+
+
+%%%% Draw to offscreen windows
 
 % Modify this file to draw whatever stimuli you need to winsOff.stims.h
-drawStimuli; % TODO (coordinate transforms to PTB frame are necessary)
+drawStimuli; 
 
 % Draw fixation cross to winsOff.fix.h
-drawFixation; % TODO (this can be its own offscreen window and thus be drawn in advance)
+drawFixation; 
+
 
 
 
 % -------------------------------------------------------------------------
 % PRESENTATION STARTS HERE
 % -------------------------------------------------------------------------
+
 
 
 
@@ -75,11 +43,13 @@ drawFixation; % TODO (this can be its own offscreen window and thus be drawn in 
 
 % Copy start marker offscreen window to onscreen window & present
 Screen('CopyWindow', winsOff.empty.h, winOn.h);
-Screen('Flip', winOn.h, []); 
+Screen('Flip', winOn.h, []);
 
+tOnStart = 0;
+deltatOnStart = 0;
 startScreenOnset = GetSecs;
 while deltatOnStart <= e.s.durOnStart
-               
+    
     % get position of pointer tip (in pres area frame)
     [tipPos_pa, ~, ~, vzData] = getTip_pa(e.s);
     
@@ -91,91 +61,79 @@ while deltatOnStart <= e.s.durOnStart
         tipAtStart = 1;
     else
         tipAtStart = 0;
-    end     
-        
-    % Check whether pointer markers are within prescribed starting angle    
+    end
+    
+    % Check whether pointer markers are within prescribed starting angle
     M = filterTrackerData(vzData, e.s.markers.pointer_IDs, true); % pos
-    V = M - repmat(tipPos_pa, 3, 1);       % vectors from tip to markers    
-    A = zAngle(V);                         % angles from z-axis    
+    V = M - repmat(tipPos_pa, 3, 1);       % vectors from tip to markers
+    A = zAngle(V);                         % angles from z-axis
     if ~any(A > e.s.pointerStartAngle)     % check deviation
-       withinAngle = 1;
+        withinAngle = 1;
     else
-       withinAngle = 0;
-    end                              
+        withinAngle = 0;
+    end
     
     % what happens next depends on how long pointer has been on/off marker:
-    % (1) if pts in starting position 
+    % (1) if pts in starting position
     %   (A) and was not during last iteration     -> start timer
     %   (B) and already was during last iteration -> increment timer
-    % (2) if pts not in starting position 
+    % (2) if pts not in starting position
     %   (A) but was in last iteration             -> reset counter to zero
-    %   (B) and never was and max wait time up    -> abort trial        
+    %   (B) and never was and max wait time up    -> abort trial
     if withinAngle && tipAtStart
         if deltatOnStart == 0                                         % (A)
             tOnStart = GetSecs;
-        end        
-        deltatOnStart = GetSecs - tOnStart;                           % (B)        
-    elseif ~(withinAngle && tipAtStart)                                % (2)                
+        end
+        deltatOnStart = GetSecs - tOnStart;                           % (B)
+    elseif ~(withinAngle && tipAtStart)                                % (2)
         if  deltatOnStart ~= 0  &&  deltatOnStart < e.s.durOnStart    % (A)
-            deltatOnStart = 0;                
+            deltatOnStart = 0;
         elseif GetSecs - startScreenOnset > e.s.durWaitForStart       % (B)
             abortTrial = 2;
-            break;           
-        end        
+            break;
+        end
     end
     
     % Draw indicators to show in which direction the pointer has to be
     % moved to arrive at the starting position (circle for distance, arrows
     % for pointer inclination)
     drawStartPosIndicators;
-                
+    
     Screen('Flip',winOn.h,[]);
     
 end
 
 
 
-%%%% Show fixation cross 
+%%%% Show fixation cross
 
-% for e.s.durPreStimFixation seconds.  
+% for e.s.durPreStimFixation seconds.
 % If during that time pts moves off start marker, abort trial (code 5).
 
 if ~abortTrial
     
     % copy fix window to onscreen window
     Screen('CopyWindow', winsOff.fix.h, winOn.h);
-    Screen('Flip',winOn.h,[]);    
+    [~, tFixOnset_pc, ~, ~] = Screen('Flip',winOn.h,[]);
     
     deltatFix = GetSecs - tFixOnset_pc;
     
     while deltatFix <= e.s.durPreStimFixation
         
         % get position of pointer tip
-        tipPos_pa = getTip_pa(e.s);     
+        tipPos_pa = getTip_pa(e.s);
         
-        % Check whether it is within starting region
-        if distFromStart < e.s.startRadius_mm
-            tipAtStart = 1;
-        else
-            tipAtStart = 0;
-        end
-        
-        % Check whether pointer markers are within prescribed starting angle
-        M = filterTrackerData(vzData, e.s.markers.pointer_IDs, true); % pos
-        V = M - repmat(tipPos_pa, 3, 1);       % vectors from tip to markers
-        A = zAngle(V);                         % angles from z-axis
-        if ~any(A > e.s.pointerStartAngle)     % check deviation
-            withinAngle = 1;
-        else
-            withinAngle = 0;
-        end                                  
+        % Check whether tip position is in correct location and pointer is
+        % angled correctly. This is indicated by variables tipAtStart and
+        % withinAngle, respectively.
+        checkStartingPosition;
         
         % if start pos left, abort trial
         if ~withinAngle || ~tipAtStart
             abortTrial = 5;
-            break; 
-        end                
-                
+            break;
+        end
+        
         % Increment timer
         deltatFix = GetSecs - tFixOnset_pc;
         
@@ -190,34 +148,32 @@ end
 % If participant moves off start position, abort trial (code 3).
 
 if ~abortTrial
-            
+    
     % Copy offscreen window with stims and start marker to onscreen window
     Screen('CopyWindow', winsOff.stims.h, winOn.h);
     
     % present items
-    [~,tArrayOnset_pc,~,~] = Screen('Flip', winOn.h, []);                    
+    [~,tStimOnset_pc,~,~] = Screen('Flip', winOn.h, []);
     
-    % present items for fixed time             
-    deltatItems = GetSecs - tArrayOnset_pc;    
-    while deltatItems <= e.s.durItemPresentation                                      
-              
-        % get position of pointer and check whether still at start pos        
-        tipPos_pa = getTip_pa(e.s);                
-        distFromStart = dist3d(tipPos_pa, e.s.startPos_mm);        
+    % present items for fixed time
+    deltatItems = GetSecs - tStimOnset_pc;
+    while deltatItems <= e.s.durItemPresentation
+        
+        % Check whether tip position is in correct location and pointer is
+        % angled correctly. This is indicated by variables tipAtStart and
+        % withinAngle, respectively.
+        checkStartingPosition;
         
         % if start pos left, abort trial
-        if ~(distFromStart < e.s.startRadius_mm)
+        if ~withinAngle || ~tipAtStart
             abortTrial = 3;
-            break; 
-        end        
+            break;
+        end
         
         % Increment timer
-        deltatItems = GetSecs - tArrayOnset_pc;
+        deltatItems = GetSecs - tStimOnset_pc;
         
     end
-    
-    % remove items and get location response onset time
-    [~,tLocResponseOnset_pc,~,~] = Screen('Flip', winOn.h, []);
     
 end
 
@@ -227,87 +183,108 @@ end
 
 % If allowed response time exceeded, abort trial (code 3).
 
-if ~abortTrial                               
-        
+if ~abortTrial
+    
+    % clear onscreen window and get location response onset time
+    [~,tLocResponseOnset_pc,~,~] = Screen('Flip', winOn.h, []);
+    
+    % wait for response (pointer at screen surface)
+    loopCounter = 1;
     while 1
         
         % get position of pointer and time
-        tipPos_pa = getTip_pa(e.s);                                
+        [tipPos_pa, trackerTime, ~, ~] = getTip_pa(e.s);
         pcTime = GetSecs;
-                
+        
+        % store onset time from trackers
+        if loopCounter == 1
+            tLocResponseOnset_tr = trackerTime;
+        end
+        
         % if max time is up, leave loop and abort trial
         if pcTime - tLocResponseOnset_pc > e.s.allowedLocResponseTime
             abortTrial = 3;
             break;
         end
         
-        % record pointer position 
-        loopsSinceStimOffset = loopsSinceStimOffset + 1;
-        trajectory(loopsSinceStimOffset, ...
-            [e.s.trajCols.x, e.s.trajCols.y, e.s.trajCols.z, e.s.trajCols.t]) = ...
-            [tipPos_pa(1:2), pcTime];
+        % record pointer position
+        trajectory(loopCounter, ...
+            [e.s.trajCols.x, ...
+            e.s.trajCols.y, ...
+            e.s.trajCols.z, ...
+            e.s.trajCols.t]) = [tipPos_pa, pcTime];
         
-        % store time and proceed if pointer at screen surface (z = 0)? 
-        if abs(tipPos_pa(3)) < e.s.zZeroTolerance                         
-            movementOffset_pc = pcTime;                                
+        % store time and proceed if pointer at screen surface (z = 0)?
+        if abs(tipPos_pa(3)) < e.s.zZeroTolerance
+            tMovementOffset_pc = pcTime;
+            tMovementOffset_tr = trackerTime;
             break;
         end
-            
+        
     end
     
 end
 
 
 
-%%%% Target presence response
+%%%% Target presence keyboard response
 
-% I AM HERE
-
-if ~abortTrial                               
-        
-    % copy fix window to onscreen window
-    Screen('CopyWindow', winsOff.fix.h, winOn.h);
-    Screen('Flip',winOn.h,[]);
+if ~abortTrial
+    
+    targetPresentResponse = nan;
+    
+    % copy response window to onscreen window and show
+    Screen('CopyWindow', winsOff.targetResponse.h, winOn.h);
+    [~, tTgtResponseOnset_pc, ~, ~] = Screen('Flip',winOn.h,[]);
     
     while 1
         
-        % get position of pointer and time
-        tipPos_pa = getTip_pa(e.s);                                
-        pcTime = GetSecs;
-                
         % if max time is up, leave loop and abort trial
-        if pcTime - tLocResponseOnset_pc > e.s.allowedResponseTime
+        if pcTime - tTgtResponseOnset_pc > e.s.allowedTgtResponseTime
             abortTrial = 3;
             break;
         end
         
-        % record pointer position 
-        loopsSinceStimOffset = loopsSinceStimOffset + 1;
-        trajectory(loopsSinceStimOffset, ...
-            [e.s.trajCols.x, e.s.trajCols.y, e.s.trajCols.z, e.s.trajCols.t]) = ...
-            [tipPos_pa(1:2), pcTime];
+        % Check keyboard
+        [keyIsDown, secs, keyCode, ~] = KbCheck;
         
-        % store time and proceed if pointer at screen surface (z = 0)? 
-        if abs(tipPos_pa(3)) < e.s.zZeroTolerance                         
-            movementOffset_pc = pcTime;                                
-            break;
-        end
+        % Store response
+        if keyIsDown
             
+            if strcmp(KbName(keyCode), e.s.yesKeyName)
+                tgtPresentResponse = 1;
+            elseif strcmp(KbName(keyCode), e.s.noKeyName)
+                tgtPresentResponse = 0;
+            end
+            
+            % store RT and proceed
+            if ~isnan(tgtPresentResponse)
+                tgtPresentResponse_RT = secs - tTgtResponseOnset_pc;
+                break;
+            end
+            
+        end
+        
     end
     
 end
 
+
+
+
+% -------------------------------------------------------------------------
+% PRESENTATION ENDS HERE (except for possible feedback)
+% -------------------------------------------------------------------------
 
 
 
 
 %%%% Trial aftermath (feedback, correctness etc.)
 
-
 % retest for trial abortion, since it may have happened during
 % stimulus display through exceeding max display time
 if ~abortTrial
-       
+    
     Screen('Flip', winOn.h, []); % flip from backbuffer to onscreen window (backbuffer is cleared)
     
     % Determine correctness of response
@@ -315,10 +292,9 @@ if ~abortTrial
         correctResponse = 1;
     elseif ~isempty(chosenItem) % incorrect response
         correctResponse = 0;
-    end    
-        
-end
+    end
     
+end
 
 if ~abortTrial
     
@@ -330,13 +306,13 @@ if ~abortTrial
     
     e.results(curTrial,e.s.resCols.correct) = correctResponse; % if response correct 1, else 0
     e.results(curTrial,e.s.resCols.chosen) = chosenItem; % item chosen by participant
-    e.results(curTrial,e.s.resCols.type) = e.trials(curTrial,tg.triallistCols.type); % trialtype    
-    e.results(curTrial,e.s.resCols.stimOnset_pc) = tArrayOnset_pc; % onset of stimulus display, pc time
+    e.results(curTrial,e.s.resCols.type) = e.trials(curTrial,tg.triallistCols.type); % trialtype
+    e.results(curTrial,e.s.resCols.stimOnset_pc) = tStimOnset_pc; % onset of stimulus display, pc time
     e.results(curTrial,e.s.resCols.moveOnset_pc) = movementOnset_pc; % start time of movement, pc time
     e.results(curTrial,e.s.resCols.moveOffset_pc) = movementOffset_pc; % end time of movement, pc time
     e.results(curTrial,e.s.resCols.reactionTime_pc) = movementOnset_pc - phraseOffset_pc;
     e.results(curTrial,e.s.resCols.movementTime_pc) = movementOffset_pc - movementOnset_pc;
-    e.results(curTrial,e.s.resCols.responseTime_pc) = movementOffset_pc - phraseOffset_pc;        
+    e.results(curTrial,e.s.resCols.responseTime_pc) = movementOffset_pc - phraseOffset_pc;
     
     e.results(curTrial,e.s.resCols.horzPosStart:e.s.resCols.horzPosEnd) = (stimuliCenters_px(:,1)' - presMargins_px(1))/e.s.pxPerMm(1);
     e.results(curTrial,e.s.resCols.vertPosStart:e.s.resCols.vertPosEnd) = (presArea_px(2)-(stimuliCenters_px(:,2)' - presMargins_px(2)))/e.s.pxPerMm(2);
@@ -407,7 +383,7 @@ end
 % TODO: Move this above result saving
 
 if ~abortTrial
-
+    
     % provide feedback
     if tooSlow % e.s.maxRT exceeded (supersedes other feedback)
         feedbackStr = e.s.tooSlowString;
@@ -416,7 +392,7 @@ if ~abortTrial
     elseif ~correctResponse
         feedbackStr = e.s.incorrectString;
     end
-
+    
     durFeedback = e.s.Feedback_nonAbort;
     
     % Play sound as feedback for target-present response
@@ -437,8 +413,8 @@ if abortTrial
         feedbackStr = e.s.earlyMoveString;
     end
     
-    durFeedback = e.s.Feedback_abort;        
-
+    durFeedback = e.s.Feedback_abort;
+    
 end
 
 ShowTextAndWait(feedbackStr, e.s.feedbackColor, winOn.h, durFeedback, false)
@@ -452,19 +428,19 @@ if abortTrial
     if curTrial ~= size(e.trials,1)
         
         % Do reordering on vector of row indices
-        rowInds = 1:size(e.trials,1);        
-        newPos = randi([curTrial, numel(rowInds)]);        
-        abortedRow = rowInds(curTrial);        
-        rowInds(curTrial) = [];                         
-        upper = rowInds(1:newPos-1); 
-        lower = rowInds(newPos:end); 
+        rowInds = 1:size(e.trials,1);
+        newPos = randi([curTrial, numel(rowInds)]);
+        abortedRow = rowInds(curTrial);
+        rowInds(curTrial) = [];
+        upper = rowInds(1:newPos-1);
+        lower = rowInds(newPos:end);
         rowInds = [upper, abortedRow, lower];
         
-        % Apply to e.trials  
-        e.trials = e.trials(rowInds, :);        
-                
-    end
+        % Apply to e.trials
+        e.trials = e.trials(rowInds, :);
         
+    end
+    
     curTrial = curTrial - 1; % will be incremented again at trial outset.
     
 end

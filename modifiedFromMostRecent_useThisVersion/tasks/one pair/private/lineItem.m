@@ -65,7 +65,7 @@ if nargin > 1
     % Draw
     for idx = 1:numel(line_spec)
         coords = [grid_x(line_spec{idx}) + center_xy(1); ...
-            -grid_y(line_spec{idx}) + center_xy(2)];
+                 -grid_y(line_spec{idx}) + center_xy(2)];
         Screen('DrawLines', win, coords, lineWidth, color);
     end
     
