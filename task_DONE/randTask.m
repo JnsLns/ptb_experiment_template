@@ -89,6 +89,10 @@
 
 % GENERAL TODO %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% Enable multisampling for onscreen window (does it have to be enabled for
+% offscreen windows separately?), like this (here, 20 samples are used):
+% w =  PsychImaging('openWindow', 0, [0 0 0], [100 100 500 500], [], [], [], 20);
+
 % Pointer calibration... validate it in some way before proceeding.
 
 % The checks for starting position being assumed and held throughout

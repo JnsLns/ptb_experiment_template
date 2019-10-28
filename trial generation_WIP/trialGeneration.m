@@ -1,21 +1,21 @@
-% NOTES FOR TRIAL GENERATION %%%%%%%%%%%%%%%%%%%%%%%%%
+ 
 
-% Adjust for stimulus line width when defining size in trial
-% generation (stims should still be as large as defined by h and v).
-
-
-% NOTE Struct tg should contain fields
-% s         --> all settings that need not be iterated over (these are copied to
-%               e.s in the beginning of the experimental script)
-% triallist --> list of trials (each row will copied into experimental
-%               results matrix when the respective trial is completed)
-% triallistCols --> Will be used in experimental script to address into
+% The experimental script expects a struct 'tg' in the trial file, which
+% contains the following fields: 
+%
+% s                 all across-trials settings. These are transferred to
+%                   e.s in the beginning of the experimental script. 
+%
+% triallist         Matrix of trial data, rows are trials, columns are 
+%                   trial properties. 
+%
+% triallistCols     Will be used in experimental script to address into
 %                   triallist. Also, its fields are added to e.s.resCols
 %                   (with an appropriate numeric offset to account for
 %                   already existing results columns) to be able to address
 %                   into the trial-data columns in the final results
 %                   matrix.
-%
+
 
 
 % These need to be defined during trial generation; tg.s is copied to e.s
@@ -56,7 +56,7 @@
 %                                            % 0  = O (tgt)
 %tg.s.stimShapes{1} = {[1,3,9]};             % 1  = L
 %tg.s.stimShapes{2} = {[1,9],[3,7]};         % 2  = X
-%tg.s.stimShapes{3} = {[4,6],[1,7],[3,6]};   % 3  = I
+%tg.s.stimShapes{3} = {[4,6],[1,7],[3,9]};   % 3  = I
 %tg.s.stimShapes{4} = {[1,3,5,9,7]};         % 4  = W
 %tg.s.stimShapes{5} = {[7,1,3],[2,8]};       % 5  = F
 %tg.s.stimShapes{6} = {[3,1,5,7,9]};         % 6  = M
@@ -115,3 +115,12 @@
 % NOTE: Regardless of the length of the number of elements covered by the
 % above spans of columns, items can be left unspecified by putting nan in
 % the stimIdentities column.
+
+
+
+
+
+% Adjust for stimulus line width when defining size in trial
+% generation (stims should still be as large as defined by h and v).
+
+
