@@ -1,6 +1,6 @@
-% Check whether pause key is being pressed, if so, halt experiment execution
-% If user chooses to resume, reopen psychtoolbox windows whose properties
-% are found in structs winOn and winsOff.
+% Check whether pause key is being pressed, if so, halt experiment
+% execution. If user chooses to resume, reopen psychtoolbox windows whose
+% properties are found in structs winOn and winsOff.
 
 if KbCheck
     

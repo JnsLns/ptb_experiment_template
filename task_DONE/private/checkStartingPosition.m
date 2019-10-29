@@ -10,6 +10,8 @@ else
 end
 
 % Check whether pointer markers are within prescribed starting angle
+% (for all lines from tip position to pointer markers, the angle with the 
+% z-axis must be below e.s.pointerStartAngle)
 M = filterTrackerData(vzData, e.s.markers.pointer_IDs, true); % pos
 V = M - repmat(tipPos_pa, 3, 1);       % vectors from tip to markers
 A = zAngle(V);                         % angles from z-axis

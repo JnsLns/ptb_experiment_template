@@ -4,18 +4,25 @@ function str = colStruct(fieldname, nCols, str)
 %
 % Create/extend a struct that in each of its fields holds a column number
 % which addresses into data matrices generated in the context of
-% experiments (e.g., triallists, results lists). (This then allows to
+% experiments (e.g., trial lists, results lists). (This then allows to
 % address that column through a field name, which makes addressing into
 % those data matrices easier, i.e., you don't have to recall which column
 % holds what data).
 %
-% __For instance: 
+% __Example__ 
 %
 % s = colStruct('itemsize', 5)  % Omitting argument str creates new struct!
-% 
-% s = colStruct('nItems', 1, s) % Adds nItems as new field
+%                               % If nCols is larger than 1, two fields
+%                               % will be created holding the start and end
+%                               % column numbers for the given span and the
+%                               % given field name will be prefixed with
+%                               % 'Start' and 'End', respectively.
 %
-% __Outcome :
+% s = colStruct('nItems', 1, s) % Including an existing struct name as argument
+%                               % 'str' adds a new field to the specified
+%                               % struct.
+%
+% --> Result:
 %
 % s = 
 %

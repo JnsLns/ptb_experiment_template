@@ -1,7 +1,7 @@
 function [rect] = rectFromPosSize(xywh)
 % function [rect] = rectFromPosSize(xywh)
 %
-% Convert to Psychtoolbox rect from an object's center position's x,y
+% Get a Psychtoolbox rect from an object's center position's x/y
 % coordinates and the object's width/height. xywh is a vector holding these
 % values.
 %

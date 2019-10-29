@@ -19,43 +19,45 @@ function [grid] = lineItem(win, size_xy, nGrid_xy, line_spec, lineWidth, color, 
 %                   more than two points, resulting in  a chain of lines.
 %                   Points are addressed as in MATLAB linear indexing
 %                   (i.e., moving from top to bottom, column by column);
-%                   Look at output 'grid' for aid.
+%                   Look at output 'grid' for aid and see example below.
 % lineWidth         scalar, in pixels
 % color             line color, RGB vector.
-% center_xy         position of grid center in PTB window coords, pixels.
+% center_xy         position of grid center in PTB window coords (pixels).
 % compensateLineWidth  Optional, default true. Adjusts grid extent
 %                      depending on requested line width so that the final
 %                      shape's extent is exactly the requested size. If
-%                      disabled and there are lines at the border of the
+%                      false and there are lines at the border of the
 %                      grid specified, each border line will exceed the
 %                      requested size by 1/2 line width, since the lines are
-%                      centered on the grid edges. If enabled, horizontal/
+%                      centered on the grid edges. If true, horizontal/
 %                      vertical grid size is reduced by 1/2 line width for
 %                      each vertical/horizontal border line present
-%                      (respectively) and the position is adjusted so that
+%                      (respectively) and item position is adjusted so that
 %                      the item is still centered on the desired position.
 %                      Note that this does not remedy diagonal line corners
 %                      overlapping the requested size area. Use bounding box
 %                      for that (see below).
 % boxLineWidth      Optional, no bounding box is drawn by default.
-%                   Otherwise, this should be a scalar specifiying the line
+%                   Otherwise, this should be a scalar specifying the line
 %                   width of a bounding box that will be drawn around and
 %                   on top of the drawn item. The bounding box will be
 %                   drawn just outside the area defined by size_xy and
 %                   never overlap it. If boxLineWidth is defined, then
 %                   boxColor as well needs to be supplied.
-% boxColor          Color of the bounding box (RGB vector). Setting this to
+% boxColor          Color of the bounding box, RGB vector. Setting this to
 %                   the window's background color enables hiding corners of
 %                   diagonal lines that reach beyond the rectangular area
 %                   defined by size_xy.
-
-
+%
 %
 % __Example__
 %
-% For the call    lineItem(win, [100, 200], [3 4], {[1 9],[3 6 5]}, ...)
-% the grid looks as follows and lines will be drawn from gridpoint 1 to 9
-% and from 3 to 6 to 5:   
+% For the call
+%
+% >> lineItem(win, [100, 200], [3 4], {[1 9],[3 6 5]}, ...)
+%
+% the point grid looks as follows and lines will be drawn from gridpoint
+% 1 to 9 and from 3 to 6 to 5:   
 %                                 1 5 9  |
 %                                 2 6 10 | 200 px
 %                                 3 7 11 |
@@ -98,6 +100,7 @@ if nargin > 1
     % border
     borderLines = [0 0 0 0];
     if compensateLineWidth
+        % Check which sides are occupied by border lines:
         % top, bottom, left, right border
         borders = {grid(1,:),grid(end,:),grid(:,1),grid(:,end)};        
         for bNum = 1:numel(borders)            
@@ -112,7 +115,8 @@ if nargin > 1
                 end                                
             end
         end
-    end        
+    end      
+    % Adjust item size and position accordingly:
     if borderLines(1) && borderLines(2) % top & bottom                                    
         size_xy = size_xy - [0 lineWidth];        
     elseif borderLines(1) % only top    
@@ -162,8 +166,7 @@ if nargin > 1
             {[grid(1), grid(end,1), grid(end), grid(1,end), grid(1)]}, ...
             boxLineWidth, boxColor, reqCenter_xy, false);                                
     end
-    
-    
+        
 end
 
 

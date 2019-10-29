@@ -4,7 +4,7 @@ function [px] = mmToPx(mm, spatialConfig)
 % Convert millimeters to pixels. mm can be a vector.
 % 
 % Conversion is dependent on the spatial configuration of the experiment,
-% which must be supplied in spatialConfig. SpatialConfig is a struct with
+% which must be supplied in spatialConfig. spatialConfig is a struct with
 % fields:
 %
 % viewingDistance_mm 	Distance of participant from screen in mm

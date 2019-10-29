@@ -5,10 +5,10 @@ vps = triallistCols.vertPosStart;  % positions
 vpe = triallistCols.vertPosEnd;
 hps = triallistCols.horzPosStart;
 hpe = triallistCols.horzPosEnd;
-ves = triallistCols.vertExtStart;  % extent
-vee = triallistCols.vertExtEnd;
-hes = triallistCols.horzExtStart;
-hee = triallistCols.horzExtEnd;
+vss = triallistCols.vertSizeStart;  % extent
+vse = triallistCols.vertSizeEnd;
+hss = triallistCols.horzSizeStart;
+hse = triallistCols.horzSizeEnd;
 sids = triallistCols.stimIdentitiesStart;        
 side = triallistCols.stimIdentitiesEnd;        
 scs  = triallistCols.stimColorsEnd;        
@@ -23,8 +23,8 @@ ct = e.trials(curTrial,:);
 [x_pos, y_pos] = paVaToPtbPx(ct(hps:hpe), ct(vps:vpe), spatialConfig);
 
 % item extent in pixels
-x_ext = vaToPx(ct(hes:hee), spatialConfig);
-y_ext = vaToPx(ct(ves:vee), spatialConfig);
+x_ext = vaToPx(ct(hss:hse), spatialConfig);
+y_ext = vaToPx(ct(vss:vse), spatialConfig);
 
 % letter identities, colors, and linewidths
 shapeCodes = ct(sids:side);
@@ -46,11 +46,16 @@ for i = 1:side-sids+1
                      e.s.stimShapes{shapeCodes(i)}, ...
                      lineWidths(i), ...
                      e.s.stimColors{colorCodes(i)}, ...
-                     [x_pos(i), y_pos(i)]);
+                     [x_pos(i), y_pos(i)], ...
+                     true, ...
+                     lineWidths(i), ...
+                     e.s.bgColor);
         
         % letter O (target)
         else                         
             
+            % note: the circle will be inscribed in the rect regardless of
+            % the line width.
             Screen('FrameOval', ...
                    winsOff.stims.h, ...
                    e.s.stimColors{colorCodes(i)}, ...

@@ -206,7 +206,7 @@ e.s.pointer.DistanceThreshold = 1;     % distance threshold for marker
                                        % distance check [mm}
 
 % Regarding recording of trajectories:
-% If e.s.dontRecordConstantTrajData == 1, then only the first one of any directly
+% If e.s.dontRecordConstantTrajData == 1, then only the first of any directly
 % successive data points that have the same position data is kept.
 % Setting e.s.dontRecordConstantTrajData to 0 will store the redundant data
 % points.
@@ -215,17 +215,15 @@ e.s.dontRecordConstantTrajData = 1;
 
 
                        %%%% END OF SETTINGS %%%%
-
                        
 
 %%%% Complete settings struct e.s.
 
-% Get/store spatial configuration of experimental setup
-
+% Get/store spatial configuration of experimental setup.
 % Gather all values defining actual spatial setup with respect to the
-% specific hardware and arrangement used when the experiment was conducted.
-% --> struct 'e.s.spatialConfig'. Serves as input to CRF/unit conversion
-% functions that are found in private directory.
+% specific hardware and arrangement used when the experiment was conducted
+% ans store them in struct 'e.s.spatialConfig'. Serves as input to CRF/unit
+% conversion functions that are found in private directory.
 tmp = get(expScreen,'ScreenSize');
 e.s.expScreenSize_px = tmp(3:4);         % get screen res
 e.s.spatialConfig.viewingDistance_mm = e.s.viewingDistance_mm;
@@ -235,7 +233,6 @@ e.s.spatialConfig.presArea_va = tg.s.presArea_va;
 
 % copy experimental setup data (not trials) from trial generation struct
 % (tg.s) to experimental output struct (e.s).
-
 for fn = fieldnames(tg.s)'
     if isfield(e.s, fn{1})
         error(['Field ', fn{1}, ' was about to be copied from tg.s', ...
@@ -250,7 +247,6 @@ end
 
 % compute numbers for columns of results matrix from definition in the
 % experiment settings and store in e.s.resCols
-
 e.s.resCols = struct;
 for row = 1:size(resColsFields, 1)
     fName = resColsFields{row, 1};
@@ -258,13 +254,11 @@ for row = 1:size(resColsFields, 1)
     e.s.resCols = colStruct(fName, nCols, e.s.resCols);
 end
 
-% add row numbers to e.s.resCols that correspond to trial data
-
-% When results are written to e.results, each trial row will be appended
-% to the corresponding results row. Thus, addressing the resulting columns
-% will be possible through the numbers in tg.triallistCols plus the length
-% of each results column.
-maxCol = max(structfun(@(x) x, e.s.resCols)); % max column in use
+% add row numbers to e.s.resCols for results matrix rows that will hold
+% trial data. (when results are written to e.results, the row of trial data
+% for the current trial will be appended to the corresponding results row;
+% the row numbers for these data are computed and stored here)
+maxCol = max(structfun(@(x) x, e.s.resCols)); % max column in use for results data
 % iterate over fields of tg.triallistCols, add maxCol to each entry, and
 % store in new field with same name in e.s.resCols.
 for fn = fieldnames(tg.triallistCols)'
@@ -307,8 +301,6 @@ savePath = requestSavePath(experimentName);
 
 
 
-
-
 %%%% Create results file
 
 save(savePath, 'e');
@@ -317,12 +309,16 @@ save(savePath, 'e');
 
 %%%% Open PTB windows & hide cursor
 
-% note: add offscreen windows if images (e.g. fixation) are repeatedly used.
-% onscreen window handle is stored in struct winOn.h, as well as other
-% properties, e.g., winOn.rect. offscreen window handles are stored in
-% winsOff.windowname.h, as well as properties in other fields, e.g.,
-% 'winsOff.windowname.rect'. Additional offscreen windows should be
-% stored accordingly, E.g., winsOff.windowname2.h (etc.).
+% note: if certain images (e.g. fixation) are repeatedly used in your
+% experiment, make a separate offscreen window for each of them. This way
+% you need to draw that image once and afterwards only need to copy the
+% offscreen window to the onscreen window when the image is needed.
+%
+% The onscreen window handle is stored in struct winOn.h, as well as the
+% window's other properties, e.g., winOn.rect. Offscreen window handles are
+% stored as winsOff.windowname.h, and window properties in other fields,
+% such as% winsOff.windowname.rect. Additional offscreen windows should be
+% stored accordingly, e.g., winsOff.windowname2.h (etc.).
 
 % onscreen window for actual display
 winOn.bgColor = e.s.bgColor;
