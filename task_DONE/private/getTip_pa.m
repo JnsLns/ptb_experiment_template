@@ -8,7 +8,7 @@ function [tipPos_pa, trackerTime, dataGood, vzData] = getTip_pa(experimentSettin
 %
 % This wraps transformedTipPosition, adding transformation from
 % marker-based reference frame to presentation area frame and applies an
-% offset to the frame as defined by markerCRFoffset_xyz.
+% offset to the frame as defined by markerCRFoffset_xyz_mm.
 %
 % The sole argument experimentSettingsStruct is the struct of settings
 % created in the experimental code as 'e.s'.
@@ -27,7 +27,7 @@ es.pointer.expectedDistances, ...
 es.pointer.DistanceThreshold);
     
 % apply offset 
-ttp = ttp + es.markerCRFoffset_xyz;
+ttp = ttp + es.markerCRFoffset_xyz_mm;
 
 % Convert to presentation area frame
 tipPos_pa = scrMmToPaMm_xyz(ttp, es.spatialConfig);

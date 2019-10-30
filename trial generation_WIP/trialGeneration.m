@@ -1,5 +1,19 @@
  
 
+
+
+
+
+
+
+
+%%%%%% HEAVILY WORK IN PROGRESS %%%%%%%%%%%%
+
+
+
+
+
+
 % The experimental script expects a struct 'tg' in the trial file, which
 % contains the following fields: 
 %
@@ -9,8 +23,8 @@
 % triallist         Matrix of trial data, rows are trials, columns are 
 %                   trial properties. 
 %
-% triallistCols     Will be used in experimental script to address into
-%                   triallist. Also, its fields are added to tg.triallistCols
+% s.triallistCols     Will be used in experimental script to address into
+%                   triallist. Also, its fields are added to tg.s.triallistCols
 %                   (with an appropriate numeric offset to account for
 %                   already existing results columns) to be able to address
 %                   into the trial-data columns in the final results
@@ -111,10 +125,10 @@
 
 
 
-% Create tg.triallistCols (holds column numbers for triallist)
+% Create tg.s.triallistCols (holds column numbers for triallist)
 %
 nItems = 5;
-% Fields and number of columns for tg.triallistCols (struct holding column
+% Fields and number of columns for tg.s.triallistCols (struct holding column
 % indices of trial matrix). .
 triallistColsFields = ...
     { ...
@@ -135,11 +149,11 @@ triallistColsFields = ...
     'lineWidths', nItems ...    % item line widths  
     };
 % Create the struct
-tg.triallistCols = struct;
+tg.s.triallistCols = struct;
 for row = 1:size(triallistColsFields, 1)
     fName = triallistColsFields{row, 1};
     nCols = triallistColsFields{row, 2};
-    tg.triallistCols = colStruct(fName, nCols, tg.triallistCols);
+    tg.s.triallistCols = colStruct(fName, nCols, tg.s.triallistCols);
 end
 
 
@@ -247,14 +261,14 @@ for shapesNum = 1:numel(stimShapeSequences)
                     
             trialRow = [];
                                                            
-            trialRow(tg.triallistCols.trialType) = 1;
-            trialRow(tg.triallistCols.nItemsBtwFeatures) = 0;
-            trialRow(tg.triallistCols.tgtColorItemNum) = oPos;
-            trialRow(tg.triallistCols.tgtShapeItemNum) = oPos;
-            trialRow(tg.triallistCols.letterStringCode) = shapesNum;
-            trialRow(tg.triallistCols.colorStringCode) = colorsNum;
-            trialRow(tg.triallistCols.shapesStart:tg.triallistCols.shapesEnd) = shapes;
-            trialRow(tg.triallistCols.colorsStart:tg.triallistCols.colorsEnd) = colors;                        
+            trialRow(tg.s.triallistCols.trialType) = 1;
+            trialRow(tg.s.triallistCols.nItemsBtwFeatures) = 0;
+            trialRow(tg.s.triallistCols.tgtColorItemNum) = oPos;
+            trialRow(tg.s.triallistCols.tgtShapeItemNum) = oPos;
+            trialRow(tg.s.triallistCols.letterStringCode) = shapesNum;
+            trialRow(tg.s.triallistCols.colorStringCode) = colorsNum;
+            trialRow(tg.s.triallistCols.shapesStart:tg.s.triallistCols.shapesEnd) = shapes;
+            trialRow(tg.s.triallistCols.colorsStart:tg.s.triallistCols.colorsEnd) = colors;                        
                                         
             tgtPresentTriallist(end+1,:) = trialRow;
             
@@ -296,14 +310,14 @@ for shapesNum = 1:numel(stimShapeSequences)
                     
             trialRow = [];
                                                            
-            trialRow(tg.triallistCols.trialType) = 1;
-            trialRow(tg.triallistCols.nItemsBtwFeatures) = 0;
-            trialRow(tg.triallistCols.tgtColorItemNum) = oPos;
-            trialRow(tg.triallistCols.tgtShapeItemNum) = oPos;
-            trialRow(tg.triallistCols.letterStringCode) = shapesNum;
-            trialRow(tg.triallistCols.colorStringCode) = colorsNum;
-            trialRow(tg.triallistCols.shapesStart:tg.triallistCols.shapesEnd) = shapes;
-            trialRow(tg.triallistCols.colorsStart:tg.triallistCols.colorsEnd) = colors;                        
+            trialRow(tg.s.triallistCols.trialType) = 1;
+            trialRow(tg.s.triallistCols.nItemsBtwFeatures) = 0;
+            trialRow(tg.s.triallistCols.tgtColorItemNum) = oPos;
+            trialRow(tg.s.triallistCols.tgtShapeItemNum) = oPos;
+            trialRow(tg.s.triallistCols.letterStringCode) = shapesNum;
+            trialRow(tg.s.triallistCols.colorStringCode) = colorsNum;
+            trialRow(tg.s.triallistCols.shapesStart:tg.s.triallistCols.shapesEnd) = shapes;
+            trialRow(tg.s.triallistCols.colorsStart:tg.s.triallistCols.colorsEnd) = colors;                        
                                         
             tgtPresentTriallist(end+1,:) = trialRow;
             

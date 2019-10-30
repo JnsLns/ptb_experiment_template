@@ -3,21 +3,145 @@
 
 
 
-% New things for documentation %%%%%%%%%%%%%%%%%%
+%                  _____Script input and output_____
 %
-% There are three reference frames at work here: PTB (only used temporally
-% for drawing etc., stored nowhere), presentation area (used in trial
-% generation and for anything stored in struct e, i.e., results and trial
-% info), screen-marker based* (the frame in which pointer position is
-% obtained from transformedTipPosition; only used when obtaining that
-% position; transformed to presentation-area-frame for results). In other
-% words, *everything* stored anywhere is in the presentation-area-based
-% frame.
-% * the origin marker is at the lower left of the screen's visible image,
-%   the marker on the x-axis at the lower right, and the marker in the
-%   positive x-y-plane needs to be on the top border of the visible image.
+%
+% Trial generation --> struct 'tg', stored in each trial file and loaded
+%                      in the current script anew for each participant.
+%                      Fields:
+%
+%                      tg.triallist     Matrix, rows are individual trials
+%                                       columns are trial properties
+%                      tg.s.triallistCols Struct, each of whose fields holds
+%                                       an integer that can be used to
+%                                       address into the columns of
+%                                       tg.triallist. Used to address trial
+%                                       properties "by name" instead of
+%                                       column number.
+%                      tg.s             Struct with various fields that hold
+%                                       settings for the experiment that
+%                                       apply across trials (e.g.,
+%                                       background color).
+%
+% Experiment (this script) --> struct 'e', stored in each results file
+%                              Fields:
+%
+%                       e.results       Matrix, each row corresponding to
+%                                       one presented trial, and columns
+%                                       pertaining to different response or
+%                                       trial properties.
+%                       e.s.resCols     Struct, function analogous to
+%                                       'tg.s.triallistCols' (see above)
+%                                       but for 'e.results'.
+%                       e.s             Struct with various fields that
+%                                       hold settings for the experiment
+%                                       (including copies of all fields of
+%                                       'tg.s', except for field
+%                                       'triallistCols')
 
-% Trial abort codes
+%
+%                   _____Experiment settings_____
+%
+% Most settings for the experiment have to be defined already during trial
+% generation and are assumed to be found in struct 'tg.s' loaded from a
+% trial file. This ensures that once trials have been generated and saved,
+% experiment settings are not changed accidently half way through
+% participants. Note that all fields found in 'tg.s' will be copied to
+% 'e.s' here (except for field 'triallistCols') so that 'tg' will not be
+% needed for analysis.
+%
+% There are only a few settings that must be set here in the experimental
+% script itself (these are as well stored in 'e.s'), namely those that
+% pertain to specific properties of the hardware used or the spatial
+% arrangement, such as screen size or viewing distance of the participant.
+% They are set here in order to allow things like switching to a different
+% screen half way through participants.
+% When changing any of these settings, for instance, screen size, stimulus
+% sizes etc will be computed anew so that they adhere to the visual angle
+% values given in the trial list.
+%
+%
+%                    _____Spatial reference frames_____
+%
+% SUMMARY: All input and output to and from this script is in the
+% presentation-area-based frame and in degrees visual angle EXCEPT
+% trajectory data (which is in the same frame but in millimeters) and very
+% few settings that make sense only in millimeters (like physical screen
+% size; these are postfixed '_mm') or pixels (like screen resolution;
+% postfixed '_px'). 
+%
+% LONG VERSION: There are three spatial reference frames used here...
+%
+% -- Presentation-area-based-frame (pa):
+% 
+% Used for input to and output from this script, that is, in trial
+% generation (struct 'tg' loaded from trial file) and for results output,
+% that is, everything that is stored in the output struct 'e'. The origin
+% is at the bottom left of the presentation area (rectangular area whose
+% size is defined in 'tg' and which is inset in and centered within the
+% screen), x-axis increases to the right, y-axis increases upward. Units
+% used in conjunction with this frame are degrees of visual angle (va),
+% except for very few exceptions, which are: (1) Trajectory data (in
+% e.trajectories), which uses this frame but is in millimeters (as visual
+% angle does not make much sense for 3D data; the positive z-axis extends
+% toward the viewer and is orthogonal to the screen surface) and (2) a few
+% settings that make sense only in millimeters (these settings are clearly
+% marked by the postfix '_mm' in the fieldname in struct 'e.s').
+%
+% -- Psychtoolbox frame (ptb):
+%
+% Used *only* in the internals of the trial script (singleTrial.m) when
+% drawing things to the screen via Psychtoolbox. The origin is at the top
+% left of the screen, x-axis increasing to the right, y-axis increasing
+% downward. Units used in conjunction with this frame are pixels.
+%
+% -- Screen-marker-based frame (scr):
+%
+% This is the frame in which pointer position is obtained from function
+% getTip_pa (see private folder) during the experiment.
+% (Apart from a prespecified offset, as explained below) its origin is at
+% the position of the marker mounted at the lower left of the screen's
+% visible image area, its positive x-axis points in the direction
+% of the marker mounted at the lower right corner of the visible image
+% area, the positive x-y-plane is defined by the marker on the top border
+% of the visible image (at a positive x-value). The z-axis extends toward
+% the viewer. As hinted above, this frame (i.e., what is obtained from
+% getTip_pa) is offset in x/y/z direction by the three-element vector in
+% e.s.markerCRFoffset_xyz_mm, the main use of which is to shift the
+% x-y-plane(z=0) right onto the screen surface despite marker diodes being
+% mounted somewhat above the screen surface.
+%
+%
+%                 ____CRF/unit conversion functions____
+%
+% The private folder contains functions that allow to convert between the
+% different reference frames, by passing the values to be converted 
+% and 'e.s.spatialConfig' (which holds all relevant information about the
+% spatial setup, such as viewing distance, screen extent etc).
+% All these functions follow the same naming scheme (see each functions
+% documentation for more info), for instance:
+%
+% paVaToPtbPx  -->  convert from presentation-area-based frame in degrees
+%                   visual angle to Psychtoolbox frame in pixels.
+%
+% scrMmToPaMm  -->  convert from screen-marker-based frame in millimeters
+%                   to presentation-area-based frame in millimeters.
+%
+% pxToMm       -->  convert from pixels to millimeters.
+
+
+
+
+
+%%%%%%%%%% UNSORTED NOTES... to be consolidated... %%%%%%%%%%%%%%%%%%%%%%%
+
+%                      _____Trial abort codes_____
+
+%
+% Trials may be aborted before completion due to various reasons. Any data
+% pertaining to aborted trials will nonetheless be stored in e.results,
+% including an abort code (column number is e.s.resCols.abortCode) giving
+% the reason for abortion. These are:
 %
 % 0     trial completed
 % 1     not moved to starting position in time
@@ -26,18 +150,10 @@
 % 4     exceeded max RT for location response
 % 5     exceeded max RT for target presence response
 %
-% note that any missing results values for aborted trials will be
-% nan in e.results, while cells in e.trajectories will contain an empty
-% matrix.
-
-
-% viewing distance as well as screen size (both in millimeters and pixels
-% can be set (more or less) freely during the experiment, allowing to use
-% the same setup on different monitors, all sizes etc will be computed
-% based on settings from trial generation. Make help such as, when the
-% monitor is smaller than the required size of the presentation area,
-% prompt the user to decrease viewing distance.
-
+% Any missing results values for prematurely aborted trials (e.g., response
+% correctness) will be nan in e.results, while cells in e.trajectories will
+% contain an empty matrix (or an incomplete trajectory if recording had
+% already started).
 
 % Conditions, responses and response types (and codes)
 %
@@ -50,44 +166,22 @@
 % color only  (3) | tgt present (1) | feature error         (5)
 % color only  (3) | tgt absent  (0) | correct rejection CO  (6)
 
-
-% Units and coordinate frames in tg, e.results, and e.trajectories:
-%
-% -- tg:
-% Distance and position values from trial generation (i.e., those in tg.s
-% as well as in tg.triallist) are in visual angle unless the corresponding
-% fieldname in tg.s or tg.triallistCols is postfixed with '_mm'. They are
-% defined in a coordinate frame with origin at the bottom left of the
-% presentation area, x-axis increasing to the right, y-axis increasing
-% upward. Z-axis, where applicable, is taken to extend toward the
-% participant.
-%
-% -- e.results:
-% The same is true for position values in e.results: they are in visual
-% and in the presentation-area-based coordinate frame.
-%
-% -- e.trajectories: 
-% Trajectory data in e.trajectories is in the same coordinate frame but in
-% millimeters (since visual angle does not make sense for the z-axis)!
-
 % Any pseudo-randomization in terms of trial order has to be done when
 % constructing the triallists... (i.e., outside the experiment script)
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-
-%%% NECESSARY CHANGES TO ANALYSIS %%%%%%%%%%%%%%%%%%%%%%%
+% NECESSARY CHANGES TO ANALYSIS SCRIPT
 
 % Aborted trials are now stored, i.e., there are now empty trajectory
 % matrices in e.trajectories and partially incomplete results rows (nans).
 % This has to be dealt with during analysis.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% the triallist is not longer stored in the experimental output. everything
+% needed can now be found in e.results.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-% GENERAL TODO %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% GENERAL TODO %%%%%%%%%%%%%%%%%
 
 % Enable multisampling for onscreen window (does it have to be enabled for
 % offscreen windows separately?), like this (here, 20 samples are used):
@@ -101,7 +195,12 @@
 % filtered out anyway and replaced by last good data, so that should do the
 % trick unless there are types of marker jumps that are not caught by this.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Color definitions (set below) should be set during trial generation.
+
+% winOn.font = 'Arial' and winOn.fontSize = 25 (currently set below
+% somewhere in the code) should be defined in trial generation. Ideally in
+% visual angle...
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
@@ -130,7 +229,6 @@ e.s.expScreenSize_mm = [531 299]; % Gecko
 e.s.viewingDistance_mm = 500;
 
 % Define colors
-% TODO : These should perhaps be set during trial generation (tg.s)
 white = WhiteIndex(expScreen);
 black = BlackIndex(expScreen);
 grey = white/2;
@@ -176,7 +274,7 @@ e.s.trajCols.t = 4; % tracker time stamps (compatible with time measure-
                     % ments in e.results if they are postfixed '_tr').
                     
                     
-
+                    
 %%% Settings that are specific to the current paradigm
 
 % marker IDs [TCMID1,LEDID1;TCMID2,LEDID2]
@@ -197,7 +295,7 @@ e.s.markers.coordinate_IDs = [3, 10; 3,9; 3,11];% IDs of markers defining coordi
 % the LEDs are positioned 10 millimeter above the screen surface and you
 % want the screen surface to correspond to z=0 in the results data, set
 % this to [0 0 10].
-e.s.markerCRFoffset_xyz = [0 0 12];
+e.s.markerCRFoffset_xyz_mm = [0 0 12];
 
 e.s.pointer.VelocityThreshold = 2000;  % velocity threshold beyond which 
                                        % marker movement is considered 
@@ -232,13 +330,17 @@ e.s.spatialConfig.expScreenSize_px = e.s.expScreenSize_px;
 e.s.spatialConfig.presArea_va = tg.s.presArea_va;
 
 % copy experimental setup data (not trials) from trial generation struct
-% (tg.s) to experimental output struct (e.s).
-for fn = fieldnames(tg.s)'
+% (tg.s) to experimental output struct (e.s); except for
+% tg.s.triallistCols.
+for fn = fieldnames(tg.s)'    
+    if strcmp(fn{1}, 'triallistCols')
+        continue; 
+    end    
     if isfield(e.s, fn{1})
         error(['Field ', fn{1}, ' was about to be copied from tg.s', ...
             ' to e.s, but already exists in e.s']);
     end
-    e.s.(fn{1}) = tg.s.(fn{1});
+    e.s.(fn{1}) = tg.s.(fn{1});    
 end
 
 
@@ -259,14 +361,14 @@ end
 % for the current trial will be appended to the corresponding results row;
 % the row numbers for these data are computed and stored here)
 maxCol = max(structfun(@(x) x, e.s.resCols)); % max column in use for results data
-% iterate over fields of tg.triallistCols, add maxCol to each entry, and
+% iterate over fields of tg.s.triallistCols, add maxCol to each entry, and
 % store in new field with same name in e.s.resCols.
-for fn = fieldnames(tg.triallistCols)'
+for fn = fieldnames(tg.s.triallistCols)'
     if isfield(e.s.resCols, fn{1})
-        error(['Field ', fn{1}, ' was about to be copied from tg.triallistCols', ...
+        error(['Field ', fn{1}, ' was about to be copied from tg.s.triallistCols', ...
             ' to e.s.resCols, but already exists in e.s.resCols.']);
     end
-    e.s.resCols.(fn{1}) = tg.triallistCols.(fn{1}) + maxCol;
+    e.s.resCols.(fn{1}) = tg.s.triallistCols.(fn{1}) + maxCol;
 end
 
 
@@ -274,7 +376,7 @@ end
 %%%% Trial data variables (used in rest of experiment)
 
 trials = tg.triallist;
-triallistCols = tg.triallistCols;
+triallistCols = tg.s.triallistCols;
 
 
 
@@ -330,7 +432,6 @@ winOn.fontSize = 25;
 
 [winOn.h, winOn.rect] = ...
     PsychImaging('openWindow', winOn.screen, winOn.bgColor, winOn.rect);
-
 Screen('TextFont', winOn.h, winOn.font);
 Screen('TextSize', winOn.h, winOn.fontSize);
 
