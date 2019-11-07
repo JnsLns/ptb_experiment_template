@@ -1,20 +1,10 @@
-%%%% Pause execution if desired
 
-% Check whether pause key is being pressed, if so, halt execution and
-% close PTB windows. Reopen if resumed.
-pauseAndResume;
+% This script presents a single trial including feedback and assigns values
+% to struct 'out'
 
 
-
-%%%% Initialize things
-
-% Clear offscreen windows
-for osw = fieldnames(winsOff)'
-    Screen('FillRect', winsOff.(osw), winsOff.(osw).bgColor);
-end
-
-abortTrial = 0;
-trajectory = nan(20000, max(structfun(@(x) x, e.s.trajCols)));
+out.abortCode = 0;
+out.sequNum = sequNum;
 
 
 
@@ -89,7 +79,7 @@ while deltatOnStart <= e.s.durOnStart
         if  deltatOnStart ~= 0  &&  deltatOnStart < e.s.durOnStart    % (A)
             deltatOnStart = 0;
         elseif GetSecs - startScreenOnset > e.s.durWaitForStart       % (B)
-            abortTrial = 1;
+            out.abortCode = 1;
             break;
         end
     end
@@ -110,15 +100,15 @@ end
 % for e.s.durPreStimFixation seconds.
 % If during that time pts moves off start marker, abort trial (code 2).
 
-tFixOnset_pc = nan;
+out.tFixOnset_pc = nan;
 
-if ~abortTrial
+if ~out.abortCode
     
     % copy fix window to onscreen window
     Screen('CopyWindow', winsOff.fix.h, winOn.h);
-    [~, tFixOnset_pc, ~, ~] = Screen('Flip',winOn.h,[]);
+    [~, out.tFixOnset_pc, ~, ~] = Screen('Flip',winOn.h,[]);
     
-    deltatFix = GetSecs - tFixOnset_pc;
+    deltatFix = GetSecs - out.tFixOnset_pc;
     
     while deltatFix <= e.s.durPreStimFixation
         
@@ -132,12 +122,12 @@ if ~abortTrial
         
         % if start pos left, abort trial
         if ~withinAngle || ~tipAtStart
-            abortTrial = 2;
+            out.abortCode = 2;
             break;
         end
         
         % Increment timer
-        deltatFix = GetSecs - tFixOnset_pc;
+        deltatFix = GetSecs - out.tFixOnset_pc;
         
     end
     
@@ -149,18 +139,18 @@ end
 
 % If participant moves off starting position, abort trial (code 3).
 
-tStimOnset_pc = nan;
+out.tStimOnset_pc = nan;
 
-if ~abortTrial
+if ~out.abortCode
     
     % Copy offscreen window with stims and start marker to onscreen window
     Screen('CopyWindow', winsOff.stims.h, winOn.h);
     
     % present items
-    [~,tStimOnset_pc,~,~] = Screen('Flip', winOn.h, []);
+    [~,out.tStimOnset_pc,~,~] = Screen('Flip', winOn.h, []);
     
     % present items for fixed time
-    deltatItems = GetSecs - tStimOnset_pc;
+    deltatItems = GetSecs - out.tStimOnset_pc;
     while deltatItems <= e.s.durItemPresentation
         
         % Check whether tip position is in correct location and pointer is
@@ -170,12 +160,12 @@ if ~abortTrial
         
         % if start pos left, abort trial
         if ~withinAngle || ~tipAtStart
-            abortTrial = 3;
+            out.abortCode = 3;
             break;
         end
         
         % Increment timer
-        deltatItems = GetSecs - tStimOnset_pc;
+        deltatItems = GetSecs - out.tStimOnset_pc;
         
     end
     
@@ -188,15 +178,15 @@ end
 % wait for pointer to be close to screen surface.
 % If allowed response time exceeded, abort trial (code 4).
 
-tLocResponseOnset_pc = nan;
-tLocResponseOnset_tr = nan;
-tLocResponseOffset_pc = nan;
-tLocResponseOffset_tr = nan;
+out.tLocResponseOnset_pc = nan;
+out.tLocResponseOnset_tr = nan;
+out.tLocResponseOffset_pc = nan;
+out.tLocResponseOffset_tr = nan;
 
-if ~abortTrial
+if ~out.abortCode
     
     % clear onscreen window and get location response onset time
-    [~,tLocResponseOnset_pc,~,~] = Screen('Flip', winOn.h, []);
+    [~,out.tLocResponseOnset_pc,~,~] = Screen('Flip', winOn.h, []);
     
     % wait for response (pointer at screen surface)
     loopCounter = 1;
@@ -208,13 +198,13 @@ if ~abortTrial
         
         % store onset time from trackers
         if loopCounter == 1
-            tLocResponseOnset_tr = trackerTime;
+            out.tLocResponseOnset_tr = trackerTime;
         end
         
         % if max time is up, leave loop and abort trial
-        if pcTime - tLocResponseOnset_pc > e.s.allowedLocResponseTime
-            tLocResponseOffset_tr = trackerTime;
-            abortTrial = 4;
+        if pcTime - out.tLocResponseOnset_pc > e.s.allowedLocResponseTime
+            out.tLocResponseOffset_tr = trackerTime;
+            out.abortCode = 4;
             break;
         end
         
@@ -227,8 +217,8 @@ if ~abortTrial
         
         % store time and proceed if pointer at screen surface (z = 0)?
         if abs(tipPos_pa(3)) < e.s.zZeroTolerance
-            tLocResponseOffset_pc = pcTime;
-            tLocResponseOffset_tr = trackerTime;
+            out.tLocResponseOffset_pc = pcTime;
+            out.tLocResponseOffset_tr = trackerTime;
             break;
         end
         
@@ -243,21 +233,21 @@ end
 % wait for yes/no button to be pressed.
 % if allowed response time exceeded, abort trial (code 5)
 
-tgtPresentResponse = nan;
-tTgtPresentResponseOnset_pc = nan;
-tgtPresentResponseRT = nan;
+out.tgtPresentResponse = nan;
+out.tTgtPresentResponseOnset_pc = nan;
+out.tgtPresentResponseRT = nan;
 
-if ~abortTrial        
+if ~out.abortCode        
     
     % copy response window to onscreen window and show
     Screen('CopyWindow', winsOff.targetResponse.h, winOn.h);
-    [~, tTgtPresentResponseOnset_pc, ~, ~] = Screen('Flip',winOn.h,[]);
+    [~, out.tTgtPresentResponseOnset_pc, ~, ~] = Screen('Flip',winOn.h,[]);
     
     while 1
         
         % if max time is up, leave loop and abort trial
-        if pcTime - tTgtPresentResponseOnset_pc > e.s.allowedTgtResponseTime
-            abortTrial = 5;
+        if pcTime - out.tTgtPresentResponseOnset_pc > e.s.allowedTgtResponseTime
+            out.abortCode = 5;
             break;
         end
         
@@ -268,14 +258,15 @@ if ~abortTrial
         if keyIsDown
             
             if strcmp(KbName(keyCode), e.s.yesKeyName)
-                tgtPresentResponse = 1;
+                out.tgtPresentResponse = 1;
             elseif strcmp(KbName(keyCode), e.s.noKeyName)
-                tgtPresentResponse = 0;
+                out.tgtPresentResponse = 0;
             end
             
             % store RT and proceed
-            if ~isnan(tgtPresentResponse)
-                tgtPresentResponseRT = secs - tTgtPresentResponseOnset_pc;
+            if ~isnan(out.tgtPresentResponse)
+                out.tgtPresentResponseRT = ...
+                    secs - out.tTgtPresentResponseOnset_pc;
                 break;
             end
             
@@ -300,74 +291,82 @@ Screen('Flip', winOn.h, []);
 
 %%%% Determine correctness and type of target presence response
 
-responseCorrect = nan;
-responseType = nan;
+out.responseCorrect = nan;
+out.responseType = nan;
 
-if ~abortTrial
+if ~out.abortCode
 
     ttype = trials(curTrial, triallistCols.trialType);
     
     if ttype == 1                       % tgt present trial         
         
-        if tgtPresentResponse == 1          % hit (1)            
-            responseCorrect = 1;
-            responseType = 1;             
-        elseif tgtPresentResponse == 0      % miss (2)         
-            responseCorrect = 0;
-            responseType = 2;             
+        if out.tgtPresentResponse == 1          % hit (1)            
+            out.responseCorrect = 1;
+            out.responseType = 1;             
+        elseif out.tgtPresentResponse == 0      % miss (2)         
+            out.responseCorrect = 0;
+            out.responseType = 2;             
         end
         
     elseif ttype == 2                   % both present trial
         
-        if tgtPresentResponse == 1          % illusory conjunction (3)
-            responseCorrect = 0;   
-            responseType = 3;             
-        elseif tgtPresentResponse == 0      % correct rejection BP (4)             
-            responseCorrect = 1;
-            responseType = 4;             
+        if out.tgtPresentResponse == 1          % illusory conjunction (3)
+            out.responseCorrect = 0;   
+            out.responseType = 3;             
+        elseif out.tgtPresentResponse == 0      % correct rejection BP (4)             
+            out.responseCorrect = 1;
+            out.responseType = 4;             
         end        
     
     elseif ttype == 3                   % color only trial       
         
-        if tgtPresentResponse == 1          % feature error (5)            
-            responseCorrect = 0;   
-            responseType = 5;             
-        elseif tgtPresentResponse == 0      % correct rejection CO (6)            
-            responseCorrect = 1;
-            responseType = 6;             
+        if out.tgtPresentResponse == 1          % feature error (5)            
+            out.responseCorrect = 0;   
+            out.responseType = 5;             
+        elseif out.tgtPresentResponse == 0      % correct rejection CO (6)            
+            out.responseCorrect = 1;
+            out.responseType = 6;             
         end    
                 
     end
     
+end
+ 
+
+
+%%%% create unique ID for current response
+out.reponseID = round(rand()* 1e+12);
+while any(e.results(:, e.s.resCols.responseID) == responseID)
+    out.reponseID = round(rand()* 1e+12);
 end
 
 
 
 %%%% Feedback
 
-if abortTrial == 0
+if out.abortCode == 0
     
     dur = e.s.feedback.dur_nonAbort;
     
-    if responseCorrect == 1
+    if out.responseCorrect == 1
         feedbackStr = e.s.feedback.correct;
-    elseif responseCorrect == 0
+    elseif out.responseCorrect == 0
         feedbackStr = e.s.feedback.incorrect;
     end        
     
-elseif abortTrial ~= 0
+elseif out.abortCode ~= 0
 
     dur = e.s.feedback.dur_abort;
     
-    if abortTrial == 1        
+    if out.abortCode == 1        
         feedbackStr = e.s.feedback.notMovedToStart;       
-    elseif abortTrial == 2        
+    elseif out.abortCode == 2        
         feedbackStr = e.s.feedback.leftStartInFix;        
-    elseif abortTrial == 3        
+    elseif out.abortCode == 3        
         feedbackStr = e.s.feedback.leftStartInStim;        
-    elseif abortTrial == 4        
+    elseif out.abortCode == 4        
         feedbackStr = e.s.feedback.exceededLocRT;        
-    elseif abortTrial == 5        
+    elseif out.abortCode == 5        
         feedbackStr = e.s.feedback.exceededTgtRT;
                 
     end
@@ -378,91 +377,6 @@ ShowTextAndWait(feedbackStr, e.s.feedbackColor, winOn.h, dur, false)
 
 
 
-%%%% Store results 
-
-% prepare new results row and populate
-
-newResRow = [];
-
-% create unique ID for current response
-reponseID = round(rand()* 1e+12);
-while any(e.results(:, e.s.resCols.responseID) == responseID)
-    reponseID = round(rand()* 1e+12);
-end
-
-% populate with result values
-newResRow(e.s.resCols.sequNum) = sequNum;
-newResRow(e.s.resCols.responseID) = reponseID;
-newResRow(e.s.resCols.abortCode) = abortCode;
-newResRow(e.s.resCols.responseCorrect) = responseCorrect;
-newResRow(e.s.resCols.responseType) = responseType;
-newResRow(e.s.resCols.tgtPresentResponse) = tgtPresentResponse;
-newResRow(e.s.resCols.tgtPresentResponseRT) = tgtPresentResponseRT;
-newResRow(e.s.resCols.tFixOnset_pc) = tFixOnset_pc;
-newResRow(e.s.resCols.tStimOnset_pc) = tStimOnset_pc;
-newResRow(e.s.resCols.tLocResponseOnset_pc) = tLocResponseOnset_pc;
-newResRow(e.s.resCols.tLocResponseOffset_pc) = tLocResponseOffset_pc;
-newResRow(e.s.resCols.tLocResponseOnset_tr) = tLocResponseOnset_tr;
-newResRow(e.s.resCols.tLocResponseOffset_tr) = tLocResponseOffset_tr;
-newResRow(e.s.resCols.tTgtPresentResponseOnset_pc) = tTgtPresentResponseOnset_pc;
-
-% append trial data 
-newResRow = [newResRow, trials(curTrial, :)];
-
-% store in results matrix
-e.results(end+1, :) = newResRow;
 
 
 
-%%%% Store trajectory 
-
-% note that for aborted trials, this will results in an empty matrix
-
-% remove unfilled rows
-trajectory(all(isnan(trajectory)'), :) = [];
-
-% of any directly successive rows in trajectory that have identical
-% position data, remove all but the first ones (if desired).
-if e.s.dontRecordConstantTrajData    
-    rem = trajectory(:, [e.s.trajCols.x, e.s.trajCols.y, e.s.trajCols.z]);
-    rem = [ones(1, size(rem,2)); diff(rem,1,1)];
-    rem = all(rem' == 0);
-    trajectory(rem, :) = [];       
-end
-
-% store in trajectory array
-e.trajectories{end+1} = trajectory;
-
-
-
-%%%% save to file (append)
-
-if doSave
-    save(savePath, 'e', '-append');
-end
-
-
-
-%%%% Shuffle aborted trial into remaining triallist
-
-if abortTrial
-    
-    if curTrial ~= size(trials,1)
-        
-        % Do reordering on vector of row indices
-        rowInds = 1:size(trials,1);
-        newPos = randi([curTrial, numel(rowInds)]);
-        abortedRow = rowInds(curTrial);
-        rowInds(curTrial) = [];
-        upper = rowInds(1:newPos-1);
-        lower = rowInds(newPos:end);
-        rowInds = [upper, abortedRow, lower];
-        
-        % Apply to trials
-        trials = trials(rowInds, :);
-        
-    end
-    
-    curTrial = curTrial - 1; % will be incremented again at trial outset.
-    
-end

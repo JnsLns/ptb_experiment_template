@@ -108,7 +108,7 @@
 
 % NOTE: Regardless of the length of the number of elements covered by the
 % above spans of columns, items can be left unspecified by putting nan in
-% the stimIdentities column.
+% the stimShapes column.
 
 
 

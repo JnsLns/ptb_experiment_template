@@ -36,8 +36,38 @@
 %                       e.s             Struct with various fields that
 %                                       hold settings for the experiment
 %                                       (including copies of all fields of
-%                                       'tg.s', except for field
-%                                       'triallistCols')
+%                                       'tg.s', except 'triallistCols')
+%
+%
+%                   _____Specifying outputs_____
+%
+% An empty struct 'out' is created at the start of the trial loop (i.e.,
+% before each trial). Fields can be created in this struct during the trial
+% (preferably in singleTrial.m). Values stored in these fields will be
+% written to the results matrix in 'e.results', which is generated automatically.
+% Also, a struct 'e.s.resCols' is generated, whose fields hold integers that
+% can be used to address into columns of e.results "by name". The fields of
+% e.s.resCols are named after the fields that exist in 'out' at the end of
+% a trial. For instance, if there is a field "out.responseTime = 1150",
+% then there will be a field e.s.resCols.responseTime, holding an
+% integer. During analysis, the respective column of e.results where
+% response time (1150 in this case) is stored can be addressed through
+% "e.results(:, e.s.resCols.responseTime)". If the value of a field of 'out'
+% is a column vector, then two fields will be generated in e.s.resCols,
+% having the same name as the field in 'out', except for the postfix 'Start'
+% for one, and 'End' for the other field name. The column vector will be written
+% to that span of columns in e.results. For instance, if there is a field
+% "out.itemColors = [1,2,3,4]", then there could be fields in e.s.resCols
+% such as "e.s.resCols.itemColorsStart = 10" and
+% "e.s.resCols.itemColorsEnd = 13" (where the absolute value depends on how
+% many fields were created before that); the span of columns can then later
+% be addressed through "e.results(:, e.s.resCols.itemColorsStart:e.s.resCols.itemColorsEnd)".
+% It is possible to add fields to 'out' that were not used in earlier trials.
+% In this case, rows in e.results from preceding trials will be filled with
+% nans in these rows. Note however that once a field has been used, the
+% objects stored in it must be of the same size in each trial (pad with
+% nans if needed); also, the objects in 'out' must be either integers or
+% column vectors.
 
 %
 %                   _____Experiment settings_____
@@ -45,7 +75,7 @@
 % Most settings for the experiment have to be defined already during trial
 % generation and are assumed to be found in struct 'tg.s' loaded from a
 % trial file. This ensures that once trials have been generated and saved,
-% experiment settings are not changed accidently half way through
+% experiment settings are not changed accidently halfway through
 % participants. Note that all fields found in 'tg.s' will be copied to
 % 'e.s' here (except for field 'triallistCols') so that 'tg' will not be
 % needed for analysis.
@@ -54,27 +84,29 @@
 % script itself (these are as well stored in 'e.s'), namely those that
 % pertain to specific properties of the hardware used or the spatial
 % arrangement, such as screen size or viewing distance of the participant.
-% They are set here in order to allow things like switching to a different
-% screen half way through participants.
-% When changing any of these settings, for instance, screen size, stimulus
-% sizes etc will be computed anew so that they adhere to the visual angle
-% values given in the trial list.
+% These are set here in order to allow things like switching to a different
+% screen halfway through participants. The actual sizes of stimuli on
+% the screen as well as other spatial properties are computed dynamically
+% in the current script based on these settings, so that all distances and
+% sizes will automatically adhere to the desired visual angle values
+% specified in the trial list.
+%
 %
 %
 %                    _____Spatial reference frames_____
 %
 % SUMMARY: All input and output to and from this script is in the
-% presentation-area-based frame and in degrees visual angle EXCEPT
+% presentation-area-based frame and in degrees visual angle EXCEPT for
 % trajectory data (which is in the same frame but in millimeters) and very
 % few settings that make sense only in millimeters (like physical screen
 % size; these are postfixed '_mm') or pixels (like screen resolution;
 % postfixed '_px'). 
 %
-% LONG VERSION: There are three spatial reference frames used here...
+% LONG VERSION: There are three spatial reference frames used here:
 %
 % -- Presentation-area-based-frame (pa):
 % 
-% Used for input to and output from this script, that is, in trial
+% Used for all input to and output from this script, that is, in trial
 % generation (struct 'tg' loaded from trial file) and for results output,
 % that is, everything that is stored in the output struct 'e'. The origin
 % is at the bottom left of the presentation area (rectangular area whose
@@ -112,31 +144,47 @@
 % mounted somewhat above the screen surface.
 %
 %
+%
 %                 ____CRF/unit conversion functions____
 %
-% The private folder contains functions that allow to convert between the
+% The private folder contains functions that allow converting between the
 % different reference frames, by passing the values to be converted 
-% and 'e.s.spatialConfig' (which holds all relevant information about the
-% spatial setup, such as viewing distance, screen extent etc).
-% All these functions follow the same naming scheme (see each functions
-% documentation for more info), for instance:
+% plus the struct 'e.s.spatialConfig' (which holds all relevant information
+% about the spatial setup, such as viewing distance, screen extent etc).
+% All these functions follow the same naming scheme (see the individual
+% functions' documentations for more info). Naming examples:
 %
-% paVaToPtbPx  -->  convert from presentation-area-based frame in degrees
-%                   visual angle to Psychtoolbox frame in pixels.
+% paVaToPtbPx  -->  convert from presentation-area-based frame (pa) in
+%                   degrees visual angle (va) to Psychtoolbox frame (ptb)
+%                   in pixels (px).
 %
-% scrMmToPaMm  -->  convert from screen-marker-based frame in millimeters
-%                   to presentation-area-based frame in millimeters.
+% scrMmToPaMm  -->  convert from screen-marker-based frame (scr) in
+%                   millimeters (mm) to presentation-area-based frame (pa)
+%                   in millimeters (mm).
 %
-% pxToMm       -->  convert from pixels to millimeters.
-
-
-
-
-
-%%%%%%%%%% UNSORTED NOTES... to be consolidated... %%%%%%%%%%%%%%%%%%%%%%%
-
-%                      _____Trial abort codes_____
-
+% pxToMm       -->  convert from pixels (px) to millimeters (mm).
+%
+%
+%
+%                 _____Conditions, responses & codes_____
+%
+% Conditions, responses, and response types, plus corresponding column
+% names and codes used in 'e.results':
+%
+%                 TRIAL TYPE     PRESENT RESPONSE       RESPONSE TYPE
+% -------------------------------------------------------------------------
+% e.s.resCols     .trialType   .tgtPresentResponse      .responseType  
+% -------------------------------------------------------------------------
+%              tgt present (1) | tgt present (1) | hit                  (1)
+%              tgt present (1) | tgt absent  (0) | miss                 (2)
+%              both present(2) | tgt present (1) | illusory conjunction (3)
+%              both present(2) | tgt absent  (0) | correct rejection BP (4)
+%              color only  (3) | tgt present (1) | feature error        (5)
+%              color only  (3) | tgt absent  (0) | correct rejection CO (6)
+%
+%
+%
+%                   _____Trial abortion & codes_____
 %
 % Trials may be aborted before completion due to various reasons. Any data
 % pertaining to aborted trials will nonetheless be stored in e.results,
@@ -145,64 +193,15 @@
 %
 % 0     trial completed
 % 1     not moved to starting position in time
-% 2     moved off starting position in fixation phase
+% 2     moved off starting position during fixation phase
 % 3     moved off starting position during stimulus presentation
 % 4     exceeded max RT for location response
 % 5     exceeded max RT for target presence response
 %
 % Any missing results values for prematurely aborted trials (e.g., response
-% correctness) will be nan in e.results, while cells in e.trajectories will
-% contain an empty matrix (or an incomplete trajectory if recording had
-% already started).
-
-% Conditions, responses and response types (and codes)
-%
-%    TRIAL TYPE     PRESENT RESPONSE       RESPONSE TYPE
-% -------------------------------------------------------------
-% tgt present (1) | tgt present (1) | hit                   (1)
-% tgt present (1) | tgt absent  (0) | miss                  (2)
-% both present(2) | tgt present (1) | illusory conjunction  (3)
-% both present(2) | tgt absent  (0) | correct rejection BP  (4)
-% color only  (3) | tgt present (1) | feature error         (5)
-% color only  (3) | tgt absent  (0) | correct rejection CO  (6)
-
-% Any pseudo-randomization in terms of trial order has to be done when
-% constructing the triallists... (i.e., outside the experiment script)
-
-
-% NECESSARY CHANGES TO ANALYSIS SCRIPT
-
-% Aborted trials are now stored, i.e., there are now empty trajectory
-% matrices in e.trajectories and partially incomplete results rows (nans).
-% This has to be dealt with during analysis.
-
-% the triallist is not longer stored in the experimental output. everything
-% needed can now be found in e.results.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% GENERAL TODO %%%%%%%%%%%%%%%%%
-
-% Enable multisampling for onscreen window (does it have to be enabled for
-% offscreen windows separately?), like this (here, 20 samples are used):
-% w =  PsychImaging('openWindow', 0, [0 0 0], [100 100 500 500], [], [], [], 20);
-
-% Pointer calibration... validate it in some way before proceeding.
-
-% The checks for starting position being assumed and held throughout
-% fixation phase may (didn't test) need some sluggishness over time to not
-% be disrupted by marker jumps. on the other hand, bad data should be
-% filtered out anyway and replaced by last good data, so that should do the
-% trick unless there are types of marker jumps that are not caught by this.
-
-% Color definitions (set below) should be set during trial generation.
-
-% winOn.font = 'Arial' and winOn.fontSize = 25 (currently set below
-% somewhere in the code) should be defined in trial generation. Ideally in
-% visual angle...
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
+% correctness) will be nan in 'e.results' and cells in 'e.trajectories' will
+% contain an empty matrix if recording has not started yet (if abortion
+% instead occurs during recording, an incomplete trajectory will be stored).
 
 
 
@@ -243,28 +242,6 @@ pauseKey = 'Pause';
 % trials are assumed to be in variable tg.triallist
 % column number indices into trials assumed to be in struct triallistCols
 load('trials.mat');
-
-% Fields and number of columns for e.s.resCols (struct holding column
-% indices of results matrix). Note that all data about the corresponding
-% trial is appended to each results row (column indices for these are later
-% also added to e.s.resCols).
-resColsFields = ...
-    { ...
-    'sequNum', 1; ...
-    'reponseID', 1; ...
-    'abortCode', 1; ...
-    'responseCorrect', 1; ...
-    'tgtPresentResponse', 1; ...
-    'tgtPresentResponseRT', 1; ...
-    'responseType', 1; ...
-    'tFixOnset_pc', 1; ...
-    'tStimOnset_pc', 1; ...
-    'tLocResponseOnset_pc', 1; ...
-    'tLocResponseOffset_pc', 1; ...
-    'tLocResponseOnset_tr', 1; ...
-    'tLocResponseOffset_tr', 1; ...
-    'tTgtPresentResponseOnset_pc', 1 ...    
-    };
 
 % Define column numbers for trajectory matrices 
 e.s.trajCols.x = 1; % pointer coordinates
@@ -341,34 +318,6 @@ for fn = fieldnames(tg.s)'
             ' to e.s, but already exists in e.s']);
     end
     e.s.(fn{1}) = tg.s.(fn{1});    
-end
-
-
-
-%%%% Build e.s.resCols (holds result matrix column number)
-
-% compute numbers for columns of results matrix from definition in the
-% experiment settings and store in e.s.resCols
-e.s.resCols = struct;
-for row = 1:size(resColsFields, 1)
-    fName = resColsFields{row, 1};
-    nCols = resColsFields{row, 2};
-    e.s.resCols = colStruct(fName, nCols, e.s.resCols);
-end
-
-% add row numbers to e.s.resCols for results matrix rows that will hold
-% trial data. (when results are written to e.results, the row of trial data
-% for the current trial will be appended to the corresponding results row;
-% the row numbers for these data are computed and stored here)
-maxCol = max(structfun(@(x) x, e.s.resCols)); % max column in use for results data
-% iterate over fields of tg.s.triallistCols, add maxCol to each entry, and
-% store in new field with same name in e.s.resCols.
-for fn = fieldnames(tg.s.triallistCols)'
-    if isfield(e.s.resCols, fn{1})
-        error(['Field ', fn{1}, ' was about to be copied from tg.s.triallistCols', ...
-            ' to e.s.resCols, but already exists in e.s.resCols.']);
-    end
-    e.s.resCols.(fn{1}) = tg.s.triallistCols.(fn{1}) + maxCol;
 end
 
 
@@ -494,9 +443,43 @@ ShowTextAndWait(...
 curTrial = 1;
 sequNum = 0;
 while curTrial <= size(trials,1)
-    sequNum = sequNum + 1;
-    singleTrial;
-    curTrial = curTrial + 1;
+    
+    % Initialize / empty some things        
+    for osw = fieldnames(winsOff)'        
+        Screen('FillRect', winsOff.(osw), winsOff.(osw).bgColor);
+    end
+    out = struct();    
+    trajectory = nan(20000, max(structfun(@(x) x, e.s.trajCols)));
+    
+    % increment sequential number for output
+    sequNum = sequNum + 1;       
+    
+    % Check whether pause key is being pressed, if so, halt execution and
+    % close PTB windows. Reopen if resumed.
+    pauseAndResume;
+    
+    
+    % run trial (only this script assigns to fields of struct 'out')
+    singleTrial;          
+            
+    
+    constructResCols; % construct/extend e.s.resCols based on the field
+                      % names of struct 'out' and those of triallistCols
+    storeResults;     % store contents of fields of 'out' in the correspon-
+                      % dingly named columns of e.results.    
+    storeTrajectory;  % store trajectory in e.trajectories (empty cell if
+                      % trial was aborted before recording started)
+    insertAbortedTrial; % if trial was aborted, shuffle it into the
+                        % remaining trial list to be redone later at a
+                        % random time point (only if
+    
+    if doSave
+        save(savePath, 'e', '-append');
+    end
+    
+    % go to next trial... 
+    curTrial = curTrial + 1; 
+    
 end
 
 

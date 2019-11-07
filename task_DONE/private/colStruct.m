@@ -19,7 +19,7 @@ function str = colStruct(fieldname, nCols, str)
 %                               % 'Start' and 'End', respectively.
 %
 % s = colStruct('nItems', 1, s) % Including an existing struct name as argument
-%                               % 'str' adds a new field to the specified
+%                               % 's' adds a new field to the specified
 %                               % struct.
 %
 % --> Result:
