@@ -1,7 +1,22 @@
+*__NOTE:__ This code is work in progress and much of it has simply been carried over
+from an earlier experiment and awaits modification. The code has three main components:
+trial generation, experiment, and analysis scripts. Here's the status of each:*
+* *Experiment scripts are largely done by now but are pretty much untested. They probably
+have some bugs, but these will be fixed soon.*
+* *Trial generation nears completion but remains work in progress and does not work yet.*
+* *Analysis is completely untouched as of yet.*  
+
+*However, the three components are independent of each other,
+so the experimental script can be used independently of trial generation and analysis. When
+using the experimental code as a template for a new experiment (which should work fine),
+trial generation in particular and probably also analysis will be very specific to that
+other experiment anyway.*
+
+
 # IC pointing task
 
-Experimental task combining illusory conjunctions with motion tracking using
-MATLAB & Psychtoolbox.
+Experimental task to examine illusory conjunctions though motion tracking, using
+MATLAB, Psychtoolbox, and PTI Phoenix Visualeyez 3D Motion Trackers.
 
 While this code implements a specific paradigm, it is designed in a way that
 (hopefully) makes it quick and simple to implement other paradigms on its basis
@@ -246,7 +261,8 @@ postfixed '_px').
 #### Detailed version
 
 There are three coordinate reference frames (CRF) used here (see figure above).
-Although in most cases you only need to think about the first one.
+Although in most cases you only need to think about the first one (unless you
+modify lower-level code).
 
 * *__Presentation-area-based frame (pa):__* Used for all input to and output
 from the experimental script, that is, in trial generation (struct 'tg' loaded from
