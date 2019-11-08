@@ -2,48 +2,23 @@
 
 
 
-
-
-
-
-
 %%%%%% HEAVILY WORK IN PROGRESS %%%%%%%%%%%%
 
 
 
+%%%% Fields of tg.s expected by the experimental script:
 
-
-
-% The experimental script expects a struct 'tg' in the trial file, which
-% contains the following fields: 
-%
-% s                 all across-trials settings. These are transferred to
-%                   e.s in the beginning of the experimental script. 
-%
-% triallist         Matrix of trial data, rows are trials, columns are 
-%                   trial properties. 
-%
-% s.triallistCols     Will be used in experimental script to address into
-%                   triallist. Also, its fields are added to tg.s.triallistCols
-%                   (with an appropriate numeric offset to account for
-%                   already existing results columns) to be able to address
-%                   into the trial-data columns in the final results
-%                   matrix.
-
-
-
-% These need to be defined during trial generation. Each field of tg.s is
-% copied to e.s in the experimental script. Size and position measures are in
-% degrees visual angle unless fieldnames are postfixed with '_mm' (millimeters).
+% Size and position measures are in degrees visual angle unless fieldnames
+% are postfixed with '_mm' (millimeters).
 % 
-% tg.s.fixRadius_va;    Radius of fixation cross (visual angle)
-% tg.s.fixLineWidth_va; Line width of fixation cross (visual angle)
-% tg.s.fixColor;        Color of fixation cross (rgb)
-% tg.s.startPos_mm;     Pointer tip starting position that has to be assumed at the outset of
-%                       trial. Row vector x,y,z in presentation area frame (mm). Should be in the
-%                       center
-% tg.s.startRadius_mm   Radius around tg.startPos_mm in which pointer tip
-%                       has to be to count as being on the starting position
+% tg.s.fixRadius_va;    % Radius of fixation cross (visual angle)
+% tg.s.fixLineWidth_va; % Line width of fixation cross (visual angle)
+% tg.s.fixColor;        % Color of fixation cross (rgb)
+% tg.s.startPos_mm;     % Pointer tip starting position that has to be assumed at the outset of
+%                       % trial. Row vector x,y,z in presentation area frame (mm). Should be in the
+%                       % center
+% tg.s.startRadius_mm   % Radius around tg.startPos_mm in which pointer tip
+%                       % has to be to count as being on the starting position
 % tg.s.circleLineWidth_va;
 % tg.s.durOnStart;
 % tg.s.durWaitForStart;
@@ -51,24 +26,24 @@
 % tg.s.durItemPresentation;
 % tg.s.allowedLocResponseTime;
 % tg.s.allowedTgtResponseTime;
-% tg.s.zZeroTolerance   pointer's absolute z-value must be below this value
-%                       for response to be registered (mm) 
-% tg.s.pointerStartAngle;  max angle (deg) of lines from pointer tip to
-%                          pointer markers with z-axis during start phase
-% tg.s.circleColor_notOk;
+% tg.s.zZeroTolerance   % pointer's absolute z-value must be below this value
+%                       % for response to be registered (mm) 
+% tg.s.pointerStartAngle   % max angle (deg) of lines from pointer tip to
+%                          % pointer markers with z-axis during start phase
+% tg.s.circleColor_notOk
 % tg.s.circleColor_ok;
-% tg.s.yesKeyName;      should be 'return'
-% tg.s.noKeyName;       should be '.'
+% tg.s.yesKeyName;      % should be 'return'
+% tg.s.noKeyName;       % should be '.'
 % tg.s.stimShapes;
 % tg.s.stimColors;
 % tg.s.feedbackColor;
-% tg.s.presArea_va = [20, 15]; % size of presentation angle in degrees visual angle
-% 
+% tg.s.presArea_va = [20, 15]; % horz/vert size of presentation angle in degrees visual angle
 % tg.s.instructionTextFont % string, e.g. 'Arial'
 % tg.s.instructionTextHeight_va % font height in degrees visual angle
 % 
-% cell array with letter specifications for function lineItem
-%                                            % 0  = O (tgt)
+% cell array with letter specifications for function lineItem:
+%
+%                                             % 0  = O (tgt)
 % tg.s.stimShapes{1} = {[1,3,9]};             % 1  = L
 % tg.s.stimShapes{2} = {[1,9],[3,7]};         % 2  = X
 % tg.s.stimShapes{3} = {[4,6],[1,7],[3,9]};   % 3  = I
@@ -93,7 +68,8 @@
 % tg.s.stimColors{5} = [0 0 0]; % black
 % tg.s.stimColors{6} = [1 1 1]; % white
 % 
-% Feedback strings
+% Feedback strings:
+%
 % tg.s.feedback.correct;
 % tg.s.feedback.incorrect;
 % tg.s.feedback.dur_nonAbort;
@@ -104,17 +80,19 @@
 % tg.s.feedback.exceededTgtRT
 % tg.s.feedback.dur_abort
 % 
-% background color (can be either an RGB triplet or one of the strings
-% 'black', 'white', or 'grey'
-% tg.s.bgColor  
 % 
-% tg.s.textColor % color for instruction text (RGB triplet or string)
+% tg.s.bgColor   % background color (can be either an RGB triplet or one of the strings
+%                % 'black', 'white', or 'grey'
 % 
-% NOTE: Regardless of the length of the number of elements covered by the
+% tg.s.textColor % color for instruction text (RGB triplet or string, see bgColor)
+ 
+
+
+%%%% Notes
+
+% Regardless of the length of the number of elements covered by the
 % above spans of columns, items can be left unspecified by putting nan in
 % the stimShapes column.
-
-
 
 
 
@@ -130,8 +108,8 @@
 
 
 
-% Create tg.s.triallistCols (holds column numbers for triallist)
-%
+%%%% Create tg.s.triallistCols (holds column numbers for triallist)
+
 nItems = 5;
 % Fields and number of columns for tg.s.triallistCols (struct holding column
 % indices of trial matrix). .
@@ -162,7 +140,7 @@ for row = 1:size(triallistColsFields, 1)
 end
 
 
-% stim color specification. color codes in triallist should correspond to
+%%%% stim color specification. color codes in triallist should correspond to
 % element number in this array.
 %
 % TODO: Adjust to colors used in Hazeltine
@@ -196,7 +174,7 @@ fixPos = [presArea./2];
 stimRegionsWidth = 4.02;
 stimRegionsHeight = 0.88;
 
-% stim regions (stim string center will be placed within).
+% stim regions (stim string center will be placed within randomly).
 % above fix cross:
 stimRegions{1} = [fixPos(1) - stimRegionsWidth/2, ...  % left
                   fixPos(2) + 0.88, ...                % bottom                  
@@ -205,8 +183,6 @@ stimRegions{1} = [fixPos(1) - stimRegionsWidth/2, ...  % left
 % below fix cross:
 stimRegions{2} = stimRegions{1};
 stimRegions{2}(2) = fixPos(2) - (0.88 + stimRegionsHeight);
-
-
 
 
 stimSize_xy = [0.54, 0.71];
@@ -226,6 +202,9 @@ stimColorSequences{2} = [3,6,5,1,2];     % YRGOB
 stimColorSequences{3} = [4,1,2,3,5];     % POBYG
 stimColorSequences{4} = [1,6,4,2,5];     % ORPBG
 
+
+% NOTE on trials in Hazeltine 1997:
+%
 % In each trial, one of the middle three letters replaced by green
 %
 % In 75 % of trials, (i.e. tgt-present and both-present) one of the middle

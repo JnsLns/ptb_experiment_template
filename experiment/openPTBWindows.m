@@ -8,8 +8,12 @@
 % The onscreen window handle is stored in struct winOn.h, as well as the
 % window's other properties, e.g., winOn.rect. Offscreen window handles are
 % stored as winsOff.windowname.h, and window properties in other fields,
-% such as% winsOff.windowname.rect. Additional offscreen windows should be
+% such as winsOff.windowname.rect. Additional offscreen windows should be
 % stored accordingly, e.g., winsOff.windowname2.h (etc.).
+%
+% Note that some functionality requires the window handles to be stored the
+% way it is done here (in a struct), such as closing and reopening all
+% windows when the experiment is paused/resumed.
 
 % onscreen window for actual display
 winOn.bgColor = e.s.bgColor;

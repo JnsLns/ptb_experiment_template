@@ -4,7 +4,8 @@
 % See readme.md for help.
 
 
-%%%% Settings
+%%%% General settings
+
 
 % This will be appended to each results file name
 experimentName = 'my_exp';
@@ -90,6 +91,7 @@ load([trialsPath, e.s.trialsFileName]);
 
 
 %%%% Ask for save path
+
 if doSave
     savePath = requestSavePath(experimentName);
 end
@@ -137,11 +139,11 @@ for fn = fieldnames(tg.s)'
 end
 
 
-%%%% Trial data variables (remove tg... it won't be needed anymore)
+%%%% Get trial data 
 
 trials = tg.triallist;
 triallistCols = tg.s.triallistCols;
-clear tg; 
+clear tg; % remove 'tg', it won't be needed anymore
 
 
 %%%% Pointer Calibration
@@ -164,7 +166,7 @@ if doSave
 end
 
 
-%%%% ConVert color-defining field in e.s from strings to RGB
+%%%% Convert color-defining field in e.s from strings to RGB
 
 colorDefinition;
 
@@ -174,7 +176,7 @@ colorDefinition;
 % create psychtoolbox onscreen and offscreen windows. NOTE: See this script
 % for info on how to create additional offscreen windows (it is useful to
 % create an offscreen window for displays that reoccur mutliple times.
-openPTBwindows;
+openPTBWindows;
 
 % Hide mouse cursor
 HideCursor;
@@ -239,7 +241,6 @@ end
 ShowTextAndWait(...
     'Experiment beendet. Vielen Dank für die Teilnahme!', ...
     e.s.textColor, winOn.h, 0.5, true);
-
 
 
 %%% Clean up

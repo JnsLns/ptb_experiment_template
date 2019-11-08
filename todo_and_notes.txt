@@ -20,19 +20,8 @@
 % Make a setting (in trial generation) to determine whether trials should
 % be repeated if aborted. Maybe with maximum number of repetitions.
 
-% For documentation: All variables in fields of struct 'out' will be stored
-% to e.results. NOTE: variables in fields of 'out' must be integers or
-% column vectors. Also, the objects stored in out must be of same size each
-% trial.
-
 % Make similar scheme for trajCols as for resCols? (would simplify dealing
 % with different dimensionality of trajectories...)
-
-% Put this somewhere:
-% Fields and number of columns for e.s.resCols (struct holding column
-% indices of results matrix). Note that all data about the corresponding
-% trial is appended to each results row (column indices for these are later
-% also added to e.s.resCols).
 
 % Any pseudo-randomization in terms of trial order has to be done when
 % constructing the triallists... (i.e., outside the experiment script)
@@ -49,11 +38,6 @@
 % filtered out anyway and replaced by last good data, so that should do the
 % trick unless there are types of marker jumps that are not caught by this.
 
-% Color definitions (set below) should be set during trial generation.
-
-% winOn.font = 'Arial' and winOn.fontSize = 25 (currently set below
-% somewhere in the code) should be defined in trial generation. Ideally in
-% visual angle...
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
