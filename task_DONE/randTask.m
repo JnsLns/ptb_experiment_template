@@ -3,6 +3,16 @@
 
 
 
+% The general idea of this template code is that to create a new
+% experiment, functions and files in the private folder do not need to be
+% touched (they can be used as is). Instead, experiment-specific
+% modifications should be made only in experiment.m (adding settings,
+% opening psychtoolbox windows; things that need to be done before or after 
+% trial block), singleTrial.m (general sequence of events in each trial;
+% specifying output variables to be stored), and drawStimuli.m (draw
+% stimulus items to psychtoolbox offscreen windows before presentation).
+%
+%
 %                  _____Script input and output_____
 %
 %
@@ -329,15 +339,6 @@ triallistCols = tg.s.triallistCols;
 
 
 
-
-%%%% Initialize output arrays
-
-e.results = [];
-e.trajectories = cell();
-
-
-
-
 %%%% Ask for save path
 
 savePath = requestSavePath(experimentName);
@@ -349,6 +350,13 @@ savePath = requestSavePath(experimentName);
 [e.s.pointer.coefficients, e.s.pointer.expectedDistances, ...
     e.s.pointer.markerPairings, e.s.pointer.markerIDs] = ...
     doCalibrationProcedure(pad_tipID, pad_IDs, pointer_IDs);
+
+
+
+%%%% Initialize output arrays
+
+e.results = [];
+e.trajectories = cell();
 
 
 

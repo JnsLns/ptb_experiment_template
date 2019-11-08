@@ -9,10 +9,10 @@ vss = triallistCols.vertSizeStart;  % extent
 vse = triallistCols.vertSizeEnd;
 hss = triallistCols.horzSizeStart;
 hse = triallistCols.horzSizeEnd;
-sids = triallistCols.stimIdentitiesStart;        
-side = triallistCols.stimIdentitiesEnd;        
-scs  = triallistCols.stimColorsEnd;        
-sce  = triallistCols.stimColorsEnd;        
+sshs = triallistCols.shapesStart;        
+sshe = triallistCols.shapesEnd;        
+scs  = triallistCols.colorsStart;        
+sce  = triallistCols.colorsEnd;        
 lws  = triallistCols.stimLineWidthsStart;        
 lwe  = triallistCols.stimLineWidthsEnd;        
 
@@ -27,12 +27,12 @@ x_ext = vaToPx(ct(hss:hse), spatialConfig);
 y_ext = vaToPx(ct(vss:vse), spatialConfig);
 
 % letter identities, colors, and linewidths
-shapeCodes = ct(sids:side);
+shapeCodes = ct(sshs:sshe);
 colorCodes = ct(scs:sce);
 lineWidths = ct(lws:lwe);
 
 % Draw items
-for i = 1:side-sids+1
+for i = 1:sshe-sshs+1
 
     % skip nan entries in shapeCodes (i.e., stimIdentities)
     if ~isnan(shapeCodes(i))
