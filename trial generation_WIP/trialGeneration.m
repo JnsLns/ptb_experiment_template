@@ -66,6 +66,10 @@
 % tg.s.presArea_va = [20, 15]; % size of presentation angle in degrees visual angle
 %
 %
+% tg.s.instructionTextFont % string, e.g. 'Arial'
+% tg.s.instructionTextHeight_va % font height in degrees visual angle
+%
+%
 % cell array with letter specifications for function lineItem
 %                                            % 0  = O (tgt)
 %tg.s.stimShapes{1} = {[1,3,9]};             % 1  = L
@@ -104,7 +108,11 @@
 %tg.s.feedback.exceededTgtRT
 %tg.s.feedback.dur_abort
 
-
+% background color (can be either an RGB triplet or one of the strings
+% 'black', 'white', or 'grey'
+% tg.s.bgColor  
+%
+% tg.s.textColor % color for instruction text (RGB triplet or string)
 
 % NOTE: Regardless of the length of the number of elements covered by the
 % above spans of columns, items can be left unspecified by putting nan in

@@ -5,12 +5,13 @@
 
 % The general idea of this template code is that to create a new
 % experiment, functions and files in the private folder do not need to be
-% touched (they can be used as is). Instead, experiment-specific
-% modifications should be made only in experiment.m (adding settings,
-% opening psychtoolbox windows; things that need to be done before or after 
-% trial block), singleTrial.m (general sequence of events in each trial;
+% touched - they can be used as is. Paradigm-specific modifications should
+% be made only in experiment.m (adding settings, opening psychtoolbox
+% windows; things that need to be done before or after all trials),
+% singleTrial.m (sequence of events in each trial; getting responses;
 % specifying output variables to be stored), and drawStimuli.m (draw
-% stimulus items to psychtoolbox offscreen windows before presentation).
+% stimulus items to psychtoolbox offscreen windows for presentation in
+% singleTrial.m).
 %
 %
 %                  _____Script input and output_____
@@ -247,7 +248,7 @@ screens = Screen('Screens');        % get connected screens
 expScreen = max(screens);           % use last screen as stimulus display
 Screen('Preference', 'VisualDebuglevel', 3); % suppress PTB splash screen
 Screen('Preference','SkipSyncTests',1); % use when debugging without
-% in windowed mode
+                                        % in windowed mode
 
 
 %%%% Settings needed for every paradigm
@@ -262,21 +263,12 @@ e.s.expScreenSize_mm = [531 299]; % Gecko
 % Participant's distance from screen in millimeters
 e.s.viewingDistance_mm = 500;
 
-% Define colors
-white = WhiteIndex(expScreen);
-black = BlackIndex(expScreen);
-grey = white/2;
-e.s.bgColor = grey; % background
-e.s.textColor = black;
-
 % name of key to press to pause experiment (to pause, the key needs to be
 % depressed at the start of a trial)
 pauseKey = 'Pause';
-
-% Load list of trials from mat file
-% trials are assumed to be in variable tg.triallist
-% column number indices into trials assumed to be in struct triallistCols
-load('trials.mat');
+                                
+                    
+%%% Settings that are specific to the current paradigm
 
 % Define column numbers for trajectory matrices 
 e.s.trajCols.x = 1; % pointer coordinates
@@ -284,10 +276,6 @@ e.s.trajCols.y = 2;
 e.s.trajCols.z = 3;
 e.s.trajCols.t = 4; % tracker time stamps (compatible with time measure-
                     % ments in e.results if they are postfixed '_tr').
-                    
-                    
-                    
-%%% Settings that are specific to the current paradigm
 
 % marker IDs [TCMID1,LEDID1;TCMID2,LEDID2]
 e.s.markers.pad_tipID = [3,1];                  % calibration pad: ID of tip marker
@@ -327,6 +315,19 @@ e.s.dontRecordConstantTrajData = 1;
                        %%%% END OF SETTINGS %%%%
                        
 
+%%%% Load list of trials and settings from file
+
+[e.s.trialsFileName, trialsPath] = uigetfile('*.mat', 'Select trial file.');
+load([trialsPath, e.s.trialsFileName]);
+ 
+
+
+%%%% Ask for save path
+
+savePath = requestSavePath(experimentName);
+
+
+
 %%%% Complete settings struct e.s.
 
 % Get/store spatial configuration of experimental setup.
@@ -364,12 +365,6 @@ triallistCols = tg.s.triallistCols;
 
 
 
-%%%% Ask for save path
-
-savePath = requestSavePath(experimentName);
-
-
-
 %%%% Pointer Calibration
 
 [e.s.pointer.coefficients, e.s.pointer.expectedDistances, ...
@@ -391,6 +386,12 @@ save(savePath, 'e');
 
 
 
+%%%% Conert color-defining field in e.s from strings to RGB
+
+colorDefinition;
+
+
+
 %%%% Open PTB windows & hide cursor
 
 % note: if certain images (e.g. fixation) are repeatedly used in your
@@ -409,13 +410,12 @@ winOn.bgColor = e.s.bgColor;
 winOn.screen = expScreen;
 winOn.rect = [0 0 e.s.expScreenSize_px];
 [winOn.center(1), winOn.center(2)] = RectCenter(winOn.rect);
-winOn.font = 'Arial';
-winOn.fontSize = 25;
-
+winOn.font = e.s.instructionTextFont;
+winOn.fontSize = vaToPx(e.s.instructionTextHeight_va, e.s.spatialConfig);
 [winOn.h, winOn.rect] = ...
     PsychImaging('openWindow', winOn.screen, winOn.bgColor, winOn.rect);
 Screen('TextFont', winOn.h, winOn.font);
-Screen('TextSize', winOn.h, winOn.fontSize);
+Screen('TextSize', winOn.h, winOn.fontSize); 
 
 % offscreen window to draw stimuli to
 winsOff.stims.bgColor = e.s.bgColor;

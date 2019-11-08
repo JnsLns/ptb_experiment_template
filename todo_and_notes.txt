@@ -11,6 +11,8 @@
 
 % GENERAL TODO %%%%%%%%%%%%%%%%%
 
+% Make script for loading trial file and store trial file name in e.s
+
 % IMPORTANT: Test storeResults.m
 
 % Make a setting (in trial generation) to determine whether trials should
