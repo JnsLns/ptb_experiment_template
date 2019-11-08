@@ -11,9 +11,9 @@
 
 % GENERAL TODO %%%%%%%%%%%%%%%%%
 
-% Check color representation... 0-1 or 0-255 ? See PsychDefaultSetup doc
-% and check all color specifications in the code. I might have mixed the
-% two...
+% Check color representation... 0-1 or 0-25
+
+% Make script for loading trial file and store trial file name in e.s
 
 % IMPORTANT: Test storeResults.m
 
@@ -24,6 +24,7 @@
 % to e.results. NOTE: variables in fields of 'out' must be integers or
 % column vectors. Also, the objects stored in out must be of same size each
 % trial.
+
 
 % Make similar scheme for trajCols as for resCols? (would simplify dealing
 % with different dimensionality of trajectories...)
