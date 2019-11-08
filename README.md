@@ -1,4 +1,4 @@
-*__NOTE:__ This code is work in progress and much of it has simply been carried over
+*__STATUS NOTE:__ This code is work in progress and much of it has simply been carried over
 from an earlier experiment and awaits modification. The code has three main components:
 trial generation, experiment, and analysis scripts. Here's the status of each:*
 * *Experiment scripts are largely done by now but are pretty much untested. They probably
