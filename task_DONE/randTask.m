@@ -39,35 +39,60 @@
 %                                       'tg.s', except 'triallistCols')
 %
 %
-%                   _____Specifying outputs_____
+%                     _____Specifying outputs_____
 %
-% An empty struct 'out' is created at the start of the trial loop (i.e.,
-% before each trial). Fields can be created in this struct during the trial
-% (preferably in singleTrial.m). Values stored in these fields will be
-% written to the results matrix in 'e.results', which is generated automatically.
-% Also, a struct 'e.s.resCols' is generated, whose fields hold integers that
-% can be used to address into columns of e.results "by name". The fields of
-% e.s.resCols are named after the fields that exist in 'out' at the end of
-% a trial. For instance, if there is a field "out.responseTime = 1150",
-% then there will be a field e.s.resCols.responseTime, holding an
-% integer. During analysis, the respective column of e.results where
-% response time (1150 in this case) is stored can be addressed through
-% "e.results(:, e.s.resCols.responseTime)". If the value of a field of 'out'
-% is a column vector, then two fields will be generated in e.s.resCols,
-% having the same name as the field in 'out', except for the postfix 'Start'
-% for one, and 'End' for the other field name. The column vector will be written
-% to that span of columns in e.results. For instance, if there is a field
-% "out.itemColors = [1,2,3,4]", then there could be fields in e.s.resCols
-% such as "e.s.resCols.itemColorsStart = 10" and
-% "e.s.resCols.itemColorsEnd = 13" (where the absolute value depends on how
-% many fields were created before that); the span of columns can then later
-% be addressed through "e.results(:, e.s.resCols.itemColorsStart:e.s.resCols.itemColorsEnd)".
-% It is possible to add fields to 'out' that were not used in earlier trials.
-% In this case, rows in e.results from preceding trials will be filled with
-% nans in these rows. Note however that once a field has been used, the
-% objects stored in it must be of the same size in each trial (pad with
-% nans if needed); also, the objects in 'out' must be either integers or
-% column vectors.
+% SUMMARY: Everything written to fields of struct 'out' during trials will
+% autoimatically be stored it in the results matrix ('e.results'). Add
+% fields to 'out' as needed, but assign only integers or column vectors.
+% Columns of the results matrix can later be addressed "by name" using
+% column indices in fields of 'e.s.resCols'. 
+%
+% DETAILS: An empty struct 'out' is created/reset before each trial. Fields
+% can be created in this struct as needed during the trial (preferably in
+% singleTrial.m); a column vector or an integer should be written to each
+% field.
+% When a trial ends, the objects stored in the fields of 'out' will be
+% transformed into a row of results values and this row is written to the
+% results matrix ('e.results').
+%
+% To be able to address into the columns of 'e.results' later, a struct
+% 'e.s.resCols' is automatically created. Its fields hold integers that
+% are column indices into 'e.results', allowing to address the columns
+% "by name". The fields of e.s.resCols are named after the fields that
+% exist in 'out' at the end of a trial. For instance, 
+% 
+% >> out.RT = 1150;                 % say this happens in the 10th trial.
+%
+% >> e.s.resCols.RT                 % later check what column number has
+% ans = 12                          % been automatically assigned to RT.
+% 
+% >> e.results(10, e.s.resCols.RT)  % it can be used during analysis to
+% ans = 1150                        % address into the results matrix.       
+%
+% If the value of a field of 'out' is a column vector then its elements
+% will be written to the results matrix in consecutive columns and
+% e.s.resCols will have two fields for this object, one to address into the
+% first column of the span of values, the other addressing into the last
+% column. These two fields are named the same as the respective field of
+% 'out' except for being postfixed with 'Start' and 'End', respectively.
+% For instance,
+% 
+% >> out.foo = [1,2,3];             % say this happens in the 10th trial.
+%
+% >> e.s.resCols.fooStart
+% ans = 12
+% >> e.s.resCols.fooEnd   
+% and = 14
+%
+% >> e.results(10, e.s.resCols.fooStart:e.s.resCols.fooEnd)                                    
+% ans = [1,2,3]
+%
+% The absolute values of the column indices depend on how many fields have
+% been created before. It is possible to add fields to 'out' that were not
+% used in earlier trials, in which case rows in e.results from preceding
+% trials will be filled with nans in these columns. Note however that once
+% a field has been used, the objects stored in it must be of the same size
+% in each trial (pad with nans if needed).
 
 %
 %                   _____Experiment settings_____
@@ -102,7 +127,7 @@
 % size; these are postfixed '_mm') or pixels (like screen resolution;
 % postfixed '_px'). 
 %
-% LONG VERSION: There are three spatial reference frames used here:
+% DETAILS: There are three spatial reference frames used here:
 %
 % -- Presentation-area-based-frame (pa):
 % 
