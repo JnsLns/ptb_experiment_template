@@ -6,9 +6,9 @@ black = BlackIndex(expScreen);
 grey = white/2;
 
 % convert
-for fName = fieldnames(e.s)    
+for fName = fieldnames(e.s)'    
     fName = fName{1};
-    if isstr(e.s.(fName)) && endswith(fName, 'Color') 
+    if isstr(e.s.(fName)) && endsWith(fName, 'Color') 
         switch e.s.(fName)
             case 'grey'
                 e.s.(fName) = grey;

@@ -90,21 +90,21 @@ tg.s.stimShapes{11} = {[1,7],[4,6]};        % 11 = T
 tg.s.stimShapes{12} = {[1,5,7],[5,6]};      % 12 = Y
 tg.s.stimShapes{13} = {[3,1,9,7]};          % 13 = N
  
-tgtShapeCode = 0;
+tg.s.tgtShapeCode = 0;
 
 % Stimulus color specification. Color codes in triallist correspond to
 % element number in this array. 
 % TODO: Adjust these to have the correct colors used by Hazeltine!
 % TODO: Adjust to colors used in Hazeltine
-stimColors{1} = [70 0 0]; % orange
-stimColors{2} = [0 0 255]; % blue
-stimColors{3} = [255 255 0]; % yellow
-stimColors{4} = [100 0 100]; % purple
-stimColors{5} = [100 100 100]; % gray
-stimColors{6} = [255 0 0]; % red
-stimColors{7} = [0 255 0]; % green TARGET COLOR!
+tg.s.stimColors{1} = [70 0 0]; % orange
+tg.s.stimColors{2} = [0 0 255]; % blue
+tg.s.stimColors{3} = [255 255 0]; % yellow
+tg.s.stimColors{4} = [100 0 100]; % purple
+tg.s.stimColors{5} = [100 100 100]; % gray
+tg.s.stimColors{6} = [255 0 0]; % red
+tg.s.stimColors{7} = [0 255 0]; % green TARGET COLOR!
 
-tgtColorCode = 7;
+tg.s.tgtColorCode = 7;
  
 
 % Feedback parameters:
@@ -224,8 +224,8 @@ for shapesNum = 1:numel(stimShapeSequences)
             colors = stimColorSequences{colorsNum};
                   
             % Place target
-            shapes(oPos) = tgtShapeCode;                        
-            colors(oPos) = tgtColorCode;                                                                                
+            shapes(oPos) = tg.s.tgtShapeCode;                        
+            colors(oPos) = tg.s.tgtColorCode;                                                                                
                                                            
             trialRow(tg.s.triallistCols.trialType) = 1;
             trialRow(tg.s.triallistCols.nItemsBtwFeatures) = 0;

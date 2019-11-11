@@ -21,7 +21,7 @@ winOn.screen = expScreen;
 winOn.rect = [0 0 e.s.expScreenSize_px];
 [winOn.center(1), winOn.center(2)] = RectCenter(winOn.rect);
 winOn.font = e.s.instructionTextFont;
-winOn.fontSize = vaToPx(e.s.instructionTextHeight_va, e.s.spatialConfig);
+winOn.fontSize = round(vaToPx(e.s.instructionTextHeight_va, e.s.spatialConfig));
 [winOn.h, winOn.rect] = ...
     PsychImaging('openWindow', winOn.screen, winOn.bgColor, winOn.rect);
 Screen('TextFont', winOn.h, winOn.font);

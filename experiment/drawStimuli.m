@@ -17,19 +17,19 @@ lws  = triallistCols.lineWidthsStart;
 lwe  = triallistCols.lineWidthsEnd;        
 
 % triallist row for current trial
-ct = e.trials(curTrial,:);
+ct = trials(curTrial,:);
 
 % item positions in psychtoolbox coordinates / pixels
-[x_pos, y_pos] = paVaToPtbPx(ct(hps:hpe), ct(vps:vpe), spatialConfig);
+[x_pos, y_pos] = paVaToPtbPx(ct(hps:hpe), ct(vps:vpe), e.s.spatialConfig);
 
 % item extent in pixels
-x_ext = vaToPx(ct(hss:hse), spatialConfig);
-y_ext = vaToPx(ct(vss:vse), spatialConfig);
+x_ext = vaToPx(ct(hss:hse), e.s.spatialConfig);
+y_ext = vaToPx(ct(vss:vse), e.s.spatialConfig);
 
 % letter identities, colors, and linewidths
 shapeCodes = ct(sshs:sshe);
 colorCodes = ct(scs:sce);
-lineWidths = ct(lws:lwe);
+lineWidths = vaToPx(ct(lws:lwe), e.s.spatialConfig);
 
 % Draw items
 for i = 1:sshe-sshs+1

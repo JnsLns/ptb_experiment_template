@@ -54,10 +54,10 @@ e.s.markers.coordinate_IDs = [3, 10; 3,9; 3,11];% IDs of markers defining coordi
 % this to [0 0 10].
 e.s.markerCRFoffset_xyz_mm = [0 0 12];
 
-e.s.pointer.VelocityThreshold = 2000;  % velocity threshold beyond which 
+e.s.pointer.velocityThreshold = 2000;  % velocity threshold beyond which 
                                        % marker movement is considered 
                                        % marker jump and discarded [mm/second]
-e.s.pointer.DistanceThreshold = 1;     % distance threshold for marker 
+e.s.pointer.distanceThreshold = 1;     % distance threshold for marker 
                                        % distance check [mm}
 
 % Regarding recording of trajectories:
@@ -137,9 +137,9 @@ for fn = fieldnames(tg.s)'
     end
     e.s.(fn{1}) = tg.s.(fn{1});    
 end
-
-
-%%%% Get trial data 
+ 
+ 
+%%%% Get trial data  
 
 trials = tg.triallist;
 triallistCols = tg.s.triallistCols;
@@ -150,13 +150,15 @@ clear tg; % remove 'tg', it won't be needed anymore
 
 [e.s.pointer.coefficients, e.s.pointer.expectedDistances, ...
     e.s.pointer.markerPairings, e.s.pointer.markerIDs] = ...
-    doCalibrationProcedure(pad_tipID, pad_IDs, pointer_IDs);
+    doCalibrationProcedure(e.s.markers.pad_tipID, ...
+                           e.s.markers.pad_IDs, ...
+                           e.s.markers.pointer_IDs);
 
 
 %%%% Initialize output arrays
 
 e.results = [];
-e.trajectories = cell();
+e.trajectories = cell(0);
 
 
 %%%% Create results file
@@ -186,7 +188,7 @@ HideCursor;
 
 % Show welcome text and wait for button press
 ShowTextAndWait(...
-    'Bereit. Zum Starten des Experiments beliebige Taste drücken!', ...
+    'Bereit. Zum Starten des Experiments beliebige Taste drück en!', ...
     e.s.instructionTextColor, winOn.h, 0.5, true);
 
 
@@ -197,8 +199,9 @@ sequNum = 0;
 while curTrial <= size(trials,1)
     
     % Initialize / empty some things        
-    for osw = fieldnames(winsOff)'        
-        Screen('FillRect', winsOff.(osw), winsOff.(osw).bgColor);
+    for osw = fieldnames(winsOff)'  
+        osw = osw{1};
+        Screen('FillRect', winsOff.(osw).h, winsOff.(osw).bgColor);
     end
     out = struct();    
     trajectory = nan(20000, max(structfun(@(x) x, e.s.trajCols)));

@@ -11,6 +11,8 @@
 
 % GENERAL TODO %%%%%%%%%%%%%%%%%
 
+% Make experiment a function
+
 % Any randomization of trial order must be done during trial generation. 
  
 % Colors can be specified as RGB vectors (0-255) or strings, as follows.
