@@ -17,6 +17,10 @@ drawStimuli;
 drawFixation; 
 
 
+startPos_mm = [vaToMm(e.s.presArea_va(1)/2), ...
+               vaToMm(e.s.presArea_va(2)/2), ...
+               
+    e.s.spatialConfig) e.s.startPosZ_mm
 
 
 % -------------------------------------------------------------------------
@@ -30,13 +34,6 @@ drawFixation;
 
 % Go on when they have kept starting pos for e.s.durOnStart
 % If not in start pos within e.s.durWaitForStart, abort trial (code 1).
-
-
-% Compute x,y,z starting position in millimeters (needed below to check
-% pointer distance)
-startPos_mm = [vaToMm(e.s.presArea_va(1)/2, e.s.spatialConfig), ...
-               vaToMm(e.s.presArea_va(2)/2, e.s.spatialConfig), ...
-               e.s.startPosZ_mm];
 
 % Copy start marker offscreen window to onscreen window & present
 Screen('CopyWindow', winsOff.empty.h, winOn.h);

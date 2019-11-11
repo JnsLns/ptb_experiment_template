@@ -29,7 +29,7 @@ if tipAtStart && ~withinAngle
     h_px = vaToPx(e.s.angleArrowHeight_va, spatialConfig);
     lw_px = vaToPx(e.s.angleArrowLine_va, spatialConfig);
     startPosXy_ptb = ...
-        paMmToPtbPx(e.s.startPos_mm(1), e.s.startPos_mm(2), spatialConfig);
+        paMmToPtbPx(startPos_mm(1), startPos_mm(2), spatialConfig);
     ecc_px = vaToPx(e.s.angleArrowEcc_va, spatialConfig);
     
     % Max angles btw markers and z-axis in planes, signed (neg. is left/down)    

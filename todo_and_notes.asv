@@ -11,15 +11,13 @@
 
 % GENERAL TODO %%%%%%%%%%%%%%%%%
 
- 
-% Colors can be specified as RGB vectors (0-255) or strings, as follows.
-% Any fields of 'e.s' (carried over from 'tg.s') whose names end on 'Color'
+% Colors can be specified as either RGB vectors (0-255) or the strings
+% . Fields of 'e.s' (carried over from 'tg.s') whose names end on 'Color'
 % will be checked for any of the strings 'white', 'black', 'grey'. 
 %.If the field contains one of these strings, it will be replaced by a
 % Psychtoolbox color lookup table index (which is obtained during
-% experiment runtime) corresponding to that color ('grey' is 'white'/2).
-% This happens in colorDefinition.m. 
-%
+% experiment runtime). 'Grey' is 'white'/2. This happens in  
+
 % Check color representation... 0-1 or 0-255 ? See PsychDefaultSetup doc
 % and check all color specifications in the code. I might have mixed the
 % two...
