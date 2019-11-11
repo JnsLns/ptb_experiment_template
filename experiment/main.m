@@ -187,7 +187,7 @@ HideCursor;
 % Show welcome text and wait for button press
 ShowTextAndWait(...
     'Bereit. Zum Starten des Experiments beliebige Taste drücken!', ...
-    e.s.textColor, winOn.h, 0.5, true);
+    e.s.instructionTextColor, winOn.h, 0.5, true);
 
 
 %%%% Trial loop
@@ -240,7 +240,7 @@ end
 % Show goodbye message and wait for button press
 ShowTextAndWait(...
     'Experiment beendet. Vielen Dank für die Teilnahme!', ...
-    e.s.textColor, winOn.h, 0.5, true);
+    e.s.instructionTextColor, winOn.h, 0.5, true);
 
 
 %%% Clean up

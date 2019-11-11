@@ -223,7 +223,7 @@ if ~out.abortCode
             e.s.trajCols.t]) = [tipPos_pa, pcTime];
         
         % store time and proceed if pointer at screen surface (z = 0)?
-        if abs(tipPos_pa(3)) < e.s.zZeroTolerance
+        if abs(tipPos_pa(3)) < e.s.zZeroTolerance_mm
             out.tLocResponseOffset_pc = pcTime;
             out.tLocResponseOffset_tr = trackerTime;
             break;
@@ -380,7 +380,7 @@ elseif out.abortCode ~= 0
     
 end
 
-ShowTextAndWait(feedbackStr, e.s.feedbackColor, winOn.h, dur, false)
+ShowTextAndWait(feedbackStr, e.s.feedbackTextColor, winOn.h, dur, false)
 
 
 

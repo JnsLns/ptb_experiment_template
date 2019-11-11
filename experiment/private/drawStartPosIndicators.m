@@ -8,9 +8,9 @@
 % color changing when at starting position;
 tipPos_ptb = paMmToPtbPx(tipPos_pa(1), tipPos_pa(2), e.s.spatialConfig);
 if tipAtStart
-    circleColor = e.s.circleColor_ok;
+    circleColor = e.s.cirlceOkColor;
 else
-    circleColor = e.s.circleColor_notOk;
+    circleColor = e.s.circleNotOkColor;
 end
 circleRect = ...
     rectFromPosSize([tipPos_ptb, distFromStart([1 1])*2]);
