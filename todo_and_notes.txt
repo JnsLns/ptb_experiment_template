@@ -11,6 +11,7 @@
 
 % GENERAL TODO %%%%%%%%%%%%%%%%%
 
+% Any randomization of trial order must be done during trial generation. 
  
 % Colors can be specified as RGB vectors (0-255) or strings, as follows.
 % Any fields of 'e.s' (carried over from 'tg.s') whose names end on 'Color'

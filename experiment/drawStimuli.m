@@ -5,16 +5,16 @@ vps = triallistCols.vertPosStart;  % positions
 vpe = triallistCols.vertPosEnd;
 hps = triallistCols.horzPosStart;
 hpe = triallistCols.horzPosEnd;
-vss = triallistCols.vertSizeStart;  % extent
-vse = triallistCols.vertSizeEnd;
-hss = triallistCols.horzSizeStart;
-hse = triallistCols.horzSizeEnd;
+vss = triallistCols.vertSizesStart;  % extent
+vse = triallistCols.vertSizesEnd;
+hss = triallistCols.horzSizesStart;
+hse = triallistCols.horzSizesEnd;
 sshs = triallistCols.shapesStart;        
 sshe = triallistCols.shapesEnd;        
 scs  = triallistCols.colorsStart;        
 sce  = triallistCols.colorsEnd;        
-lws  = triallistCols.stimLineWidthsStart;        
-lwe  = triallistCols.stimLineWidthsEnd;        
+lws  = triallistCols.lineWidthsStart;        
+lwe  = triallistCols.lineWidthsEnd;        
 
 % triallist row for current trial
 ct = e.trials(curTrial,:);
