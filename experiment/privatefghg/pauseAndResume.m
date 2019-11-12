@@ -30,11 +30,12 @@ if KbCheck
         % Reopen onscreen window
         [winOn.h, winOn.rect] = ...
             PsychImaging('openWindow', winOn.screen, winOn.bgColor, winOn.rect);                 
-        Screen('TextFont', win, winOn.font); 
-        Screen('TextSize', win, winOn.fontSize);
+        Screen('TextFont', winOn.h, winOn.font); 
+        Screen('TextSize', winOn.h, winOn.fontSize);
         
         % Reopen offscreen windows
         for osw = fieldnames(winsOff)'
+            osw = osw{1};
             [winsOff.(osw).h, winsOff.(osw).rect] = ...
                 Screen('OpenOffScreenWindow', winsOff.(osw).screen, ...
                 winsOff.(osw).bgColor, winsOff.(osw).rect);

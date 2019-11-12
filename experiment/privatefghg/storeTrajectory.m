@@ -8,7 +8,7 @@ trajectory(all(isnan(trajectory)'), :) = [];
 % of any directly successive rows in trajectory that have identical
 % position data, remove all but the first ones (if desired).
 if e.s.dontRecordConstantTrajData    
-    rem = trajectory(:, [e.s.trajCols.x, e.s.trajCols.y, e.s.trajCols.z]);
+    rem = trajectory(:, [e.s.trajCols.x, e.s.trajCols.y]);
     rem = [ones(1, size(rem,2)); diff(rem,1,1)];
     rem = all(rem' == 0);
     trajectory(rem, :) = [];       

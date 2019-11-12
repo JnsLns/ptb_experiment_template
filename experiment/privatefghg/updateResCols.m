@@ -1,15 +1,3 @@
-
-%%%% Construct or extend e.s.resCols based on fields of struct 'out'
-%    (and on first run also transfer tg.s.triallistCols numbers)
-
-% initialize e.s.resCols and check whether it's the first run 
-if ~isfield(e.s, 'resCols')
-    e.s.resCols = struct;
-    isFirstRun = true;    
-else 
-    isFirstRun = false;
-end
-
 % After each trial, go through all fields of 'out' and add those fields
 % to e.s.resCols that weren't present on previous trials.
 for fName = fieldnames(out)'
@@ -51,24 +39,3 @@ for fName = fieldnames(out)'
     end        
     
 end
-
-% only on the first go: 
-% add row numbers to e.s.resCols for results matrix columns that will hold
-% trial data. (when results are written to e.results, the row of trial data
-% for the current trial will be appended to the corresponding results row;
-% the row numbers for these data are computed and stored here)
-if isFirstRun    
-    maxCol = max(structfun(@(x) x, e.s.resCols)); % max column in use for results data
-    % iterate over fields of tg.s.triallistCols, add maxCol to each entry, and
-    % store in new field with same name in e.s.resCols.
-    for fn = fieldnames(tg.s.triallistCols)'
-        if isfield(e.s.resCols, fn{1})
-            error(['Field ', fn{1}, ' was about to be copied from tg.s.triallistCols', ...
-                ' to e.s.resCols, but already exists in e.s.resCols.']);
-        end
-        e.s.resCols.(fn{1}) = tg.s.triallistCols.(fn{1}) + maxCol;
-    end
-end
-
-
-

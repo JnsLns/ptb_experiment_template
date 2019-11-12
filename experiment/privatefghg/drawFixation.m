@@ -2,7 +2,7 @@
 
 % convert radius and line width of fixation cross from degrees visual angle
 % to pixels
-fr_px = vaToPx(e.s.fixRadius_va, e.s.spatialConfig);
+fr_px = vaToPx(e.s.fixRadius_va, e.s.spatialConfig)*2;
 flw_px = vaToPx(e.s.fixLineWidth_va, e.s.spatialConfig);
 
 % Draw cross

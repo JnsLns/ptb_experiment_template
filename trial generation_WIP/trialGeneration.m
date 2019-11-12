@@ -36,26 +36,31 @@
 % unless fieldnames are postfixed with '_mm' (millimeters). All position
 % data is in the presentaion-area-based coordinate frame.
  
+tg.s.mouseMovementMultiplier = [1 1];
+
+tg.s.cursorRad_va = 0.05;
+tg.s.cursorColor = 'white';
+
 tg.s.fixRadius_va = 1;              % Radius of fixation cross (visual angle)
 tg.s.fixLineWidth_va = 0.2;         % Line width of fixation cross (visual angle)
 tg.s.fixColor = 'white';            % Color of fixation cross (rgb vec or string)
-tg.s.presArea_va = [20, 15];        % horz/vert size of presentation angle in degrees visual angle
+tg.s.presArea_va = [20, 20];        % horz/vert size of presentation angle in degrees visual angle
                                     % (always centered within screen)
 tg.s.startPosZ_mm = 200;            % Distance of pointer tip starting position
                                     % from screen surface (x and y are determined
                                     % automatically as center of presentation are).
-tg.s.startRadius_mm = 5;            % Radius around strating position in which pointer tip
+tg.s.startRadius_va = 0.2;          % Radius around strating position in which pointer tip
                                     % has to be situated to count as being on the starting position
-tg.s.circleLineWidth_va = 0.2;      % Line width of circle that indicates to the participant
+tg.s.circleLineWidth_va = 0.4;      % Line width of circle that indicates to the participant
                                     % how far the pointer is from the strating
                                     % position. in visual angle.
-tg.s.durOnStart = 1;                % Time that pointer must dwell in starting position [s] before exp proceeds
+tg.s.durOnStart = 2;                % Time that pointer must dwell in starting position [s] before exp proceeds
 tg.s.durWaitForStart = inf;         % Time to wait for participant to assume strating position 
-tg.s.durPreStimFixation = 1;        % Time fixation cross is shown after starting position has been 
+tg.s.durPreStimFixation = 2;        % Time fixation cross is shown after starting position has been 
                                     % assumed and before stimuli are presented 
-tg.s.durItemPresentation = 0.15;    % Duration of stimulus presentation
-tg.s.allowedLocResponseTime = 1.5;  % Max duration to make location response
-tg.s.allowedTgtResponseTime = 1.5;  % Max duration to make tgt presence response
+tg.s.durItemPresentation = 1;       % Duration of stimulus presentation
+tg.s.allowedLocResponseTime = 3;    % Max duration to make location response
+tg.s.allowedTgtResponseTime = 3;    % Max duration to make tgt presence response
 tg.s.zZeroTolerance_mm = 1;         % pointer's *absolute* z-value must be below this value
                                     % for response to be registered (mm)
 tg.s.pointerStartAngle = 15;        % max angle (deg) between lines from pointer tip
@@ -63,15 +68,22 @@ tg.s.pointerStartAngle = 15;        % max angle (deg) between lines from pointer
 tg.s.circleNotOkColor = 'white';    % color of start pos indicator circle when pointer is too far
 tg.s.circleOkColor = 'black';       % color of start pos indicator circle when pointer is within
                                     % tg.s.startRadius_mm millimeters of starting position
-tg.s.yesKeyName = 'return';         % name of yes-key for target present response
-tg.s.noKeyName = '.';               % % name of no-key for target present response
+tg.s.yesKeyName = 'x';              % name of yes-key for target present response
+tg.s.noKeyName = 'y';               % name of no-key for target present response
 tg.s.instructionTextFont = 'Arial'; % font for instruction test
-tg.s.instructionTextHeight_va = 1;  % font height in degrees visual angle
+tg.s.instructionTextHeight_va = 0.75; % font height in degrees visual angle
 tg.s.instructionTextColor = 'black';% color for instruction text (RGB triplet or string, see bgColor)
 tg.s.bgColor = 'grey';              % background color (can be either an RGB triplet or one of the strings
                                     % 'black', 'white', or 'grey'
 tg.s.feedbackTextColor = 'black';   % color of feedback text
   
+% Starting position (cursor has to be moved to this position to start
+% trial)
+offsetFromCenter_x = 0;
+offsetFromCenter_y = -(tg.s.presArea_va(2)/2 - tg.s.presArea_va(2) * 0.1 );
+tg.s.startPos_va = [tg.s.presArea_va(1)/2 + offsetFromCenter_x, ...
+               tg.s.presArea_va(2)/2 + offsetFromCenter_y];
+
 % Letter shape specifications for function lineItem (stimuli):
                                             
                                             % CODES / LETTER
@@ -319,7 +331,7 @@ triallist(:,tg.s.triallistCols.trialSequNum) = 1:size(triallist,1);
 tg.triallist = triallist;
 
 
-save('trials.mat', 'tg')
+save('s:\trials.mat', 'tg')
 
 
 
