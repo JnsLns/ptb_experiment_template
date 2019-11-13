@@ -17,8 +17,25 @@ drawStimuli;
 drawFixation; 
 
 
+% DEBUG
+warning('DEBUG CODE ACTIVE IN singleTrial.m')
+L = (e.s.spatialConfig.expScreenSize_px(1) - vaToPx(e.s.spatialConfig.presArea_va(1), e.s.spatialConfig))/2;
+T = (e.s.spatialConfig.expScreenSize_px(2) - vaToPx(e.s.spatialConfig.presArea_va(2), e.s.spatialConfig))/2;
+R = L + vaToPx(e.s.spatialConfig.presArea_va(1), e.s.spatialConfig);
+B = T + vaToPx(e.s.spatialConfig.presArea_va(2), e.s.spatialConfig);
+Screen('FillRect', winsOff.startMarker.h, [255 0 0], [L T R B]);
 
 
+% Draw start marker to winsOff.startMarker.h
+ [sm_xy_ptb_px(1), sm_xy_ptb_px(2)] = ...
+    paVaToPtbPx(e.s.startPos_va(1), e.s.startPos_va(2), e.s.spatialConfig);
+Screen('DrawDots', winsOff.startMarker.h, sm_xy_ptb_px, ...
+        vaToPx(e.s.startMarkerRad_va, e.s.spatialConfig)*2, ...
+        e.s.startMarkerColor, [], 1);
+
+
+    
+    
 % -------------------------------------------------------------------------
 % PRESENTATION STARTS HERE
 % -------------------------------------------------------------------------
@@ -31,23 +48,26 @@ drawFixation;
 % If not in start pos within e.s.durWaitForStart, abort trial (code 1).
 
 % Copy start marker offscreen window to onscreen window & present
-Screen('CopyWindow', winsOff.empty.h, winOn.h);
+
+Screen('CopyWindow', winsOff.startMarker.h, winOn.h);
 Screen('Flip', winOn.h, []);
+
+% DEBUG
+warning('DEBUG CODE ACTIVE IN singleTrial.m')
+pause(inf)
 
 tOnStart = 0;
 deltatOnStart = 0;
 startScreenOnset = GetSecs;
-while deltatOnStart <= e.s.durOnStart
-    
-    % get position of pointer tip (in pres area frame)
-    [tipPos_pa, ~, ~, vzData] = getTip_pa(e.s);
+while deltatOnStart <= e.s.durOnStart        
     
     % get position of mouse pointer (in pres area frame, visual angle)
-    [mouse_xy_pa_va, ~] = ...
+    [mouse_xy_pa_va, mouse_xy_ptb_px] = ...
         getMouseRemapped_pa_ptb(e.s.mouseMovementMultiplier, e.s.spatialConfig);                    
     
     % determine distance to starting position
-    distFromStart_va = dist3d([mouse_xy_pa_va, 0], startPos_va, [0 0 1]);
+    distFromStart_va = ...
+        dist3d([mouse_xy_pa_va, 0], [e.s.startPos_va, 0], [0 0 1]);
     
     % Check whether it is within starting region
     if distFromStart_va < e.s.startRadius_va
@@ -63,30 +83,32 @@ while deltatOnStart <= e.s.durOnStart
     % (2) if pts not in starting position
     %   (A) but was in last iteration             -> reset counter to zero
     %   (B) and never was and max wait time up    -> abort trial
-    if withinAngle && tipAtStart                                      % (1)
+    if tipAtStart                                                     % (1)
         if deltatOnStart == 0                                         % (A)
             tOnStart = GetSecs;
         end
         deltatOnStart = GetSecs - tOnStart;                           % (B)
-    elseif ~(withinAngle && tipAtStart)                               % (2)
+    elseif ~tipAtStart                                                % (2)
         if  deltatOnStart ~= 0  &&  deltatOnStart < e.s.durOnStart    % (A)
             deltatOnStart = 0;
         elseif GetSecs - startScreenOnset > e.s.durWaitForStart       % (B)
             out.abortCode = 1;
             break;
         end
-    end
+    end       
+    
+    % Draw pointer / start marker
+    Screen('CopyWindow', winsOff.startMarker.h, winOn.h);
+    Screen('DrawDots', winOn.h, mouse_xy_ptb_px, ...
+        vaToPx(e.s.cursorRad_va, e.s.spatialConfig)*2, e.s.cursorColor, [], 1);
     
     % Draw indicators to show in which direction the pointer has to be
     % moved to arrive at the starting position (circle for distance, arrows
     % for pointer inclination)
     drawStartPosIndicators;
     
-    % Refresh display and draw pointer
-    Screen('DrawDots', winOn.h, tipPos(1:2), cursorRad_px*2, tg.white, [], 1);
-    Screen('Flip',win,[]);
-    
-    Screen('Flip',winOn.h,[]);
+    % Refresh
+    Screen('Flip', winOn.h, []);    
     
 end
 
@@ -110,7 +132,7 @@ if ~out.abortCode
     while deltatFix <= e.s.durPreStimFixation
         
         % get position of mouse pointer (in pres area frame, visual angle)
-        [mouse_xy_pa_va, ~] = ...
+        [mouse_xy_pa_va, mouse_xy_ptb_px] = ...
             getMouseRemapped_pa_ptb(e.s.mouseMovementMultiplier, e.s.spatialConfig);
         
         checkStartingPosition;
@@ -123,6 +145,13 @@ if ~out.abortCode
         
         % Increment timer
         deltatFix = GetSecs - out.tFixOnset_pc;
+        
+        % Refresh display and draw pointer
+        Screen('CopyWindow', winsOff.fix.h, winOn.h);
+        Screen('DrawDots', winOn.h, mouse_xy_ptb_px, ...
+            vaToPx(e.s.cursorRad_va, e.s.spatialConfig)*2, ...
+            e.s.cursorColor, [], 1);
+        Screen('Flip', winOn.h, []);
         
     end
     
@@ -149,12 +178,11 @@ if ~out.abortCode
     while deltatItems <= e.s.durItemPresentation
         
         % get position of mouse pointer (in pres area frame, visual angle)
-        [mouse_xy_pa_va, ~] = ...
+        [mouse_xy_pa_va, mouse_xy_ptb_px] = ...
             getMouseRemapped_pa_ptb(e.s.mouseMovementMultiplier, e.s.spatialConfig);
         
         % Check whether tip position is in correct location and pointer is
-        % angled correctly. This is indicated by variables tipAtStart and
-        % withinAngle, respectively.
+        % angled correctly. This is indicated by variable tipAtStart.
         checkStartingPosition;
         
         % if start pos left, abort trial
@@ -165,6 +193,13 @@ if ~out.abortCode
         
         % Increment timer
         deltatItems = GetSecs - out.tStimOnset_pc;
+       
+        % Refresh display and draw pointer
+        Screen('CopyWindow', winsOff.stims.h, winOn.h);
+        Screen('DrawDots', winOn.h, mouse_xy_ptb_px, ...
+            vaToPx(e.s.cursorRad_va, e.s.spatialConfig)*2, ...
+            e.s.cursorColor, [], 1);
+        Screen('Flip', winOn.h, []);
         
     end
     
@@ -187,11 +222,13 @@ if ~out.abortCode
     [~,out.tLocResponseOnset_pc,~,~] = Screen('Flip', winOn.h, []);
     
     % wait for response (pointer at screen surface)
-    loopCounter = 1;
+    loopCounter = 0;
     while 1
         
+        loopCounter = loopCounter + 1;
+        
         % get position of mouse pointer (in pres area frame, visual angle)
-        [mouse_xy_pa_va, ~] = ...
+        [mouse_xy_pa_va, mouse_xy_ptb_px] = ...
             getMouseRemapped_pa_ptb(e.s.mouseMovementMultiplier, e.s.spatialConfig);
         pcTime = GetSecs;                
         
@@ -216,6 +253,12 @@ if ~out.abortCode
             break;
         end
         
+        % Refresh display and draw pointer        
+        Screen('DrawDots', winOn.h, mouse_xy_ptb_px, ...
+            vaToPx(e.s.cursorRad_va, e.s.spatialConfig)*2, ...
+            e.s.cursorColor, [], 1);
+        Screen('Flip', winOn.h, []);
+        
     end
     
 end
@@ -237,10 +280,10 @@ if ~out.abortCode
     Screen('CopyWindow', winsOff.targetResponse.h, winOn.h);
     [~, out.tTgtPresentResponseOnset_pc, ~, ~] = Screen('Flip',winOn.h,[]);
     
-    while 1
+    while 1                
         
         % if max time is up, leave loop and abort trial
-        if pcTime - out.tTgtPresentResponseOnset_pc > e.s.allowedTgtResponseTime
+        if GetSecs - out.tTgtPresentResponseOnset_pc > e.s.allowedTgtResponseTime
             out.abortCode = 5;
             break;
         end
@@ -330,8 +373,10 @@ end
 
 %%%% create unique ID for current response
 out.reponseID = round(rand()* 1e+12);
-while any(e.results(:, e.s.resCols.responseID) == responseID)
-    out.reponseID = round(rand()* 1e+12);
+if isfield(e.s.resCols, 'responseID')
+    while any(e.results(:, e.s.resCols.responseID) == responseID)
+        out.reponseID = round(rand()* 1e+12);
+    end
 end
 
 

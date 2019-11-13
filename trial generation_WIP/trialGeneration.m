@@ -37,7 +37,8 @@
 % data is in the presentaion-area-based coordinate frame.
  
 tg.s.mouseMovementMultiplier = [1 1];
-
+tg.s.startMarkerColor = 'black';
+tg.s.startMarkerRad_va = 0.2;
 tg.s.cursorRad_va = 0.05;
 tg.s.cursorColor = 'white';
 
@@ -82,7 +83,7 @@ tg.s.feedbackTextColor = 'black';   % color of feedback text
 offsetFromCenter_x = 0;
 offsetFromCenter_y = -(tg.s.presArea_va(2)/2 - tg.s.presArea_va(2) * 0.1 );
 tg.s.startPos_va = [tg.s.presArea_va(1)/2 + offsetFromCenter_x, ...
-               tg.s.presArea_va(2)/2 + offsetFromCenter_y];
+                    tg.s.presArea_va(2)/2 + offsetFromCenter_y];
 
 % Letter shape specifications for function lineItem (stimuli):
                                             

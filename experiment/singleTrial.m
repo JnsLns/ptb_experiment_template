@@ -16,9 +16,16 @@ drawStimuli;
 % Draw fixation cross to winsOff.fix.h
 drawFixation; 
 
+% Draw start marker to winsOff.startMarker.h
+ [sm_xy_ptb_px(1), sm_xy_ptb_px(2)] = ...
+    paVaToPtbPx(e.s.startPos_va(1), e.s.startPos_va(2), e.s.spatialConfig);
+Screen('DrawDots', winsOff.startMarker.h, sm_xy_ptb_px, ...
+        vaToPx(e.s.startMarkerRad_va, e.s.spatialConfig)*2, ...
+        e.s.startMarkerColor, [], 1);
 
 
-
+    
+    
 % -------------------------------------------------------------------------
 % PRESENTATION STARTS HERE
 % -------------------------------------------------------------------------
@@ -31,7 +38,7 @@ drawFixation;
 % If not in start pos within e.s.durWaitForStart, abort trial (code 1).
 
 % Copy start marker offscreen window to onscreen window & present
-Screen('CopyWindow', winsOff.empty.h, winOn.h);
+Screen('CopyWindow', winsOff.startMarker.h, winOn.h);
 Screen('Flip', winOn.h, []);
 
 tOnStart = 0;
@@ -73,16 +80,19 @@ while deltatOnStart <= e.s.durOnStart
             out.abortCode = 1;
             break;
         end
-    end
+    end       
+    
+    % Draw pointer / start marker
+    Screen('CopyWindow', winsOff.startMarker.h, winOn.h);
+    Screen('DrawDots', winOn.h, mouse_xy_ptb_px, ...
+        vaToPx(e.s.cursorRad_va, e.s.spatialConfig)*2, e.s.cursorColor, [], 1);
     
     % Draw indicators to show in which direction the pointer has to be
     % moved to arrive at the starting position (circle for distance, arrows
     % for pointer inclination)
     drawStartPosIndicators;
     
-    % Refresh display and draw pointer
-    Screen('DrawDots', winOn.h, mouse_xy_ptb_px, ...
-        vaToPx(e.s.cursorRad_va, e.s.spatialConfig)*2, e.s.cursorColor, [], 1);
+    % Refresh
     Screen('Flip', winOn.h, []);    
     
 end

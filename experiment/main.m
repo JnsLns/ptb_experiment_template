@@ -94,7 +94,7 @@ e.s.expScreenSize_px = tmp(3:4);         % get screen res
 e.s.spatialConfig.viewingDistance_mm = e.s.viewingDistance_mm;
 e.s.spatialConfig.expScreenSize_mm = e.s.expScreenSize_mm;
 e.s.spatialConfig.expScreenSize_px = e.s.expScreenSize_px;
-e.s.spatialConfig.presArea_va = tg.s.presArea_va;
+e.s.spatialConfig.presArea_va = tg.s.presArea_va;   
 
 % copy experimental setup data (not trials) from trial generation struct
 % (tg.s) to experimental output struct (e.s); except for
@@ -162,20 +162,6 @@ createResCols;
 ShowTextAndWait(...
     'Bereit. Zum Starten des Experiments beliebige Taste drück en!', ...
     e.s.instructionTextColor, winOn.h, 0.5, true);
-
-
-
-
-
-
-
-
-e.s.durPreStimFixation = inf;
-
-
-
-
-
 
 
 %%%% Trial loop

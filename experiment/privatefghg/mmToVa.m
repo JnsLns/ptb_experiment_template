@@ -16,6 +16,6 @@ function [va] = mmToVa(mm, spatialConfig)
 
 vd_mm = spatialConfig.viewingDistance_mm;
 
-va = atand(mm/vd_mm);
+va = mm * 180 / (pi * vd_mm);
 
 end

@@ -41,7 +41,6 @@ e.s.trajCols.t = 3; % tracker time stamps (compatible with time measure-
 e.s.dontRecordConstantTrajData = 1;
 
 
-
                        %%%% END OF SETTINGS %%%%
 
                        
@@ -150,9 +149,12 @@ HideCursor;
 
 %%%% Construct e.s.resCols 
 
-% e.s.resCols fields hold column indices for e.results. It is initialized
-% here by 
+% 'e.s.resCols' fields hold column indices for 'e.results'. It is
+% initialized here by trasnferring the indices from 'triallistCols', since
+% on each trial not only results are stored in 'e.results', but also all
+% trial properties.
 createResCols;
+
 
 %%%% Things to be presented before the experiment
 
@@ -160,6 +162,20 @@ createResCols;
 ShowTextAndWait(...
     'Bereit. Zum Starten des Experiments beliebige Taste drück en!', ...
     e.s.instructionTextColor, winOn.h, 0.5, true);
+
+
+
+
+
+
+
+warning('DEBUG CODE ')
+e.s.durPreStimFixation = inf;
+
+
+
+
+
 
 
 %%%% Trial loop
@@ -187,16 +203,16 @@ while curTrial <= size(trials,1)
     % run trial (only this script assigns to fields of struct 'out')
     singleTrial;          
             
-    constructResCols; % construct/extend e.s.resCols based on the field
-                      % names of struct 'out' and those of triallistCols
+    updateResCols;    % extend e.s.resCols with column numbers for fields
+                      % in struct 'out' (which stores results of one trial)
     storeResults;     % store contents of fields of 'out' in the correspon-
                       % dingly named columns of e.results.    
     storeTrajectory;  % store trajectory in e.trajectories (empty cell if
                       % trial was aborted before recording started)
     insertAbortedTrial; % if trial was aborted, shuffle it into the
                         % remaining trial list to be redone later at a
-                        % random time point (only if
-    
+                        % random time point 
+     
     if doSave
         save(savePath, 'e', '-append');
     end
@@ -219,8 +235,5 @@ ShowTextAndWait(...
 
 Screen('closeall');
 ShowCursor;
-
-
-
 
 
