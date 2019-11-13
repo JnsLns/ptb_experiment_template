@@ -21,7 +21,6 @@ ct = trials(curTrial,:);
 
 % item positions in psychtoolbox coordinates / pixels
 [x_pos, y_pos] = paVaToPtbPx(ct(hps:hpe), ct(vps:vpe), e.s.spatialConfig);
-% MOD REDQUIRED: from pa mm to ptb px
 
 % item extent in pixels
 x_ext = vaToPx(ct(hss:hse), e.s.spatialConfig);

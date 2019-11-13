@@ -59,7 +59,7 @@ tg.s.durOnStart = 2;                % Time that pointer must dwell in starting p
 tg.s.durWaitForStart = inf;         % Time to wait for participant to assume strating position 
 tg.s.durPreStimFixation = 2;        % Time fixation cross is shown after starting position has been 
                                     % assumed and before stimuli are presented 
-tg.s.durItemPresentation = 1;       % Duration of stimulus presentation
+tg.s.durItemPresentation = inf;     % Duration of stimulus presentation
 tg.s.allowedLocResponseTime = 3;    % Max duration to make location response
 tg.s.allowedTgtResponseTime = 3;    % Max duration to make tgt presence response
 tg.s.zZeroTolerance_mm = 1;         % pointer's *absolute* z-value must be below this value
@@ -109,13 +109,13 @@ tg.s.tgtShapeCode = 0;
 % element number in this array. 
 % TODO: Adjust these to have the correct colors used by Hazeltine!
 % TODO: Adjust to colors used in Hazeltine
-tg.s.stimColors{1} = [70 0 0]; % orange
-tg.s.stimColors{2} = [0 0 255]; % blue
-tg.s.stimColors{3} = [255 255 0]; % yellow
-tg.s.stimColors{4} = [100 0 100]; % purple
-tg.s.stimColors{5} = [100 100 100]; % gray
-tg.s.stimColors{6} = [255 0 0]; % red
-tg.s.stimColors{7} = [0 255 0]; % green TARGET COLOR!
+tg.s.stimColors{1} = [70 0 0]/255; % orange
+tg.s.stimColors{2} = [0 0 255]/255; % blue
+tg.s.stimColors{3} = [255 255 0]/255; % yellow
+tg.s.stimColors{4} = [100 0 100]/255; % purple
+tg.s.stimColors{5} = [100 100 100]/255; % gray
+tg.s.stimColors{6} = [255 0 0]/255; % red
+tg.s.stimColors{7} = [0 255 0]/255; % green TARGET COLOR!
 
 tg.s.tgtColorCode = 7;
  
@@ -127,8 +127,8 @@ tg.s.feedback.dur_abort = 1;  % duration of feedback if trial aborted
 tg.s.feedback.correct = 'Richtig!';    
 tg.s.feedback.incorrect = 'Falsch!'; 
 tg.s.feedback.notMovedToStart = 'Startposition nicht rechtzeitig eingenommen';
-tg.s.feedback.leftStartInFix = 'Bitte erst nach den Buchstaben';
-tg.s.feedback.leftStartInStim = 'Bitte erst nach den Buchstaben';
+tg.s.feedback.leftStartInFix = 'Bitte erst nach den Buchstaben bewegen.';
+tg.s.feedback.leftStartInStim = 'Bitte erst nach den Buchstaben bewegen.';
 tg.s.feedback.exceededLocRT = 'Ortsauswahl zu spät';
 tg.s.feedback.exceededTgtRT = 'Reaktion zu spät';
  
@@ -145,7 +145,7 @@ tg.s.fixCrossToStimRegBorder_va = 0.88; % from center of fix cross to border of 
 
 stimSize_xy = [0.54, 0.71];
 stimSep_x = 0.94;
-stimLineWidth = 0.2;
+stimLineWidth = 0.1;
 
 % refers to elements of stimShapes
 % each of these sequences in 25 % of trials
