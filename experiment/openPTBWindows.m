@@ -26,10 +26,11 @@ winOn.rect = [0 0 e.s.expScreenSize_px];
 winOn.font = e.s.instructionTextFont;
 winOn.fontSize = round(vaToPx(e.s.instructionTextHeight_va, e.s.spatialConfig));
 [winOn.h, winOn.rect] = ...
-    PsychImaging('openWindow', winOn.screen, winOn.bgColor, winOn.rect);
+    PsychImaging('openWindow', winOn.screen, winOn.bgColor, winOn.rect, ...
+    [], [], [], e.s.multisampling);
 Screen('TextFont', winOn.h, winOn.font);
 Screen('TextSize', winOn.h, winOn.fontSize); 
-
+ 
 % offscreen window to draw stimuli to
 winsOff.stims.bgColor = e.s.bgColor;
 winsOff.stims.screen = expScreen;
@@ -38,7 +39,8 @@ winsOff.stims.rect = winOn.rect;
     RectCenter(winsOff.stims.rect);
 [winsOff.stims.h, winsOff.stims.rect] = ...
     Screen('OpenOffScreenWindow', winsOff.stims.screen, ...
-    winsOff.stims.bgColor, winsOff.stims.rect);
+    winsOff.stims.bgColor, winsOff.stims.rect, ...
+    [], [], e.s.multisampling);
 
 % empty offscreen window
 winsOff.empty.bgColor = e.s.bgColor;
@@ -48,7 +50,8 @@ winsOff.empty.rect = winOn.rect;
     RectCenter(winsOff.empty.rect);
 [winsOff.empty.h, winsOff.empty.rect] = ...
     Screen('OpenOffScreenWindow', winsOff.empty.screen, ...
-    winsOff.empty.bgColor, winsOff.empty.rect);
+    winsOff.empty.bgColor, winsOff.empty.rect, ...
+    [], [], e.s.multisampling);
 
 % offscreen window with start marker
 winsOff.startMarker.bgColor = e.s.bgColor;
@@ -58,7 +61,8 @@ winsOff.startMarker.rect = winOn.rect;
     RectCenter(winsOff.startMarker.rect);
 [winsOff.startMarker.h, winsOff.startMarker.rect] = ...
     Screen('OpenOffScreenWindow', winsOff.startMarker.screen, ...
-    winsOff.startMarker.bgColor, winsOff.startMarker.rect);
+    winsOff.startMarker.bgColor, winsOff.startMarker.rect, ...
+    [], [], e.s.multisampling);
 
 % offscreen window for fixation cross
 winsOff.fix.bgColor = e.s.bgColor;
@@ -68,7 +72,7 @@ winsOff.fix.rect = winOn.rect;
     RectCenter(winsOff.fix.rect);
 [winsOff.fix.h, winsOff.fix.rect] = ...
     Screen('OpenOffScreenWindow', winsOff.fix.screen, ...
-    winsOff.fix.bgColor, winsOff.fix.rect);
+    winsOff.fix.bgColor, winsOff.fix.rect, [], [], e.s.multisampling);
 
 % offscreen window for target presence response
 winsOff.targetResponse.bgColor = e.s.bgColor;
@@ -78,4 +82,5 @@ winsOff.targetResponse.rect = winOn.rect;
     RectCenter(winsOff.targetResponse.rect);
 [winsOff.targetResponse.h, winsOff.targetResponse.rect] = ...
     Screen('OpenOffScreenWindow', winsOff.targetResponse.screen, ...
-    winsOff.targetResponse.bgColor, winsOff.targetResponse.rect);
+    winsOff.targetResponse.bgColor, winsOff.targetResponse.rect, ...
+    [], [], e.s.multisampling);

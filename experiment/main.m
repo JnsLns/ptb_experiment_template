@@ -6,6 +6,7 @@
 
 %%%% General settings
 
+e.s.multisampling = 20;
 
 % This will be appended to each results file name
 experimentName = 'my_exp';

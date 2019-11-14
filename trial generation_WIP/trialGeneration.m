@@ -42,10 +42,10 @@ tg.s.startMarkerRad_va = 0.2;
 tg.s.cursorRad_va = 0.05;
 tg.s.cursorColor = 'white';
 
-tg.s.fixRadius_va = 1;              % Radius of fixation cross (visual angle)
-tg.s.fixLineWidth_va = 0.2;         % Line width of fixation cross (visual angle)
+tg.s.fixRadius_va = 0.5;            % Radius of fixation cross (visual angle)
+tg.s.fixLineWidth_va = 0.1;         % Line width of fixation cross (visual angle)
 tg.s.fixColor = 'white';            % Color of fixation cross (rgb vec or string)
-tg.s.presArea_va = [20, 20];        % horz/vert size of presentation angle in degrees visual angle
+tg.s.presArea_va = [40, 30];        % horz/vert size of presentation angle in degrees visual angle
                                     % (always centered within screen)
 tg.s.startPosZ_mm = 200;            % Distance of pointer tip starting position
                                     % from screen surface (x and y are determined
@@ -59,7 +59,7 @@ tg.s.durOnStart = 2;                % Time that pointer must dwell in starting p
 tg.s.durWaitForStart = inf;         % Time to wait for participant to assume strating position 
 tg.s.durPreStimFixation = 2;        % Time fixation cross is shown after starting position has been 
                                     % assumed and before stimuli are presented 
-tg.s.durItemPresentation = inf;     % Duration of stimulus presentation
+tg.s.durItemPresentation = 2;       % Duration of stimulus presentation
 tg.s.allowedLocResponseTime = 3;    % Max duration to make location response
 tg.s.allowedTgtResponseTime = 3;    % Max duration to make tgt presence response
 tg.s.zZeroTolerance_mm = 1;         % pointer's *absolute* z-value must be below this value

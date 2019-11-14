@@ -21,11 +21,7 @@
 %.If the field contains one of these strings, it will be replaced by a
 % Psychtoolbox color lookup table index (which is obtained during
 % experiment runtime) corresponding to that color ('grey' is 'white'/2).
-% This happens in colorDefinition.m. 
-%
-% Check color representation... 0-1 or 0-255 ? See PsychDefaultSetup doc
-% and check all color specifications in the code. I might have mixed the
-% two...
+% This happens in colorDefinition.m. NOTE: UPDATED... use rgb vectors 0-1
 
 % IMPORTANT: Test storeResults.m
 

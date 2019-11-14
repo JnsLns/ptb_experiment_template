@@ -29,7 +29,8 @@ if KbCheck
                                 
         % Reopen onscreen window
         [winOn.h, winOn.rect] = ...
-            PsychImaging('openWindow', winOn.screen, winOn.bgColor, winOn.rect);                 
+            PsychImaging('openWindow', winOn.screen, winOn.bgColor, ...
+            winOn.rect, [], [], [], e.s.multisampling);                 
         Screen('TextFont', winOn.h, winOn.font); 
         Screen('TextSize', winOn.h, winOn.fontSize);
         
@@ -38,7 +39,8 @@ if KbCheck
             osw = osw{1};
             [winsOff.(osw).h, winsOff.(osw).rect] = ...
                 Screen('OpenOffScreenWindow', winsOff.(osw).screen, ...
-                winsOff.(osw).bgColor, winsOff.(osw).rect);
+                winsOff.(osw).bgColor, winsOff.(osw).rect, ...
+                [], [], e.s.multisampling);
         end                        
         
         HideCursor;
