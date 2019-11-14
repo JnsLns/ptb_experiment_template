@@ -1,30 +1,12 @@
 
 % This script presents a single trial including feedback and assigns values
-% to struct 'out'
+% to struct 'out' (meaning these will go into the results matrix)
 
 
 out.abortCode = 0;
 out.sequNum = sequNum;
 
-
-
-%%%% Draw to offscreen windows
-
-% Modify this file to draw whatever stimuli you need to winsOff.stims.h
-drawStimuli; 
-
-% Draw fixation cross to winsOff.fix.h
-drawFixation; 
-
-% Draw start marker to winsOff.startMarker.h
- [sm_xy_ptb_px(1), sm_xy_ptb_px(2)] = ...
-    paVaToPtbPx(e.s.startPos_va(1), e.s.startPos_va(2), e.s.spatialConfig);
-Screen('DrawDots', winsOff.startMarker.h, sm_xy_ptb_px, ...
-        vaToPx(e.s.startMarkerRad_va, e.s.spatialConfig)*2, ...
-        e.s.startMarkerColor, [], 1);
-
-
-    
+  
     
 % -------------------------------------------------------------------------
 % PRESENTATION STARTS HERE
@@ -356,15 +338,6 @@ end
  
 
 
-%%%% create unique ID for current response
-out.reponseID = round(rand()* 1e+12);
-if isfield(e.s.resCols, 'responseID')
-    while any(e.results(:, e.s.resCols.responseID) == responseID)
-        out.reponseID = round(rand()* 1e+12);
-    end
-end
-
-
 
 %%%% Feedback
 
@@ -401,6 +374,14 @@ ShowTextAndWait(feedbackStr, e.s.feedbackTextColor, winOn.h, dur, false)
 
 
 
+%%%% create unique ID for current response
+
+out.reponseID = round(rand()* 1e+12);
+if isfield(e.s.resCols, 'responseID')
+    while any(e.results(:, e.s.resCols.responseID) == responseID)
+        out.reponseID = round(rand()* 1e+12);
+    end
+end
 
 
 

@@ -1,4 +1,6 @@
 
+% Draw stimuli to offscreen window winsOff.stims.h. 
+
 
 % abbreviations for columns in triallist (used in the following)
 vps = triallistCols.vertPosStart;  % positions

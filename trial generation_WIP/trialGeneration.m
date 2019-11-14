@@ -36,6 +36,8 @@
 % unless fieldnames are postfixed with '_mm' (millimeters). All position
 % data is in the presentaion-area-based coordinate frame.
  
+tg.s.experimentName = 'paradigm_1'; % This will be appended to each results file name
+
 tg.s.mouseMovementMultiplier = [1 1];
 tg.s.startMarkerColor = 'black';
 tg.s.startMarkerRad_va = 0.2;

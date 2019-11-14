@@ -1,17 +1,38 @@
 %% Illusory conjunction mouse tracking task
 % Jonas Lins, October 2019
 
-% See readme.md for help.
+% NOTE:
+%
+% Most code here and in the private directory is infrastucture that should
+% usually not be modified to implement a new experiment.
+%
+% Things that should be modified to implement a new experiment are:
+% 
+% -- The other files in the experiment directory (they are used in the current
+%    script).
+%
+% -- Passages marked "MODIFY THIS" in the below code. 
+%
+% -- Settings at the top of this script may of course as well be modified.
+%
+% See readme.md for further help.
 
 
-%%%% General settings
 
-e.s.multisampling = 20;
+% General settings
 
-% This will be appended to each results file name
-experimentName = 'my_exp';
+% Note: All properties of the paradigm itself should be defined in trial
+% generation. Here only things that might be changed halfway through
+% participants (such as the screen used) should be listed.
 
-% actual screen size in mm (actual image area)
+% save results to file?
+doSave = true;
+
+% For antialiasing: higher values = smoother graphics but worse
+% performance. Reduce if bad performance or graphics memory problems.
+e.s.multisampling = 3;
+
+% actual screen size in mm (visible image) as accurately as possible.
 %e.s.expScreenSize_mm = [474, 291]; % Miro
 e.s.expScreenSize_mm = [531 299]; % Gecko
 
@@ -22,17 +43,13 @@ e.s.viewingDistance_mm = 500;
 % depressed at the start of a trial)
 pauseKey = 'Pause';
        
-% save results to file?
-doSave = true;
 
-
-%%%% Settings specific to IC / trajectory-based paradigm
+% Settings specific to trajectory-based paradigm
 
 % Define column numbers for trajectory matrices 
 e.s.trajCols.x = 1; % pointer coordinates
 e.s.trajCols.y = 2;
-e.s.trajCols.t = 3; % tracker time stamps (compatible with time measure-
-                    % ments in e.results if they are postfixed '_tr').
+e.s.trajCols.t = 3; % pc time
 
 % Regarding recording of trajectories:
 % If e.s.dontRecordConstantTrajData == 1, then only the first of any directly
@@ -42,54 +59,44 @@ e.s.trajCols.t = 3; % tracker time stamps (compatible with time measure-
 e.s.dontRecordConstantTrajData = 1;
 
 
-                       %%%% END OF SETTINGS %%%%
 
-                       
-%%%% Warn in case saving is disabled
-                       
-if ~doSave   
-    resp = ...
-    questdlg('Saving is disabled, results will not be recorded.', 'Warning', ...
-                'Continue without saving','Abort', 2);
-    if strcmp(resp, 'Abort')
-        return
-    end    
-end
-                       
-
-%%%% Load list of trials and settings from file
-
-[e.s.trialsFileName, trialsPath] = uigetfile('*.mat', 'Select trial file.');
-load([trialsPath, e.s.trialsFileName]);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% END OF SETTINGS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-%%%% Ask for save path
 
-if doSave
-    savePath = requestSavePath(experimentName);
-end
+ 
+%--------------------------V   MODIFY THIS   V-----------------------------
+
+% Initialize fields of struct e with arrays to store any results data 
+% that does not fit into the results matrix ('e.results'), that is,
+% anything that is not a scalar or a vector with a fixed number of elements.
+% Whatever is specified here should be filled trial-by-trial during the
+% experiment so that the order of elements corresponds to rows of
+% 'e.results'. Do not forget to insert or skip rows for aborted trials to
+% keep that order. Example here: Mouse movement paths for each trial.
+
+e.trajectories = cell(0);
+
+%--------------------------------------------------------------------------
 
 
-%%%% Psychtoolbox settings
-                       
+% Initialize results matrix
+e.results = [];
+
+% Psychtoolbox settings                       
 PsychDefaultSetup(2);               % some default Psychtoolbox settings
 Screen('Preference', 'VisualDebuglevel', 3); % suppress PTB splash screen
-% Screen('Preference','SkipSyncTests',1); % use when debugging in windowed mode
 
-
-%%%% Determine experimental screen
-
+% Determine experimental screen
 screens = Screen('Screens');        % get all connected screens
 expScreen = max(screens);           % use last screen as stimulus display
 
+% Load list of trials and settings from file
+[e.s.trialsFileName, trialsPath] = uigetfile('*.mat', 'Select trial file.');
+load([trialsPath, e.s.trialsFileName]);
 
-%%%% Complete settings struct e.s.
-
-% Get/store spatial configuration of experimental setup.
-% Gather all values defining actual spatial setup with respect to the
-% specific hardware and arrangement used when the experiment was conducted
-% ans store them in struct 'e.s.spatialConfig'. Serves as input to CRF/unit
-% conversion functions that are found in private directory.
+% Get/store spatial configuration of experimental setup (serves as input
+% to CRF/unit conversion functions)
 tmp = get(expScreen,'ScreenSize');
 e.s.expScreenSize_px = tmp(3:4);         % get screen res
 e.s.spatialConfig.viewingDistance_mm = e.s.viewingDistance_mm;
@@ -98,8 +105,7 @@ e.s.spatialConfig.expScreenSize_px = e.s.expScreenSize_px;
 e.s.spatialConfig.presArea_va = tg.s.presArea_va;   
 
 % copy experimental setup data (not trials) from trial generation struct
-% (tg.s) to experimental output struct (e.s); except for
-% tg.s.triallistCols.
+% (tg.s) to experimental output struct (e.s); except for tg.s.triallistCols.
 for fn = fieldnames(tg.s)'    
     if strcmp(fn{1}, 'triallistCols')
         continue; 
@@ -111,58 +117,69 @@ for fn = fieldnames(tg.s)'
     e.s.(fn{1}) = tg.s.(fn{1});    
 end
  
- 
-%%%% Get trial data  
-
-trials = tg.triallist;
-triallistCols = tg.s.triallistCols;
-clear tg; % remove 'tg', it won't be needed anymore
-
-
-%%%% Initialize output arrays
-
-e.results = [];
-e.trajectories = cell(0);
-
-
-%%%% Create results file
-
-if doSave
-    save(savePath, 'e');
+% Request save path or warn in case saving is disabled
+if doSave   
+    savePath = requestSavePath(e.s.experimentName);    
+else
+    resp = ...
+    questdlg('Saving is disabled, results will not be recorded.', 'Warning', ...
+                'Continue without saving','Abort', 2);
+    if strcmp(resp, 'Abort')
+        return
+    end  
 end
 
+% Transfer trial data to variables that will be used throughout rest of code  
+trials = tg.triallist;
+triallistCols = tg.s.triallistCols;
+clear tg; % tg won't be needed anymore
 
-%%%% Convert color-defining field in e.s from strings to RGB
-
+% Convert color-defining field in e.s from strings to RGB
 colorDefinition;
-
-
-%%%% Open PTB windows & hide cursor
-
-% create psychtoolbox onscreen and offscreen windows. NOTE: See this script
-% for info on how to create additional offscreen windows (it is useful to
-% create an offscreen window for displays that reoccur mutliple times.
-openPTBWindows;
 
 % Hide mouse cursor
 HideCursor;
 
-
-%%%% Construct e.s.resCols 
-
-% 'e.s.resCols' fields hold column indices for 'e.results'. It is
-% initialized here by trasnferring the indices from 'triallistCols', since
+% Construct e.s.resCols (holds column indices for 'e.results'. It is
+% initialized here by transferring the indices from 'triallistCols', since
 % on each trial not only results are stored in 'e.results', but also all
-% trial properties.
+% trial properties).
 createResCols;
 
 
-%%%% Things to be presented before the experiment
+
+%--------------------------V   MODIFY THIS   V-----------------------------
+
+% Add any PTB windows that you may need in this file.
+
+% Open PTB windows
+openPTBWindows;
+
+%--------------------------------------------------------------------------
+
+
+%--------------------------V   MODIFY THIS   V-----------------------------
+
+% Modify this file as needed to draw static graphics like fixation cross etc.
+
+% Draw graphics that are reused in same form each trial.
+drawStaticGraphics;
+
+%--------------------------------------------------------------------------
+
+
+%--------------------------V   MODIFY THIS   V-----------------------------
+
+% Add any instructions that you need to show to the participants. Use
+% ShowTextAndWait multiple times if you need multiple successive panels.
 
 % Show welcome text and wait for button press
 ShowTextAndWait(...
     'Bereit. Zum Starten des Experiments beliebige Taste drück en!', ...
     e.s.instructionTextColor, winOn.h, 0.5, true);
+
+%--------------------------------------------------------------------------
+
 
 
 %%%% Trial loop
@@ -171,7 +188,7 @@ curTrial = 1;
 sequNum = 0;
 while curTrial <= size(trials,1)
     
-    % Initialize / empty some things        
+    % Initialize / empty some things            
     for osw = fieldnames(winsOff)'  
         osw = osw{1};
         Screen('FillRect', winsOff.(osw).h, winsOff.(osw).bgColor);
@@ -187,9 +204,19 @@ while curTrial <= size(trials,1)
     pauseAndResume;
     
     
-    % run trial (only this script assigns to fields of struct 'out')
+    %--------------------------V   MODIFY THIS   V-------------------------    
+       
+    % Draw things that change from trial to trial (i.e., stimuli) to
+    % offscreen windows, to use it in singleTrial.m below.
+    drawStimuli;
+    
+    % Edit this script to adjust what happens in each trial. Only this file
+    % should assign to struct 'out'.
     singleTrial;          
-            
+
+    %----------------------------------------------------------------------
+    
+    
     updateResCols;    % extend e.s.resCols with column numbers for fields
                       % in struct 'out' (which stores results of one trial)
     storeResults;     % store contents of fields of 'out' in the correspon-
@@ -201,7 +228,7 @@ while curTrial <= size(trials,1)
                         % random time point 
      
     if doSave
-        save(savePath, 'e', '-append');
+        save(savePath, 'e');
     end
     
     % go to next trial... 
@@ -210,12 +237,20 @@ while curTrial <= size(trials,1)
 end
 
 
-%%%% Things to be presented after the experiment
+    
+%--------------------------V   MODIFY THIS   V-----------------------------  
+
+% Use ShowTextAndWait multiple times if required.
+
+% Things to be presented after the experiment
 
 % Show goodbye message and wait for button press
 ShowTextAndWait(...
     'Experiment beendet. Vielen Dank für die Teilnahme!', ...
     e.s.instructionTextColor, winOn.h, 0.5, true);
+
+%--------------------------------------------------------------------------
+
 
 
 %%% Clean up
