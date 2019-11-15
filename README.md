@@ -3,7 +3,7 @@ trial generation and experiment code. Here's the status of each:*
 * *Experiment scripts are largely done and somewhat tests, but need some additional bug hunting.*
 * *Trial generation works but is not well structured/documented and does not implement all trial types, yet.*
 
-* AS TO THE DOCUMENTATION BELOW: This has been carried over from a specific experiment and needs to be adjusted. *
+*AS TO THE DOCUMENTATION BELOW: This has been carried over from a specific experiment and needs to be adjusted.*
 
 
 # IC pointing task
