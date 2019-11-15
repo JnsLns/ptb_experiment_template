@@ -1,6 +1,6 @@
 %%%% Shuffle aborted trial into remaining triallist
 
-if out.abortCode
+if rerunTrialLater 
     
     if curTrial ~= size(trials,1)
         
@@ -21,3 +21,4 @@ if out.abortCode
     curTrial = curTrial - 1; % will be incremented again at trial outset.
     
 end
+

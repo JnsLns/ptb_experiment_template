@@ -74,7 +74,7 @@ where this does not make sense and which are instead in millimeters. The
 fieldnames of these are postfixed '_mm'. The origin of the reference frame
 is generally located at the lower left corner of the "presentation area", a
 rectangular region centered within the screen, x-axis increases rightward,
-y-axis upward; see [below](#spatial-reference-frames) for more info on spatial
+y-axis upward; see [below](#spatial-reference-frames-and-units) for more info on spatial
 reference frames.
 
 #### Further notes on settings
@@ -151,7 +151,7 @@ millimeters. The fieldnames of these are postfixed '_mm'. Trajectory data
 map onto 3D data. However, the origin of the reference frame is generally located
 at the lower left corner of the "presentation area", a rectangular region centered
 within the screen, x-axis increases rightward, y-axis upward; see
-[below](#spatial-reference-frames) for more info on spatial reference frames.
+[below](#spatial-reference-frames-and-units) for more info on spatial reference frames.
 
 ## Specifying which variables should be stored in the results matrix
 
@@ -245,7 +245,7 @@ of entities within the span is (and should be ensured to be) identical in
 all cases.
 
 
-## Spatial reference frames
+## Spatial reference frames and units
 
 ![spatial reference frames](images/readme_spatial_setup.jpg)
 
@@ -321,6 +321,36 @@ millimeters (mm) to presentation-area-based frame (pa) in millimeters (mm).
 
 Since `e.s.spatialConfig` is stored with the results data, these functions
 can also be used during later analysis.
+
+#### Note: Visual angle conversion
+
+The method that most psychophysics people use to convert between visual angle and
+sizes or distances on a flat screen is Method 1 in the figure below (where d is
+viewing distance, s is stimulus size or distance, and theta is the visual angle in
+degrees). With this method, stimulus sizes or distances depend on eccentricity, as
+can be seen from the different lengths of the green lines in the figure. With this
+method it is sometimes not clear when people provide stimulus sizes or distances
+whether they computed them as if the stimulus was in the center of vision, or whether
+they accounted for its eccentricity (which in most cases does not seem to be the case). 
+
+In the code, I instead use Method 2, which computes size or distance s as the
+length of the arc with radius d that corresponds to theta. As can be seen from
+the red lines in the figure, there is a constant relationship between
+angle and size with this method. I use this method instead of the standard one to
+be able to use visual angle as units in the coordinate system in which stimuli
+locations and sizes are defined. This works only if the relationship is consistent.
+
+Of course, the results of the two methods differ somewhat, and this difference
+increases with the visual angle or stimulus size at hand. However, for all practical
+stimulus sizes and distances that may occur in experiments that you would implement
+using this code, this difference between the methods is negligibly small (which may be
+one reason why people do not bother stating whether or not they accounted for eccentricity).
+The bottom figure shows the difference for different values of visual angle, to help
+decide whether the difference is relevant for the experiment at hand.
+
+![Visual angle conversion](images/readme_visual_angle.jpg)
+
+![Angle computation method difference](images/readme_angle_method_comparison.jpg)
 
 
 ## Conditions, responses and codes

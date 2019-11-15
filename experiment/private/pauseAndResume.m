@@ -1,6 +1,7 @@
 % Check whether pause key is being pressed, if so, halt experiment
 % execution. If user chooses to resume, reopen psychtoolbox windows whose
-% properties are found in structs winOn and winsOff.
+% properties are found in structs winOn and winsOff and re-draw static
+% graphics.
 
 if KbCheck
     
@@ -44,6 +45,7 @@ if KbCheck
         end                        
         
         HideCursor;
+        drawStaticGraphics;        
         
     end
 end
