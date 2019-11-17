@@ -14,6 +14,18 @@ function main
 % defined just below this text may of course be modified as well, as
 % specified there).
 %
+% The general structure of this file is (only modifieable components): 
+%
+% Settings                        % such as size of used screen
+% run openOffscreenWindows.m      % open PTB windows drawn to later
+% run drawStaticGraphics.m        % draw graphics static over trials
+% run presentInstructions.m       % show welcome / instructional text  
+% For each trial in trial list:  
+%   run drawChangingGraphics.m    % draw trial-specific graphics (stimuli)
+%   run runTrial.m                % everything that happens in trial
+%   run storeCustomOutputData.m   % store data not stored in results matrix
+% run presentGoodbye.m            % show goodbye / closing text
+%
 % See readme.md for further help.
 
 
