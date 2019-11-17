@@ -9,18 +9,17 @@
 % Here you are free to present to the participants whatever you like and
 % get responses, by specifying the sequential structure of the trial,
 % possibly using info from the trial list, offscreen windows and drawn
-% images you have defined before. 
+% images you have defined before. Everything in here can be modified freely. 
 %
-% NOTE. Access the current trial's parameters from the trial list by doing:
+% Access the current trial's parameters from the trial list by doing:
 %
 %      trials(curTrial, triallistCols.whateverYouAreLookingFor)
 %
-% Everything in here can be modified freely, EXCEPT FOR THE FOLLOWING LINE
-% OF CODE:
-rerunTrialLater = false;
-% If this variable is set to 'true' anywhere during the trial, the trial
-% will be redone later, at a random point in the remaining list of trials.
-% This can be used to repeat trials that were aborted prematurely for
+%
+% NOTE: You can rerun a trial at a later point of the session, by setting
+% 'rerunTrialLater = true;' anywhere in this file. This will move the
+% trial to a random point in the remaining list of trials. This can be used
+% for instance to repeat trials that were aborted prematurely for
 % some reason. Note that the results from trials where 'rerunTrialLater'
 % was set to 'true' are still recorded in 'e.results'. It is thus a good
 % idea to define an output variable like 'out.abortCode' that keeps track

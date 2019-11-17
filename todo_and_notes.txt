@@ -11,6 +11,8 @@
 
 % GENERAL TODO %%%%%%%%%%%%%%%%%
 
+% conversion functions are not in the private directory anymore.
+
 % Make experiment a function
 
 % Any randomization of trial order must be done during trial generation. 
