@@ -11,6 +11,9 @@
 
 % GENERAL TODO %%%%%%%%%%%%%%%%%
 
+% It would be handy if current trial's data within runTrial could be
+% accessed as a row vector instead of having to use curTrial.
+
 % conversion functions are not in the private directory anymore.
 
 % Make experiment a function
