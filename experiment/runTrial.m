@@ -1,29 +1,35 @@
 % This script presents a single trial including feedback and assigns values
 % to struct 'out' (meaning these will go into the results matrix).
 %
-% Output data that does not fit the results matrix (i.e., that is not a
-% scalar nor a reasonably small fixed-length vector of numeric data) can be
-% stored as well. For this, store that data in some arbitrary variable here 
-% and adjust storeCustomOutputData.m accordingly (see documentation there).
-% 
-% Here you are free to present to the participants whatever you like and
-% get responses, by specifying the sequential structure of the trial,
-% possibly using info from the trial list, offscreen windows and drawn
-% images you have defined before. Everything in here can be modified freely. 
+% Everything in here can be modified freely. Present to the participants
+% whatever you like and get responses, by specifying the sequential structure
+% of the trials. Use the offscreen windows that were drawn to earlier,
+% and use info from the trial list to further customize individual trials.
 %
 % Access the current trial's parameters from the trial list by doing:
 %
 %      trials(curTrial, triallistCols.whateverYouAreLookingFor)
 %
+% 
+%                __How to store custom output data__
 %
-% NOTE: You can rerun a trial at a later point of the session, by setting
-% 'rerunTrialLater = true;' anywhere in this file. This will move the
-% trial to a random point in the remaining list of trials. This can be used
-% for instance to repeat trials that were aborted prematurely for
-% some reason. Note that the results from trials where 'rerunTrialLater'
-% was set to 'true' are still recorded in 'e.results'. It is thus a good
-% idea to define an output variable like 'out.abortCode' that keeps track
-% of which rows in 'e.results' correspond to aborted trials.
+% Output data that does not fit the results matrix (i.e., that is not a
+% scalar nor a reasonably small fixed-length vector of numeric data) can be
+% stored as well. For this, store that data in some arbitrary variable here 
+% and adjust storeCustomOutputData.m accordingly (see documentation there).
+%
+%               __How to repeat the current trial__
+%
+% You can rerun a trial at a later point of the experimental session, by
+% setting 'rerunTrialLater = true;' anywhere in this file. This will move
+% the trial (after it is finished) to a random point in the remaining
+% list of trials. This can be used for instance to repeat trials that
+% were aborted prematurely for some reason. Note that the results from
+% trials where 'rerunTrialLater' was set to 'true' are still recorded in
+% 'e.results'. It is thus a good idea to define an output variable like
+% 'out.abortCode' that keeps track of which rows in 'e.results' correspond
+% to aborted trials. Note that 'rerunTrialLater' is reset to 'false'
+% automatically before each trial.
 
 
 
