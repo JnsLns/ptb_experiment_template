@@ -10,7 +10,25 @@
 %
 %      trials(curTrial, triallistCols.whateverYouAreLookingFor)
 %
-% 
+%
+%              __How to store things in results matrix__
+%
+% To store a given value in the results matrix ('e.results'), simply create
+% a field in the pre-existing struct 'out', and store the variable in that
+% field. For instance: out.myResultValue = myResultValue. Create as many
+% fields as you need. You can later find the values stored in 'e.results'.
+% During data analysis you can then use 'e.s.resCols' to see which column
+% numbers of 'e.results' correspond to which field of 'out' ('e.s.resCols'
+% is automatically updated when you introduce a new field in 'out'). Vector
+% data will occupy multiple columns in 'e.results', which is reflected by
+% two instead of one field being created in 'e.s.resCols'. These will be
+% named after the corresponding field in 'out' but with 'Start' and 'End'
+% appended, respectively, and address the outer columns of the column span
+% occupied by the vector data. Note that the data written to a field of
+% 'out' must have the same size as the data written to it when it was used
+% for the first time (pad with nans if necessary). Never delete or empty
+% 'out' manually, this is done automatically.
+%
 %                __How to store custom output data__
 %
 % Output data that does not fit the results matrix (i.e., that is not a
