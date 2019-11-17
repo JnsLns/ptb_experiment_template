@@ -3,8 +3,10 @@
 %
 % Everything in here can be modified freely. Present to the participants
 % whatever you like and get responses, by specifying the sequential structure
-% of the trials. Use the offscreen windows that were drawn to earlier,
-% and use info from the trial list to further customize individual trials.
+% of the trials. Use the offscreen windows that were drawn to earlier, 
+% copying them to the onscreen window (whose window pointer is 'winOn.h')
+% when needed. Use info from the trial list to further customize individual
+% trials.
 %
 % Access the current trial's parameters from the trial list by doing:
 %
