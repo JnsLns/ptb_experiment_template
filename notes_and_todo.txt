@@ -1,0 +1,54 @@
+%%%%%%%%%%%%%%%%% NECESSARY CHANGES TO ANALYSIS SCRIPT
+
+% Aborted trials are now stored, i.e., there are now empty trajectory
+% matrices in e.trajectories and partially incomplete results rows (nans).
+% This has to be dealt with during analysis.
+
+% the triallist is not longer stored in the experimental output. everything
+% needed can now be found in e.results.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% GENERAL TODO %%%%%%%%%%%%%%%%%
+
+% It would be handy if current trial's data within runTrial could be
+% accessed as a row vector instead of having to use curTrial.
+
+% conversion functions are not in the private directory anymore.
+
+% Make experiment a function
+
+% Any randomization of trial order must be done during trial generation. 
+ 
+% Colors can be specified as RGB vectors (0-255) or strings, as follows.
+% Any fields of 'e.s' (carried over from 'tg.s') whose names end on 'Color'
+% will be checked for any of the strings 'white', 'black', 'grey'. 
+%.If the field contains one of these strings, it will be replaced by a
+% Psychtoolbox color lookup table index (which is obtained during
+% experiment runtime) corresponding to that color ('grey' is 'white'/2).
+% This happens in colorDefinition.m. NOTE: UPDATED... use rgb vectors 0-1
+
+% IMPORTANT: Test storeResults.m
+
+% Make a setting (in trial generation) to determine whether trials should
+% be repeated if aborted. Maybe with maximum number of repetitions.
+
+% Make similar scheme for trajCols as for resCols? (would simplify dealing
+% with different dimensionality of trajectories...)
+
+% Any pseudo-randomization in terms of trial order has to be done when
+% constructing the triallists... (i.e., outside the experiment script)
+
+% Enable multisampling for onscreen window (does it have to be enabled for
+% offscreen windows separately?), like this (here, 20 samples are used):
+% w =  PsychImaging('openWindow', 0, [0 0 0], [100 100 500 500], [], [], [], 20);
+
+% Pointer calibration... validate it in some way before proceeding.
+
+% The checks for starting position being assumed and held throughout
+% fixation phase may (didn't test) need some sluggishness over time to not
+% be disrupted by marker jumps. on the other hand, bad data should be
+% filtered out anyway and replaced by last good data, so that should do the
+% trick unless there are types of marker jumps that are not caught by this.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

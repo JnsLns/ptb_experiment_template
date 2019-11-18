@@ -83,14 +83,16 @@ try                         % ** DO NOT MODIFY **
 preparations;               % ** DO NOT MODIFY **
 openOnscreenWindow;         % ** DO NOT MODIFY **
 
-openOffscreenWindows;       % Open any Psychtoolbox offscreen windows you
-                            % you may need. These are for drawing images to
-                            % them in drawStaticGraphics and
-                            % drawChangingGraphics (see below). The pre-
-                            % pared images can then be used during a trial
-                            % (i.e., in runTrial) by just copying the res-
-                            % pective offscreen window to the pre-existing
-                            % onscreen window.
+openOffscreenWindows;       % Open Psychtoolbox offscreen windows. Add any
+                            % windows you may need in this file. Draw to
+                            % them before the actual presentation phase of
+                            % a trial, in drawStaticGraphics and
+                            % drawChangingGraphics (see below). To use then
+                            % use the pepared images during a trial (in
+                            % runTrial) copy the  to the
+                            % onscreen window. The images then only need to
+                            % be copied to the onscreen window for
+                            % presentation. 
 
 drawStaticGraphics;         % Draw graphics that do not change from trial
                             % to trial (e.g., a fixation cross) to the
