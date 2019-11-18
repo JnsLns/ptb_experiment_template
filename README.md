@@ -240,7 +240,7 @@ all cases.
 
 ## Spatial reference frames and units
 
-![spatial reference frames](images/readme_spatial_setup.jpg)
+![spatial reference frames](doc_images/readme_spatial_setup.jpg)
 
 #### Short version
 
@@ -341,9 +341,9 @@ one reason why people do not bother stating whether or not they accounted for ec
 The bottom figure shows the difference for different values of visual angle, to help
 decide whether the difference is relevant for the experiment at hand.
 
-![Visual angle conversion](images/readme_visual_angle.jpg)
+![Visual angle conversion](doc_images/readme_visual_angle.jpg)
 
-![Angle computation method difference](images/readme_angle_method_comparison.jpg)
+![Angle computation method difference](doc_images/readme_angle_method_comparison.jpg)
 
 
 ## Conditions, responses and codes

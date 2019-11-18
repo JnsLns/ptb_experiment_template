@@ -1,27 +1,28 @@
-try
-% Add common_functions folder to MATLAB path temporarily 
-% (will be removed at the end of this script)
-[curFilePath,~,~] = fileparts(mfilename('fullpath'));
-[pathstr, ~, ~] = fileparts(curFilePath);
-dirs = regexp(pathstr, filesep, 'split');
-pathToAdd = fullfile(dirs{1:end}, 'common_functions');
-addpath(genpath(pathToAdd))
-
-%%%%% WORK IN PROGRESS %%%%%
-
+% Generate a list of trials for the example experiment.
 %
-% NOTE: It is possible to have less than nItems items (that is the max
+%                       !!! WORK IN PROGRESS !!!
+%
+% This works, but generated trial files currently only contain
+% target-presence trials. Both-present and color-only trials will be
+% implemented later. The code below is also quite untidy and contains
+% various notes and todos, which will change in the future.
+
+
+
+
+% Notes/todos
+%
+% It is possible to have less than nItems items (that is the max
 % number used in any trial in the list). To use less items, pad the
 % span of triallist columns for shapes (tg.triallistCols.shapesStart to 
 % tg.triallistCols.shapesEnd) with nans. These positions will be skipped in
 % drawStimuli.m in the experimental script. The other item column spans
 % need to be padded too, of course.
-
-
+%
 % TODO: Check coding of item shapes and colors
-
+%
 % TODO: Currently there are only target present trials. Implement the other conditions. 
-
+%
 % NOTE on trials in Hazeltine 1997:
 %
 % In each trial, one of the middle three letters replaced by green
@@ -36,21 +37,28 @@ addpath(genpath(pathToAdd))
 % 25% color only (none of the letters replaced by O)
 
 
+try
+% Add common_functions folder to MATLAB path temporarily 
+% (will be removed at the end of this script)
+[curFilePath,~,~] = fileparts(mfilename('fullpath'));
+[pathstr, ~, ~] = fileparts(curFilePath);
+dirs = regexp(pathstr, filesep, 'split');
+pathToAdd = fullfile(dirs{1:end}, 'common_functions');
+addpath(genpath(pathToAdd))
 
-%%%% Fields of tg.s expected by the experimental script:
+
+%%%% Define experiment settings:
 
 % Size and position measures are in degrees visual angle ('_va')
 % unless fieldnames are postfixed with '_mm' (millimeters). All position
 % data is in the presentaion-area-based coordinate frame.
  
 tg.s.experimentName = 'paradigm_1'; % This will be appended to each results file name
-
 tg.s.mouseMovementMultiplier = [1 1];
 tg.s.startMarkerColor = 'black';
 tg.s.startMarkerRad_va = 0.2;
 tg.s.cursorRad_va = 0.05;
 tg.s.cursorColor = 'white';
-
 tg.s.fixRadius_va = 0.5;            % Radius of fixation cross (visual angle)
 tg.s.fixLineWidth_va = 0.1;         % Line width of fixation cross (visual angle)
 tg.s.fixColor = 'white';            % Color of fixation cross (rgb vec or string)
@@ -128,7 +136,6 @@ tg.s.stimColors{7} = [0 255 0]/255; % green TARGET COLOR!
 
 tg.s.tgtColorCode = 7;
  
-
 % Feedback parameters:
 tg.s.feedback.dur_nonAbort = 1; % duration of feedback if trial completed
 tg.s.feedback.dur_abort = 1;  % duration of feedback if trial aborted
@@ -146,8 +153,6 @@ tg.s.fixPos_va = [tg.s.presArea_va./2];
 tg.s.stimRegionsWidth_va = 4.02;
 tg.s.stimRegionsHeight_va = 0.88;
 tg.s.fixCrossToStimRegBorder_va = 0.88; % from center of fix cross to border of stim regions
-
-
 
 %%%% Stuff that is not (explicitly) stored in tg.s (but will be available
 %    from the item-specific values)
@@ -169,7 +174,6 @@ stimColorSequences{1} = [1,2,3,4,6];     % OBYPR
 stimColorSequences{2} = [3,6,5,1,2];     % YRGOB
 stimColorSequences{3} = [4,1,2,3,5];     % POBYG
 stimColorSequences{4} = [1,6,4,2,5];     % ORPBG
-
 
 
 
@@ -205,8 +209,6 @@ for row = 1:size(triallistColsFields, 1)
     nCols = triallistColsFields{row, 2};
     tg.s.triallistCols = colStruct(fName, nCols, tg.s.triallistCols);
 end
-
-
 
 
 
@@ -282,8 +284,6 @@ end
 
 
 
-
-
 % Iterate through triallist rows and add positions etc (all things that are
 % not condition-specific)
 
@@ -336,7 +336,6 @@ triallist = triallist(randperm(size(triallist,1)),:);
 % sequential numbers
 triallist(:,tg.s.triallistCols.numberInTriallist) = 1:size(triallist,1);
             
-
 
 tg.triallist = triallist;
 
