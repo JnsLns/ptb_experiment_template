@@ -2,6 +2,7 @@
 trial generation and experiment code. Here's the status of each:*
 * *Experiment scripts are largely done and somewhat tested, but may profit from some additional bug hunting.*
 * *Trial generation works but is not very well documented as of yet.*
+
 *The documentation below is somewhat work in progress and may thus seem a little erratic at times. Note however
 that the code itelf contains relatively detailed instructions how to use it.*
 
