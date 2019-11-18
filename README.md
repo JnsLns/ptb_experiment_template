@@ -1,7 +1,7 @@
 *__STATUS NOTE:__ This code is work in progress. The code has two major components:
 trial generation and experiment code. Here's the status of each:*
 * *Experiment scripts are largely done and somewhat tested, but may profit from some additional bug hunting.*
-* *Trial generation works but is not well structured/documented and does not implement all trial types, yet.*
+* *Trial generation works but is not very well documented as of yet.*
 *The documentation below is somewhat work in progress and may thus seem a little erratic at times. Note however
 that the code itelf contains relatively detailed instructions how to use it.*
 
@@ -23,7 +23,9 @@ the private and `common_functions` folders should not need to be touched, althou
 it can't hurt to take a look at them since they might be useful for your experiment
 as well. 
 
-Note that there is also extensive documentation in the code files themselves.
+Note that there is also extensive documentation in the code files themselves. Also note that
+there's a working example experiment packaged with the code which uses the template code
+and should give a pretty good idea how to go about implementing your own experiment.
 
 ## Input to the experiment: Trial list and settings
 
