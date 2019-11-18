@@ -6,7 +6,7 @@ trial generation and experiment code. Here's the status of each:*
 *The documentation below is somewhat work in progress and may thus seem a little erratic at times. Note however
 that the code itelf contains relatively detailed instructions how to use it.*
 
-# Template for psychophysics experiments with MATLB and Psychtoolbox 3
+# Psychophysics experiment template using MATLAB & Psychtoolbox 3
 
 This template is designed to speed up the development of psychophsics experiments
 with MATLAB and Psychtoolbox 3. It handles some common aspects of experiment scripts,
