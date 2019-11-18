@@ -1,9 +1,9 @@
 *__STATUS NOTE:__ This code is work in progress. The code has two major components:
 trial generation and experiment code. Here's the status of each:*
-* *Experiment scripts are largely done and somewhat tested, but need some additional bug hunting.*
+* *Experiment scripts are done and somewhat tested, but may profit from some additional bug hunting.*
 * *Trial generation works but is not well structured/documented and does not implement all trial types, yet.*
 
-*AS TO THE DOCUMENTATION BELOW: This has been carried over from a specific experiment and needs to be adjusted.*
+*THE DOCUMENTATION BELOW has been carried over from elsewhere and needs to be adjusted. May still be helpful, though, especially the part about reference frames and units.*
 
 
 # IC pointing task
