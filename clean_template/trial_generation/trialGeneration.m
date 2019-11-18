@@ -29,6 +29,16 @@ addpath(genpath(pathToAdd))
 %                       experiment scripts (instead of by column number).
 % 'tg.s.experimentName' String that identifies your experiment; will be
 %                       appended to results files in the experiment.
+% 'tg.s.presArea_va'    Two-element row vectors, specifying horizontal /
+%                       vertical extent of presentation area in degrees
+%                       visual angle.
+% 'tg.s.bgColor'        Background color of onscreen window (RGB vector,
+%                       0-1; or one of the strings 'black', 'grey', 'white')
+% 'tg.s.instructionTextFont'    Font used when drawing text to onscreen
+%                               window (e.g., 'Arial')
+% 'tg.s.instructionTextHeight_va'   Font height for onscreen window in
+%                                   degrees visual angle.
+
 
 trialFileSavePathName = ''; % adjust this
 

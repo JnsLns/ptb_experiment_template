@@ -57,7 +57,7 @@ tg.s.experimentName = 'paradigm_1'; % This will be appended to each results file
 tg.s.mouseMovementMultiplier = [1 1];
 tg.s.startMarkerColor = 'black';
 tg.s.startMarkerRad_va = 0.2;
-tg.s.cursorRad_va = 0.05;
+tg.s.cursorRad_va = 0.1;
 tg.s.cursorColor = 'white';
 tg.s.fixRadius_va = 0.5;            % Radius of fixation cross (visual angle)
 tg.s.fixLineWidth_va = 0.1;         % Line width of fixation cross (visual angle)
@@ -72,13 +72,13 @@ tg.s.startRadius_va = 0.2;          % Radius around strating position in which p
 tg.s.circleLineWidth_va = 0.4;      % Line width of circle that indicates to the participant
                                     % how far the pointer is from the strating
                                     % position. in visual angle.
-tg.s.durOnStart = 2;                % Time that pointer must dwell in starting position [s] before exp proceeds
+tg.s.durOnStart = 1;                % Time that pointer must dwell in starting position [s] before exp proceeds
 tg.s.durWaitForStart = inf;         % Time to wait for participant to assume strating position 
-tg.s.durPreStimFixation = 2;        % Time fixation cross is shown after starting position has been 
+tg.s.durPreStimFixation = 1.5;      % Time fixation cross is shown after starting position has been 
                                     % assumed and before stimuli are presented 
-tg.s.durItemPresentation = 2;       % Duration of stimulus presentation
-tg.s.allowedLocResponseTime = 3;    % Max duration to make location response
-tg.s.allowedTgtResponseTime = 3;    % Max duration to make tgt presence response
+tg.s.durItemPresentation = 0.15;    % Duration of stimulus presentation
+tg.s.allowedLocResponseTime = 2;    % Max duration to make location response
+tg.s.allowedTgtResponseTime = 2;    % Max duration to make tgt presence response
 tg.s.zZeroTolerance_mm = 1;         % pointer's *absolute* z-value must be below this value
                                     % for response to be registered (mm)
 tg.s.pointerStartAngle = 15;        % max angle (deg) between lines from pointer tip
@@ -146,7 +146,7 @@ tg.s.feedback.notMovedToStart = 'Startposition nicht rechtzeitig eingenommen';
 tg.s.feedback.leftStartInFix = 'Bitte erst nach den Buchstaben bewegen.';
 tg.s.feedback.leftStartInStim = 'Bitte erst nach den Buchstaben bewegen.';
 tg.s.feedback.exceededLocRT = 'Ortsauswahl zu spät';
-tg.s.feedback.exceededTgtRT = 'Reaktion zu spät';
+tg.s.feedback.exceededTgtRT = 'Ziel-vorhanden-Reaktion zu spät';
  
 % Positions of fix cross and stimulus regions (above and below fix cross)
 tg.s.fixPos_va = [tg.s.presArea_va./2];
