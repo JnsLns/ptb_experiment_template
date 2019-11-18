@@ -93,7 +93,7 @@ are computed dynamically in the experimental script based on the
 settings there, so that all distances and sizes will automatically
 adhere to the desired visual angles specified in `tg.triallist`.
 
-## Output of the experiment: Results matrix, trajectories, and settings
+## Output of the experiment: Results matrix, custom data, and settings
 
 The idea here is that the experiment script takes a trial list as input and
 uses the information internally, but outputs only one self-contained struct
