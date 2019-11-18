@@ -4,7 +4,7 @@ trial generation and experiment code. Here's the status of each:*
 * *Trial generation works but is not very well documented as of yet.*
 
 *The documentation below is somewhat work in progress and may thus seem a little erratic at times. Note however
-that the code itelf contains relatively detailed instructions how to use it.*
+that the code itself contains relatively detailed instructions on how to use it.*
 
 # Psychophysics experiment template using MATLAB & Psychtoolbox 3
 
