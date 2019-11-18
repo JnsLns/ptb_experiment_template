@@ -1,7 +1,7 @@
 
 %%%% Store results in e.results
 
-% Initialize the new results column to nans
+% Initialize the new results row to nans
 maxCol = max(structfun(@(x) x, e.s.resCols)); % max col in e.s.resCols
 newResRow = nan(1,maxCol);
 

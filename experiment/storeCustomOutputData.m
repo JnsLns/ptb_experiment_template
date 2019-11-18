@@ -28,10 +28,10 @@
 % your variable is initialized to, say, nan or [] at the start of
 % 'runTrial.m'.
 %
-% I further suggest to define an index-struct for each type of custom data.
-% Do this in the experiment settings at the outset of 'main.m' and add it
-% as a field of 'e.s'. It will enable indexing columns and/or rows of
-% the custom data arrays by name during analysis.
+% I further suggest to define an index-struct (in the vein of e.s.resCols)
+% for each type of custom data. Do this in the experiment settings at the
+% outset of 'main.m' and add it as a field of 'e.s'. It will enable indexing
+% columns and/or rows of the custom data arrays by name during analysis.
 
 
 %%%% Store trajectory 

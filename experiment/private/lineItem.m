@@ -1,6 +1,6 @@
 
 function [grid] = lineItem(win, size_xy, nGrid_xy, line_spec, lineWidth, color, center_xy, compensateLineWidth, boxLineWidth, boxColor)
-% function [grid] = lineItem(win, size_xy, nGrid_xy, line_spec, lineWidth, color, center_xy, compensateLineWidth)
+% function [grid] = lineItem(win, size_xy, nGrid_xy, line_spec, lineWidth, color, center_xy, compensateLineWidth, boxLineWidth, boxColor)
 %
 % Draw lines, specified as connected grid points, to a Psychtoolbox window.
 %

@@ -9,6 +9,9 @@ end
 % Empty the struct that will record results data
 out = struct();
 
+% Set trial to not be repeated by default.
+rerunTrialLater = false;
+
 % increment sequential number for results row (ordinal positition within
 % list of presented trials)
 sequNum = sequNum + 1;

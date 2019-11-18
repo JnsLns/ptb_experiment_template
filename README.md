@@ -1,16 +1,9 @@
-*__STATUS NOTE:__ This code is work in progress and much of it has simply been carried over
-from an earlier experiment and awaits modification. The code has three main components:
-trial generation, experiment, and analysis scripts. Here's the status of each:*
-* *Experiment scripts are largely done by now but are pretty much untested. They probably
-have some bugs, but these will be fixed soon.*
-* *Trial generation nears completion but remains work in progress and does not work yet.*
-* *Analysis is completely untouched as of yet.*  
+*__STATUS NOTE:__ This code is work in progress. The code has two major components:
+trial generation and experiment code. Here's the status of each:*
+* *Experiment scripts are largely done and somewhat tested, but need some additional bug hunting.*
+* *Trial generation works but is not well structured/documented and does not implement all trial types, yet.*
 
-*However, the three components are independent of each other,
-so the experimental script can be used independently of trial generation and analysis. When
-using the experimental code as a template for a new experiment (which should work fine),
-trial generation in particular and probably also analysis will be very specific to that
-other experiment anyway.*
+*AS TO THE DOCUMENTATION BELOW: This has been carried over from a specific experiment and needs to be adjusted.*
 
 
 # IC pointing task
