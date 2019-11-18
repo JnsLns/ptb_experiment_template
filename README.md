@@ -107,7 +107,7 @@ Struct `e` will hold all settings and results. It has the following (sub-)fields
 responses or trial properties. Note that incomplete trials that were 
 aborted for some reason are stilll recorded in the matrix, so that the
 final order is not necessarily identical to that of `tg.triallist`. Trial
-properties in `e-results` are transferred from `tg.triallist`, though,
+properties in `e.results` are transferred from `tg.triallist`, though,
 so that all required information is present and `tg.triallist` is not
 needed anymore.
 
@@ -125,7 +125,7 @@ so that `tg` is not needed for analysis.
 * Additional custom-defined fields of `e`. If some data you want to store
 does not fit the results matrix (`e.results`), you can store that data in
 additional fields of `e` that you may create as needed. See documentation in
-`storeCustomOutputDta.m`.
+`storeCustomOutputData.m`.
 
 ## Specifying which variables should be stored in the results matrix
 
