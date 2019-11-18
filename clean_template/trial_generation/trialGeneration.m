@@ -1,15 +1,16 @@
 % Generate a list of trials to load and use in the experiment scripts.
 
-try
-% Add common_functions folder to MATLAB path temporarily 
-% (will be removed at the end of this script)
-% Allows using functions from that folder here.
-% ** DO NOT MODIFY THIS **
-[curFilePath,~,~] = fileparts(mfilename('fullpath'));
-[pathstr, ~, ~] = fileparts(curFilePath);
-dirs = regexp(pathstr, filesep, 'split');
-pathToAdd = fullfile(dirs{1:end}, 'common_functions');
-addpath(genpath(pathToAdd))
+try                                                   % ** DO NOT MODIFY **
+% Add common_functions folder to MATLAB path          % ** DO NOT MODIFY **
+% temporarily (will be removed at the end of this     % ** DO NOT MODIFY **
+% script) Allows using functions from that folder.    % ** DO NOT MODIFY **
+[curFilePath,~,~] = fileparts(mfilename('fullpath')); % ** DO NOT MODIFY **
+[pathstr, ~, ~] = fileparts(curFilePath);             % ** DO NOT MODIFY **  
+dirs = regexp(pathstr, filesep, 'split');             % ** DO NOT MODIFY **  
+pathToAdd = fullfile(dirs{1:end}, 'common_functions');% ** DO NOT MODIFY **
+addpath(genpath(pathToAdd))                           % ** DO NOT MODIFY **
+
+
 
 
 % Construct struct 'tg' here. It must have the following fields:
@@ -39,13 +40,14 @@ addpath(genpath(pathToAdd))
 % 'tg.s.instructionTextHeight_va'   Font height for onscreen window in
 %                                   degrees visual angle.
 
+trialFileSavePathName = ''; % adjust this to desired save path 
 
-trialFileSavePathName = ''; % adjust this
 
-% ** DO NOT MODIFY THIS **
-save(trialFileSavePathName, 'tg')
-% Remove common_functions folder from MATLAB path
-rmpath(genpath(pathToAdd))
-catch
-rmpath(genpath(pathToAdd))
-end
+
+
+save(trialFileSavePathName, 'tg')                     % ** DO NOT MODIFY **
+% Remove common_functions from path                   % ** DO NOT MODIFY **
+rmpath(genpath(pathToAdd))                            % ** DO NOT MODIFY **
+catch                                                 % ** DO NOT MODIFY **
+rmpath(genpath(pathToAdd))                            % ** DO NOT MODIFY **
+end                                                   % ** DO NOT MODIFY **
