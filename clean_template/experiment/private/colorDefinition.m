@@ -8,7 +8,7 @@ grey = white/2;
 % convert
 for fName = fieldnames(e.s)'    
     fName = fName{1};
-    if isstr(e.s.(fName)) && endsWith(fName, 'Color') 
+    if isstr(e.s.(fName)) && charEndsWith(fName, 'Color') 
         switch e.s.(fName)
             case 'grey'
                 e.s.(fName) = grey;

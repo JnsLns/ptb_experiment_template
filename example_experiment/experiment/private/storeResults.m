@@ -31,9 +31,9 @@ end
 for fName = fieldnames(triallistCols)'
 
     f = fName{1};
-    if endsWith(f,'End')
+    if charEndsWith(f,'End')
         continue;
-    elseif endsWith(f,'Start')
+    elseif charEndsWith(f,'Start')
         f = f(1:end-5);
         newResRow(e.s.resCols.([f, 'Start']):e.s.resCols.([f, 'End'])) = ...
             trials(curTrial, triallistCols.([f, 'Start']):triallistCols.([f, 'End']));
