@@ -13,7 +13,7 @@ end
 lencharArr = length(charArr);
 lenPat = length(pat);
 if lencharArr >= lenPat
-    ew = charArrcmp(charArr(lencharArr-lenPat+1:end), pat);            
+    ew = strcmp(charArr(lencharArr-lenPat+1:end), pat);            
 else
     ew = false;
 end
