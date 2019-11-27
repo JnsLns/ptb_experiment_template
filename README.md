@@ -11,7 +11,9 @@ that the code itself contains relatively detailed instructions on how to use it.
 This template is designed to speed up the development of psychophsics experiments
 with MATLAB and Psychtoolbox 3. It handles some common aspects of experiment scripts,
 such as loading a list of trials, reading data from it, presenting instructions, 
-iterating over trials, and generating and saving a matrix of results.
+iterating over trials, generating and saving a matrix of results, and converting between 
+different spatial reference frames and units (e.g., millimeters, degrees of visual angle,
+and pixels).
 
 What you still have to do is creating the list of trials as needed for your experiment
 (you can do that in `trial_generation.m`), define experiment-specific settings, draw
