@@ -232,8 +232,10 @@ the matching item more easily.
 All input and output to and from the experimental script should be in the
 presentation-area-based frame and in degrees visual angle except for
 settings that make sense only in millimeters (like physical screen
-size; these are postfixed '_mm') or pixels (like screen resolution;
-postfixed '_px'). 
+size; these are postfixed '\_mm') or pixels (like screen resolution;
+postfixed '\_px'). When calling Psychtoolbox functions,
+use conversion functions in `common_functions` to convert to the Psychtoolbox
+frame.
 
 #### Detailed version
 
