@@ -205,7 +205,7 @@ tg.s.triallistCols.shapesStart = 12
                                   
 >> tg.s.triallistCols.shapesEnd
 
-tg.s.triallistCols.shapesStart = 15
+tg.s.triallistCols.shapesEnd = 15
 
 >> % Shapes seem to be stored in columns 12 to 15,
 >> % so we can get all shape codes for tiral 10 like this:
