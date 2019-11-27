@@ -238,8 +238,11 @@ postfixed '_px').
 #### Detailed version
 
 There are two coordinate reference frames (CRF) relevant here (see figure above).
-Although in most cases you only really need to think about the first one (unless you
-modify lower-level code).
+In most cases you really only need to think about the first one, as all positions
+for drawing and similar things should be specified in that frame. The second one
+is used by Psychtoolbox and only relevant when using Psychtoolbox functions. On top
+of this, there are convenient conversion functions in the `common_functions` folder
+that allow switching between frames easily.
 
 * *__Presentation-area-based frame (pa):__* Should be used for all input to and
 ideally also for output from the experimental script (although that is up to you)
@@ -252,13 +255,14 @@ except for a few settings that make sense only in millimeters or pixels; these
 settings are clearly marked by the postfix '_mm' or '_px' in the fieldnames of `e.s`.
 
 * *__Psychtoolbox frame (ptb):__* Used only in the internals of the experimental 
-script. The origin is at the top left of the screen, x-axis increasing to the right,
-y-axis increasing downward. Units used in conjunction with this frame are pixels.
-The Psychtoolbox drawing functions expect data to be in this frame. Thus, when using
-Psychtoolbox functions (e.g. to draw stimuli), use conversion functions (see next
-section) to convert any data to this frame first. Note that Psychtoolbox output like
-mouse position frmo functions like `GetMouse` are also in this frame. To map these
-back to other frames and/or units you can as well use conversion functions.
+script and when drawing to Psychtoolbox-windows. The origin is at the top left of
+the screen, x-axis increasing to the right, y-axis increasing downward. Units used
+in conjunction with this frame are pixels. The Psychtoolbox drawing functions expect
+data to be in this frame. Thus, when using Psychtoolbox functions, use conversion
+functions (see next section) to convert any data to this frame first. Note that
+Psychtoolbox output like mouse position from functions like `GetMouse` are also in
+this frame. To map these back to other frames and/or units you can as well use
+conversion functions.
 
 #### Functions for CRF and unit conversion
 
