@@ -13,7 +13,8 @@
 % setting the mouse position to the position corresponding to that
 % multiplied position.
 %
-% IMPORTANT: Disable mouse acceleration.
+% IMPORTANT: Disable mouse acceleration. Changing the system setting for
+% mouse movement speed requires recalibration.
 %
 % To achieve specific mappings between mouse movement distance on the desk
 % and on the screen (e.g., one to one), use the function mouseRemapCalib
