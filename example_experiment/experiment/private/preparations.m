@@ -57,6 +57,10 @@ end
 
 % Transfer trial data to variables that will be used throughout rest of code  
 trials = tg.triallist;
+% shuffle order if desired
+if e.s.shuffleTrialOrder
+    trials = trials(randperm(size(trials,1)),:);
+end
 triallistCols = tg.s.triallistCols;
 clear tg; % tg won't be needed anymore
 

@@ -94,7 +94,12 @@ tg.s.instructionTextColor = 'black';% color for instruction text (RGB triplet or
 tg.s.bgColor = 'grey';              % background color (can be either an RGB triplet or one of the strings
                                     % 'black', 'white', or 'grey'
 tg.s.feedbackTextColor = 'black';   % color of feedback text
-  
+tg.s.shuffleTrialOrder = true;      % If true, the order of trials in the triallist
+                                    % loaded from the file generated here is
+                                    % shuffled in the experimental script before
+                                    % presenting them to the participant (so that
+                                    % the order created here is changed!).
+
 % Starting position (cursor has to be moved to this position to start
 % trial)
 offsetFromCenter_x = 0;

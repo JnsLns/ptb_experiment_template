@@ -39,6 +39,13 @@ addpath(genpath(pathToAdd))                           % ** DO NOT MODIFY **
 %                               window (e.g., 'Arial')
 % 'tg.s.instructionTextHeight_va'   Font height for onscreen window in
 %                                   degrees visual angle.
+% 'tg.s.shuffleTrialOrder'   If true, the order of trials in the triallist
+%                            loaded from the file generated here is
+%                            shuffled in the experimental script before
+%                            presenting them to the participant (so that
+%                            the order created here is changed!).
+    
+
 
 trialFileSavePathName = ''; % adjust this to desired save path 
 
