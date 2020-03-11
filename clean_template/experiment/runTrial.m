@@ -72,9 +72,11 @@
 % You can rerun a trial at a later point of the experimental session, by
 % setting 'rerunTrialLater = true;' anywhere in this file. This will move
 % the trial (after it is finished) to a random point in the remaining
-% list of trials. This can be used for instance to repeat trials that
-% were aborted prematurely for some reason. Note that the results from
-% trials where 'rerunTrialLater' was set to 'true' are still recorded in
+% list of trials (if trial blocks are used, i.e., e.s.useTrialBlocks ==
+% true, then it is moved to a random point within the remainder of the
+% current block). This can be used for instance to repeat trials that were
+% aborted prematurely for some reason. Note that the results from trials
+% where 'rerunTrialLater' was set to 'true' are still recorded in
 % 'e.results'. It is thus a good idea to define an output variable like
 % 'out.abortCode' that keeps track of which rows in 'e.results' correspond
 % to aborted trials. Note that 'rerunTrialLater' is automatically reset to

@@ -57,12 +57,36 @@ end
 
 % Transfer trial data to variables that will be used throughout rest of code  
 trials = tg.triallist;
-% shuffle order if desired
-if e.s.shuffleTrialOrder
-    trials = trials(randperm(size(trials,1)),:);
-end
 triallistCols = tg.s.triallistCols;
 clear tg; % tg won't be needed anymore
+
+% In case blocks enabled, check that trials of different blocks are
+% not mixed in the trial list.
+if e.s.useTrialBlocks
+    blockNums = [rand(); trials(:, triallistCols.block)];
+    uniqueBlockNums = unique(blockNums);
+    if any(sum(abs(diff(blockNums == uniqueBlockNums'))) > 2)
+        error('Found trials with shared block number in non-consecutive trial list rows!')
+    end    
+end
+
+% shuffle trial order if desired
+if e.s.shuffleTrialOrder        
+    % only within blocks if blocks enabled
+    if e.s.useTrialBlocks
+       blockNums = trials(:, triallistCols.block);
+       uniqueBlockNums = unique(blockNums);
+       for bn = uniqueBlockNums'
+            indFirst = find(blockNums==bn, 1, 'first');
+            indLast = find(blockNums==bn, 1, 'last');   
+            block = trials(indFirst:indLast, :);
+            block = block(randperm(size(block, 1)),:);            
+            trials(indFirst:indLast, :) = block;
+       end
+    else 
+       trials = trials(randperm(size(trials, 1)),:);            
+    end        
+end
 
 % Convert color-defining field in e.s from strings to RGB
 colorDefinition;

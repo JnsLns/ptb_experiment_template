@@ -19,10 +19,15 @@ addpath(genpath(pathToAdd))                           % ** DO NOT MODIFY **
 %                       setting you wish to use in your experiment code.
 % 'tg.triallist'        Matrix where each row specifies the properties of
 %                       one trial and each column corresponds to one
-%                       property. Trials will be presented in row order
-%                       (top to bottom). Actual presentation order may be
-%                       affected, however, if you set trials to be repeated
-%                       in 'runTrial.m' (see documentation there).
+%                       property. If tg.s.shuffleTrialOrder (see below) is
+%                       false, trials will be presented in the row order of
+%                       this list (top to bottom). If tg.s.shuffleTrialOrder
+%                       is true, the list will be randomly shuffled at the
+%                       start of the experiment script. Also note that the
+%                       actual order of trials may be affected if you set
+%                       aborted trials to be repeated in 'runTrial.m' which
+%                       is part of the experimental code (see documentation
+%                       there).
 % 'tg.s.triallistCols'  Struct with one sub-field for each column of
 %                       'tg.triallist'(or two sub-fields for a span of
 %                       columns). Each field holds a column number. Allows
@@ -43,8 +48,26 @@ addpath(genpath(pathToAdd))                           % ** DO NOT MODIFY **
 %                            loaded from the file generated here is
 %                            shuffled in the experimental script before
 %                            presenting them to the participant (so that
-%                            the order created here is changed!).
-    
+%                            the order created here is changed!). Note that 
+%                            if blocks are used (tg.s.useTrialBlocks),
+%                            shuffling will occur only within blocks.
+% 'tg.s.useTrialBlocks' If false, no particular effect; if true: pause
+%                       between blocks, shuffle only within blocks, place
+%                       to-be-repeated trials only within same block.
+%                       Details:
+%                       If true, a field tg.s.triallistCols.block is
+%                       expected, and a corresponding column in tg.triallist.
+%                       This column should list a block number for each
+%                       trial; trials belonging to the same block must be
+%                       in consecutive rows in tg.triallist. Effects:
+%                       (1) if shuffling is enabled (see above), it will
+%                       only affect trial order within blocks.
+%                       (2) if aborted trials are set to be repeated, they
+%                       will be moved to somewhere within the remainder of
+%                       the block they belong to.
+%                       (3) a break will occur between blocks during the
+%                       experiment.
+
 
 
 trialFileSavePathName = ''; % adjust this to desired save path 

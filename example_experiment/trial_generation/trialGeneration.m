@@ -98,7 +98,11 @@ tg.s.shuffleTrialOrder = true;      % If true, the order of trials in the triall
                                     % loaded from the file generated here is
                                     % shuffled in the experimental script before
                                     % presenting them to the participant (so that
-                                    % the order created here is changed!).
+                                    % the order created here is changed!). Note that 
+                                    % if blocks are used (tg.s.useTrialBlocks),
+                                    % shuffling will occur only within blocks.
+tg.s.useTrialBlocks = false;        % trials aren't blocked.
+
 
 % Starting position (cursor has to be moved to this position to start
 % trial)
