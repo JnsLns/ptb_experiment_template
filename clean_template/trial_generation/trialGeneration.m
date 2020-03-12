@@ -67,6 +67,13 @@ addpath(genpath(pathToAdd))                           % ** DO NOT MODIFY **
 %                       the block they belong to.
 %                       (3) a break will occur between blocks during the
 %                       experiment.
+% 'tg.s.breakBetweenBlocks'  If false, does nothing. If true, code in
+%                            blockBreak.m (part of the experimental
+%                            script) is executed before each block of
+%                            trials. Only comes to effect if
+%                            e.s.useTrialBlocks is also true. A new block
+%                            is detected as a change of numbers in column
+%                            'triallistCols.block' of 'trials'.
 
 
 

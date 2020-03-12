@@ -102,6 +102,9 @@ tg.s.shuffleTrialOrder = true;      % If true, the order of trials in the triall
                                     % if blocks are used (tg.s.useTrialBlocks),
                                     % shuffling will occur only within blocks.
 tg.s.useTrialBlocks = false;        % trials aren't blocked.
+tg.s.breakBetweenBlocks = false;    % Don't execute code in blockBreak.m (pause)
+                                    % before each new block of trials.
+tg.s.blockBreakString = '';         % Display text for breaks. Not needed.                           
 
 
 % Starting position (cursor has to be moved to this position to start

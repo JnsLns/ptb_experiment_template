@@ -77,11 +77,17 @@ presentInstructions;        % Things to be presented before the trials
 while curTrial <= size(trials,1)  % ** DO NOT MODIFY **
     trialLoopHead;                % ** DO NOT MODIFY **
         
+    blockBreak;            % Code executed before each trial block, allowing
+                           % for instance breaks before blocks. Only comes
+                           % to effect if e.s.useTrialBlocks and
+                           % e.s.breakBetweenBlocks are both true.
+    
     drawChangingGraphics;  % Draw things that change from trial to trial
                            % (i.e., stimuli) to offscreen windows, to use
                            % them in runTrial.m (see below).   
     
-    runTrial;              % Define what happens in the trial.
+    runTrial;              % Define what happens in the trial. Only this
+                           % file should assign to struct 'out'.
     
     storeCustomOutputData; % Store data from this trial that can't be
                            % stored in results matrix.
