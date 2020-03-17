@@ -23,29 +23,20 @@
 %
 % TODO: Currently there are only target present trials. Implement the other conditions. 
 %
-% NOTE on trials in Hazeltine 1997:
-%
-% In each trial, one of the middle three letters replaced by green
-%
-% In 75 % of trials, (i.e. tgt-present and both-present) one of the middle
-% three letters is replaced by 'O' (code 0)
-%
-% 50% target present (green and O in the same letter)
-% 25% both features present (but in different letters)
-%       2/3 of those features neighboring
-%       1/3 of those with intermediate letter
-% 25% color only (none of the letters replaced by O)
+% TODO: Mouse movement multiplier?
 
 
-try
-% Add common_functions folder to MATLAB path temporarily 
-% (will be removed at the end of this script)
-[curFilePath,~,~] = fileparts(mfilename('fullpath'));
-[pathstr, ~, ~] = fileparts(curFilePath);
-dirs = regexp(pathstr, filesep, 'split');
-pathToAdd = fullfile(dirs{1:end}, 'common_functions');
-addpath(genpath(pathToAdd))
+try                                                   % ** DO NOT MODIFY **
+% Add common_functions folder to MATLAB path          % ** DO NOT MODIFY **
+% temporarily (will be removed at the end of this     % ** DO NOT MODIFY **
+% script) Allows using functions from that folder.    % ** DO NOT MODIFY **
+[curFilePath,~,~] = fileparts(mfilename('fullpath')); % ** DO NOT MODIFY **
+[pathstr, ~, ~] = fileparts(curFilePath);             % ** DO NOT MODIFY **  
+dirs = regexp(pathstr, filesep, 'split');             % ** DO NOT MODIFY **  
+pathToAdd = fullfile(dirs{1:end}, 'common_functions');% ** DO NOT MODIFY **
+addpath(genpath(pathToAdd))                           % ** DO NOT MODIFY **
 
+trialFileSavePathName = 'my_trials_Hazeltine1997.mat';
 
 %%%% Define experiment settings:
 
@@ -54,7 +45,7 @@ addpath(genpath(pathToAdd))
 % data is in the presentaion-area-based coordinate frame.
  
 tg.s.experimentName = 'paradigm_1'; % This will be appended to each results file name
-tg.s.mouseMovementMultiplier = [1 1];
+tg.s.mouseMovementMultiplier = [1 1]; % mouse movement speed in each dimension
 tg.s.startMarkerColor = 'black';
 tg.s.startMarkerRad_va = 0.2;
 tg.s.cursorRad_va = 0.1;
@@ -64,28 +55,21 @@ tg.s.fixLineWidth_va = 0.1;         % Line width of fixation cross (visual angle
 tg.s.fixColor = 'white';            % Color of fixation cross (rgb vec or string)
 tg.s.presArea_va = [40, 30];        % horz/vert size of presentation angle in degrees visual angle
                                     % (always centered within screen)
-tg.s.startPosZ_mm = 200;            % Distance of pointer tip starting position
-                                    % from screen surface (x and y are determined
-                                    % automatically as center of presentation are).
 tg.s.startRadius_va = 0.2;          % Radius around strating position in which pointer tip
                                     % has to be situated to count as being on the starting position
-tg.s.circleLineWidth_va = 0.4;      % Line width of circle that indicates to the participant
-                                    % how far the pointer is from the strating
-                                    % position. in visual angle.
 tg.s.durOnStart = 1;                % Time that pointer must dwell in starting position [s] before exp proceeds
 tg.s.durWaitForStart = inf;         % Time to wait for participant to assume strating position 
-tg.s.durPreStimFixation = 1.5;      % Time fixation cross is shown after starting position has been 
+tg.s.durPreStimFixation = 0.5;      % Time fixation cross is shown after starting position has been 
                                     % assumed and before stimuli are presented 
-tg.s.durItemPresentation = 0.15;    % Duration of stimulus presentation
+tg.s.durItemPresentation = 0.1;     % Duration of stimulus presentation
+tg.s.durPostStimMask = 0.057;       % Duration of white mask after stimulus presentation
+tg.s.postStimMaskColor = 'white';   % Color of post-stimulus mask
 tg.s.allowedLocResponseTime = 2;    % Max duration to make location response
 tg.s.allowedTgtResponseTime = 2;    % Max duration to make tgt presence response
-tg.s.zZeroTolerance_mm = 1;         % pointer's *absolute* z-value must be below this value
-                                    % for response to be registered (mm)
-tg.s.pointerStartAngle = 15;        % max angle (deg) between lines from pointer tip
-                                    % to pointer markers and z-axis during start phase
-tg.s.circleNotOkColor = 'white';    % color of start pos indicator circle when pointer is too far
-tg.s.circleOkColor = 'black';       % color of start pos indicator circle when pointer is within
-                                    % tg.s.startRadius_mm millimeters of starting position
+tg.s.feedbackBeepCorrect = ...      % Properties (freq, amplitude, duration) of
+[600, 0.3, 0.075];                  % beep when target presence resp. correct
+tg.s.feedbackBeepIncorrect = ...    % Properties (freq, amplitude, duration) of
+[300, 0.3, 0.075];                  % beep when target presence resp. INcorrect
 tg.s.yesKeyName = 'x';              % name of yes-key for target present response
 tg.s.noKeyName = 'y';               % name of no-key for target present response
 tg.s.instructionTextFont = 'Arial'; % font for instruction test
@@ -101,11 +85,11 @@ tg.s.shuffleTrialOrder = true;      % If true, the order of trials in the triall
                                     % the order created here is changed!). Note that 
                                     % if blocks are used (tg.s.useTrialBlocks),
                                     % shuffling will occur only within blocks.
-tg.s.useTrialBlocks = false;        % trials aren't blocked.
-tg.s.breakBetweenBlocks = false;    % Don't execute code in blockBreak.m (pause)
+tg.s.useTrialBlocks = true;         % trials are blocked.
+tg.s.breakBetweenBlocks = true;     % Execute code in blockBreak.m (pause)
                                     % before each new block of trials.
-tg.s.blockBreakString = '';         % Display text for breaks. Not needed.                           
-
+tg.s.blockBreakString = ...         % Display text for breaks. 
+'Pause. Taste drücken um fortzufahren.';
 
 % Starting position (cursor has to be moved to this position to start
 % trial)
@@ -137,7 +121,6 @@ tg.s.tgtShapeCode = 0;
 % Stimulus color specification. Color codes in triallist correspond to
 % element number in this array. 
 % TODO: Adjust these to have the correct colors used by Hazeltine!
-% TODO: Adjust to colors used in Hazeltine
 tg.s.stimColors{1} = [70 0 0]/255; % orange
 tg.s.stimColors{2} = [0 0 255]/255; % blue
 tg.s.stimColors{3} = [255 255 0]/255; % yellow
@@ -149,11 +132,8 @@ tg.s.stimColors{7} = [0 255 0]/255; % green TARGET COLOR!
 tg.s.tgtColorCode = 7;
  
 % Feedback parameters:
-tg.s.feedback.dur_nonAbort = 1; % duration of feedback if trial completed
 tg.s.feedback.dur_abort = 1;  % duration of feedback if trial aborted
 % feedback text
-tg.s.feedback.correct = 'Richtig!';    
-tg.s.feedback.incorrect = 'Falsch!'; 
 tg.s.feedback.notMovedToStart = 'Startposition nicht rechtzeitig eingenommen';
 tg.s.feedback.leftStartInFix = 'Bitte erst nach den Buchstaben bewegen.';
 tg.s.feedback.leftStartInStim = 'Bitte erst nach den Buchstaben bewegen.';
@@ -161,7 +141,7 @@ tg.s.feedback.exceededLocRT = 'Ortsauswahl zu spät';
 tg.s.feedback.exceededTgtRT = 'Ziel-vorhanden-Reaktion zu spät';
  
 % Positions of fix cross and stimulus regions (above and below fix cross)
-tg.s.fixPos_va = [tg.s.presArea_va./2];
+tg.s.fixPos_va = tg.s.presArea_va./2;
 tg.s.stimRegionsWidth_va = 4.02;
 tg.s.stimRegionsHeight_va = 0.88;
 tg.s.fixCrossToStimRegBorder_va = 0.88; % from center of fix cross to border of stim regions
@@ -199,7 +179,8 @@ nItems = 5; % This is the *maximum number* of items per trial. Fill columns
 % indices of trial matrix). 
 triallistColsFields = ...
     {'trialID', 1; ...           % unique ID of this trial
-    'numberInTriallist', 1; ...  % sequential number in original trial list
+    'block', 1; ...              % block number
+    'numberInUnshuffledTriallist', 1; ...  % sequential number in original trial list
     'trialType', 1; ...         % 1 = target present, 2 = both ftrs present, 3 = color only
     'nItemsBtwFeatures', 1; ... % number of items between tgt shape and tgt color (0=tgt present, 1=neighboring, 2= one intermediate item, ...) 
     'tgtColorItemNum', 1; ...   % number of item in target color 
@@ -214,6 +195,7 @@ triallistColsFields = ...
     'colors', nItems; ...       % item color codes (index into tg.s.stimColors)
     'lineWidths', nItems ...    % item line widths  
     };
+
 % Create the struct
 tg.s.triallistCols = struct;
 for row = 1:size(triallistColsFields, 1)
@@ -239,59 +221,340 @@ stimRegions{2}(2) = tg.s.fixPos_va(2) - ...
 
 
 
-triallist = [];   
+%%%% Generate trials
+ 
+% In Hazeltine:
+% - 3 blocks of 160 trials each * 2 days -> 3*2*160 = 960 trials in total 
+% - per block:
+%       50 % (80) target present trials (green and O in one item)
+%       25 % (40) both-present trials   (green and O in different items)
+%       25 % (40) color only trials     (green in one item, O absent)
+%
+% Thus, for the differet trials:
+% - target present: take one letter string, one color string, put green O in
+%   position 2,3,4 in 2/3 (of all trials). There are 4*4*3 = 48 combi-
+%   nations. 80 such trials are needed in each block. There
+%   are 6 blocks in total, so that 6*80 = 480 such trials are needed in
+%   total; thus the set of target present trials needs to be repeated 10
+%   times in total (take care to split them equally over blocks by making
+%   an ordered list and dividing it into 80-trial batches).
+% - both-present: take one letter string, one color string, place O in one
+%   of the three center positions and green in the other (there are 6 of
+%   them). There are 4*4*6 = 96 combinations (two thirds of which have the
+%   two target features in adjacent positions), 40 are needed per block,
+%   two thirds of which should have adjacent items. There are six blocks,
+%   so a total of 6*40 = 240 are needed. 240/96 = 2.5. Need to find a
+%   sensible split... Note: Check whether 2/3 need to be adjaent *within
+%   each block*
+% - color-only: take one letter string, one-color string. Color one of the
+%   three center letters green . There are 4*4*3 = 48 combinations and 40
+%   are needed per block. 6*40 = 240 in total. 240/48 = 5, so no problem.
 
-%%%% target present trials
+%%%% target present trials (trialType 1)
 
+% order in target present pool:
+% 3 positions                             = blocks of 3 trials
+% 4 color seq * 3 positions               = blocks of 12 trials
+% 4 shape seq * 4 color seq * 3 positions = pool of 48 trials
+
+basePoolTargetPresent = [];  
 possTgtPositions = 2:4;     % sequence positions where target may be placed
-
 % letter sequences
-for shapesNum = 1:numel(stimShapeSequences)        
-    
+for shapesNum = 1:numel(stimShapeSequences)         
     % color sequences
     for colorsNum = 1:numel(stimColorSequences)
-
         % green O-positions
-        for oPos = possTgtPositions
-            
-            trialRow = [];
-            
+        for oPos = possTgtPositions            
+            trialRow = [];            
+            % pick shape and color sequence
             shapes = stimShapeSequences{shapesNum};
-            colors = stimColorSequences{colorsNum};
-                  
+            colors = stimColorSequences{colorsNum};                  
             % Place target
             shapes(oPos) = tg.s.tgtShapeCode;                        
-            colors(oPos) = tg.s.tgtColorCode;                                                                                
-                                                           
+            colors(oPos) = tg.s.tgtColorCode;                                                                                  
+            % Fill trial row                                               
             trialRow(tg.s.triallistCols.trialType) = 1;
-            trialRow(tg.s.triallistCols.nItemsBtwFeatures) = 0;
+            trialRow(tg.s.triallistCols.nItemsBtwFeatures) = nan;
             trialRow(tg.s.triallistCols.tgtColorItemNum) = oPos;
             trialRow(tg.s.triallistCols.tgtShapeItemNum) = oPos;
             trialRow(tg.s.triallistCols.letterStringCode) = shapesNum;
             trialRow(tg.s.triallistCols.colorStringCode) = colorsNum;
             trialRow(tg.s.triallistCols.shapesStart:tg.s.triallistCols.shapesEnd) = shapes;
             trialRow(tg.s.triallistCols.colorsStart:tg.s.triallistCols.colorsEnd) = colors;                                                                                                                                       
-            
-            triallist(end+1,:) = trialRow;
-            
-        end
-        
-    end
-    
+            % add to trial pool
+            basePoolTargetPresent(end+1,:) = trialRow;            
+        end        
+    end    
 end
 
 
-% TODO
-% %%%% both- present trials
-% 
-% bothPresentTriallist = [];  % List of all possible both-present trials
-%                             % (i.e. all 48 combinations of 4 shape-sequence
-%                             % × 4 color sequence × 3 tgt slot)
-% 
-% possTgtFtrPositions = 2:4;  
+%%%% both-present adjacent trials (trialType 2)
 
-% TODO 
-%%%% color only trials
+% order in both-present pool:
+% 4 position combinations (all adjacent) = blocks of 4 trials
+% 4 color seq * 4 position combinations   = blocks of 16 trials
+% 4 shape seq * 4 color seq * 4 pos com.  = pool of 64 trials
+
+basePoolBothPresentAdj = [];               
+% first element in each vector is position of green, second O
+possFtrPositions = {[3 4],[4 3],[2 3],[3 2]};
+for shapesNum = 1:numel(stimShapeSequences)         
+    % color sequences
+    for colorsNum = 1:numel(stimColorSequences)
+        % green O-positions
+        for oPos = possFtrPositions            
+            oPos = oPos{1};            
+            trialRow = [];
+            % pick shape and color sequence
+            shapes = stimShapeSequences{shapesNum};
+            colors = stimColorSequences{colorsNum};                  
+            % Place green            
+            colors(oPos(1)) = tg.s.tgtColorCode;                                                                                  
+            shapes(oPos(2)) = tg.s.tgtShapeCode;                        
+            % Fill trial row                                        
+            trialRow(tg.s.triallistCols.trialType) = 2;
+            trialRow(tg.s.triallistCols.nItemsBtwFeatures) = abs(diff(oPos))-1;
+            trialRow(tg.s.triallistCols.tgtColorItemNum) = oPos(1);
+            trialRow(tg.s.triallistCols.tgtShapeItemNum) = oPos(2);
+            trialRow(tg.s.triallistCols.letterStringCode) = shapesNum;
+            trialRow(tg.s.triallistCols.colorStringCode) = colorsNum;
+            trialRow(tg.s.triallistCols.shapesStart:tg.s.triallistCols.shapesEnd) = shapes;
+            trialRow(tg.s.triallistCols.colorsStart:tg.s.triallistCols.colorsEnd) = colors;                                                                                                                                       
+            % add to trial pool
+            basePoolBothPresentAdj(end+1,:) = trialRow;            
+        end        
+    end    
+end
+
+
+%%%% both-present non-adjacent trials (trialType 2)
+
+% order in both-present pool:
+% 2 position combinations (last four adj) = blocks of 2 trials
+% 4 color seq * 2 position combinations   = blocks of 8 trials
+% 4 shape seq * 4 color seq * 2 pos com.  = pool of 32 trials
+
+basePoolBothPresentNonadj = [];               
+% first element in each vector is position of green, second O
+possFtrPositions = {[2 4],[4 2]};
+for shapesNum = 1:numel(stimShapeSequences)         
+    % color sequences
+    for colorsNum = 1:numel(stimColorSequences)
+        % green O-positions
+        for oPos = possFtrPositions            
+            oPos = oPos{1};            
+            trialRow = [];
+            % pick shape and color sequence
+            shapes = stimShapeSequences{shapesNum};
+            colors = stimColorSequences{colorsNum};                  
+            % Place green            
+            colors(oPos(1)) = tg.s.tgtColorCode;                                                                                  
+            shapes(oPos(2)) = tg.s.tgtShapeCode;                        
+            % Fill trial row                                        
+            trialRow(tg.s.triallistCols.trialType) = 2;
+            trialRow(tg.s.triallistCols.nItemsBtwFeatures) = abs(diff(oPos))-1;
+            trialRow(tg.s.triallistCols.tgtColorItemNum) = oPos(1);
+            trialRow(tg.s.triallistCols.tgtShapeItemNum) = oPos(2);
+            trialRow(tg.s.triallistCols.letterStringCode) = shapesNum;
+            trialRow(tg.s.triallistCols.colorStringCode) = colorsNum;
+            trialRow(tg.s.triallistCols.shapesStart:tg.s.triallistCols.shapesEnd) = shapes;
+            trialRow(tg.s.triallistCols.colorsStart:tg.s.triallistCols.colorsEnd) = colors;                                                                                                                                       
+            % add to trial pool
+            basePoolBothPresentNonadj(end+1,:) = trialRow;            
+        end        
+    end    
+end
+
+
+%%%% color-only trials (trialType 3)
+
+% order in color-only pool:
+% 3 tgt color positions                   = blocks of 3 trials
+% 4 color seq * 3 tgt col pos             = blocks of 12 trials
+% 4 shape seq * 4 color seq * 3 tgt pos   = pool of 48 trials
+
+basePoolColorOnly = [];               
+possTgtColPositions = 2:4;     % sequence positions where target color may be placed
+for shapesNum = 1:numel(stimShapeSequences)         
+    % color sequences
+    for colorsNum = 1:numel(stimColorSequences)
+        % green O-positions
+        for oPos = possTgtColPositions                        
+            trialRow = [];
+            % pick shape and color sequence
+            shapes = stimShapeSequences{shapesNum};
+            colors = stimColorSequences{colorsNum};                  
+            % Place green            
+            colors(oPos) = tg.s.tgtColorCode;                                                                                  
+            % Fill trial row                                               
+            trialRow(tg.s.triallistCols.trialType) = 3;
+            trialRow(tg.s.triallistCols.nItemsBtwFeatures) = nan;
+            trialRow(tg.s.triallistCols.tgtColorItemNum) = oPos;
+            trialRow(tg.s.triallistCols.tgtShapeItemNum) = nan;
+            trialRow(tg.s.triallistCols.letterStringCode) = shapesNum;
+            trialRow(tg.s.triallistCols.colorStringCode) = colorsNum;
+            trialRow(tg.s.triallistCols.shapesStart:tg.s.triallistCols.shapesEnd) = shapes;
+            trialRow(tg.s.triallistCols.colorsStart:tg.s.triallistCols.colorsEnd) = colors;                                                                                                                                       
+            % add to trial pool
+            basePoolColorOnly(end+1,:) = trialRow;           
+        end        
+    end    
+end
+
+% In Hazeltine:
+% - 3 blocks of 160 trials each * 2 days -> 3*2*160 = 960 trials in total 
+% - per block:
+%       50 % (80) target present trials (green and O in one item)
+%       25 % (40) both-present trials   (green and O in different items)
+%       25 % (40) color only trials     (green in one item, O absent)
+%
+% Thus, for the differet trials:
+% - target present: take one letter string, one color string, put green O in
+%   position 2,3,4 in 2/3 (of all trials). There are 4*4*3 = 48 combi-
+%   nations. 80 such trials are needed in each block. There
+%   are 6 blocks in total, so that 6*80 = 480 such trials are needed in
+%   total; thus the set of target present trials needs to be repeated 10
+%   times in total (take care to split them equally over blocks by making
+%   an ordered list and dividing it into 80-trial batches).
+% - both-present: take one letter string, one color string, place O in one
+%   of the three center positions and green in the other (there are 6 of
+%   them). There are 4*4*6 = 96 combinations (two thirds of which have the
+%   two target features in adjacent positions), 40 are needed per block,
+%   two thirds of which should have adjacent items. There are six blocks,
+%   so a total of 6*40 = 240 are needed. 240/96 = 2.5. Need to find a
+%   sensible split... Note: Check whether 2/3 need to be adjaent *within
+%   each block*
+% - color-only: take one letter string, one-color string. Color one of the
+%   three center letters green . There are 4*4*3 = 48 combinations and 40
+%   are needed per block. 6*40 = 240 in total. 240/48 = 5, so no problem.
+
+% order in target present pool:
+% 3 positions                             = blocks of 3 trials
+% 4 color seq * 3 positions               = blocks of 12 trials
+% 4 shape seq * 4 color seq * 3 positions = pool of 48 trials
+
+% order in both-present pool:
+% 6 position combinations (last four adj) = blocks of 6 trials
+% 4 color seq * 6 position combinations   = blocks of 24 trials
+% 4 shape seq * 4 color seq * 6 pos com.  = pool of 96 trials
+
+% order in color-only pool:
+% 3 tgt color positions                   = blocks of 3 trials
+% 4 color seq * 3 tgt col pos             = blocks of 12 trials
+% 4 shape seq * 4 color seq * 3 tgt pos   = pool of 48 trials
+
+% - 3 blocks of 160 trials each * 2 days -> 3*2*160 = 960 trials in total 
+% - per block:
+%       50 % (80) target present trials (green and O in one item)
+%       25 % (40) both-present trials   (green and O in different items)
+%       25 % (40) color only trials     (green in one item, O absent)
+
+
+
+poolTargetPresent = repmat(basePoolTargetPresent, 10, 1); % 480 
+poolColorOnly = repmat(basePoolColorOnly, 5, 1); % 240 
+
+
+% For both present 2.5 the total number of both present trials are needed.
+% Thus first double number of trials in each subtype and then add half of
+% each subtype, picked to distribute uniformly as far as possible
+poolBothPresentAdj = repmat(basePoolBothPresentAdj, 2, 1); % 128
+poolBothPresentNonadj = repmat(basePoolBothPresentNonadj, 2, 1); % 64
+
+% Pick half of all indices into nonadj pool (the way this is done ensures
+% balanced trial set) and add to pool
+
+s = size(basePoolBothPresentNonadj, 1);
+indSets = {[1,4,5,8],[2,3,6,7]};
+rowInds = 1:size(basePoolBothPresentNonadj, 1);
+shapeBatchSize = 8;
+batches = mat2cell(rowInds,1, ones(1,s/shapeBatchSize)*shapeBatchSize);
+useRows = [];
+for batch = batches
+    batch = batch{1};
+    useRows = cat(2,useRows,batch(indSets{1}));
+    indSets = circshift(indSets,1);    
+end
+% add to pool    
+poolBothPresentNonadj = ...
+    [poolBothPresentNonadj; basePoolBothPresentNonadj(useRows,:)];
+
+% Pick half of all indices into adj pool (the way this is done ensures
+% balanced trial set) and add to pool
+
+
+s = size(basePoolBothPresentAdj, 1);
+indSets = {[2,1],[3,1],[4,1],[3,2],[4,2],[4,3]};
+rowInds = 1:size(basePoolBothPresentAdj, 1);
+shapeBatchSize = 4;
+batches = mat2cell(rowInds,1, ones(1,s/shapeBatchSize)*shapeBatchSize);
+useRows = [];
+for batch = batches
+    batch = batch{1};
+    useRows = cat(2,useRows,batch(indSets{1}));
+    indSets = circshift(indSets,1);    
+end
+% add to pool    
+poolBothPresentAdj = ...
+    [poolBothPresentAdj; basePoolBothPresentAdj(useRows,:)];
+
+
+
+% Now make blocks by drawing from pools without replacement
+%       50 % (80) target present trials (green and O in one item)
+%       25 % (40) both-present trials   (green and O in different items)
+%       25 % (40) color only trials     (green in one item, O absent)
+
+tp = poolTargetPresent;
+bp_a = poolBothPresentAdj;
+bp_n = poolBothPresentNonadj;
+co = poolColorOnly;
+
+shuffle = @(arr) arr(randperm(size(arr,1)),:);
+tp = shuffle(tp);       
+bp_a = shuffle(bp_a);
+bp_n = shuffle(bp_n);
+co = shuffle(co);
+
+% accumulate triallist from pools, creating 6 similarly composed blocks
+triallist = [];
+tp_inds = 1:80;
+co_inds = 1:40;
+bp_a_inds = 1:27;
+bp_n_inds = 1:13;
+for b = 1:6
+
+    % both present adjacent/non-adjacent cannot be fully balanced. This
+    % takes care of it on the last block. See note below loop.
+    if max(bp_a_inds) > size(bp_a,1)
+        bp_a_inds = 1:size(bp_a,1);
+        bp_n_inds = 1:(40-size(bp_a,1));
+    end    
+    
+    % accumulate this block's trials            
+    tmp = cat(1, ...
+        tp(tp_inds,:), ...
+        co(co_inds,:), ...
+        bp_a(bp_a_inds,:), ...
+        bp_n(bp_n_inds,:));
+    
+    % remove from pool
+    tp(tp_inds,:) = [];
+    co(co_inds,:) = [];
+    bp_a(bp_a_inds,:) = [];
+    bp_n(bp_n_inds,:) = [];
+    
+    % add block number        
+    tmp(:, tg.s.triallistCols.block) = b;       
+    
+    triallist = cat(1, triallist, tmp);
+    
+end
+
+% NOTE: In the last block (6) there both-present trials are 25 / 15
+% adjacent / non-adjacent feature trials, in contrast to 27 / 13 in the
+% other trials (full balancing not possible).
+
 
 
 
@@ -340,23 +603,17 @@ for curRow = 1:size(triallist, 1)
 end
 
 
-%%%% Shuffle trials and then add sequential number
-
-% shuffle
-triallist = triallist(randperm(size(triallist,1)),:);
-
-% sequential numbers
-triallist(:,tg.s.triallistCols.numberInTriallist) = 1:size(triallist,1);
-            
-
+% add sequential numbers
+triallist(:,tg.s.triallistCols.numberInUnshuffledTriallist) = 1:size(triallist,1);
+          
 tg.triallist = triallist;
 
 
-save('s:\trials.mat', 'tg')
 
 
-% Remove common_functions folder from MATLAB path
-rmpath(genpath(pathToAdd))
-catch
-rmpath(genpath(pathToAdd))
-end
+save(trialFileSavePathName, 'tg')                     % ** DO NOT MODIFY **
+% Remove common_functions from path                   % ** DO NOT MODIFY **
+rmpath(genpath(pathToAdd))                            % ** DO NOT MODIFY **
+catch                                                 % ** DO NOT MODIFY **
+rmpath(genpath(pathToAdd))                            % ** DO NOT MODIFY **
+end                                                   % ** DO NOT MODIFY **

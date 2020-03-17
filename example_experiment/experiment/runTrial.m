@@ -254,6 +254,47 @@ end
 
 
 
+%%%% PHASE 3 B: Post stimulus mask
+
+% If participant moves off starting position, abort trial (code 3).
+
+out.tPostStimMaskOnset_pc = nan;
+
+if ~out.abortCode
+    
+    % Copy offscreen window with mask to onscreen window
+    Screen('CopyWindow', winsOff.postStimMask.h, winOn.h);
+    
+    % present mask
+    [~,out.tPostStimMaskOnset_pc,~,~] = Screen('Flip', winOn.h, []);
+    
+    % present mask for fixed time, monitor pointer position
+    deltatMask = GetSecs - out.tPostStimMaskOnset_pc;
+    while deltatMask <= e.s.durPostStimMask
+        
+        % get position of mouse pointer (in pres area frame, visual angle)
+        [mouse_xy_pa_va, mouse_xy_ptb_px] = ...
+            getMouseRemapped_pa_ptb(e.s.mouseMovementMultiplier, e.s.spatialConfig);
+        
+        % Check whether tip position is in correct location.
+        % This is indicated by variable tipAtStart.
+        checkStartingPosition;
+        
+        % if start pos left, abort trial
+        if ~tipAtStart
+            out.abortCode = 3;
+            break;
+        end
+        
+        % Increment timer
+        deltatMask = GetSecs - out.tPostStimMaskOnset_pc;               
+        
+    end
+    
+end
+
+
+
 %%%% PHASE 4: Location response
 
 % wait for click
@@ -425,14 +466,14 @@ end
 
 % Determine appropriate feedback
 if out.abortCode == 0
-    
-    dur = e.s.feedback.dur_nonAbort;
-    
+        
     if out.responseCorrect == 1
-        feedbackStr = e.s.feedback.correct;
-    elseif out.responseCorrect == 0
-        feedbackStr = e.s.feedback.incorrect;
+        bp = e.s.feedbackBeepCorrect;        
+    elseif out.responseCorrect == 0        
+        bp = e.s.feedbackBeepIncorrect;        
     end        
+    
+    Beeper(bp(1), bp(2), bp(3));
     
 elseif out.abortCode ~= 0   
     
@@ -447,14 +488,13 @@ elseif out.abortCode ~= 0
     elseif out.abortCode == 4        
         feedbackStr = e.s.feedback.exceededLocRT;        
     elseif out.abortCode == 5        
-        feedbackStr = e.s.feedback.exceededTgtRT;
-                
+        feedbackStr = e.s.feedback.exceededTgtRT;                
     end
     
+    % Display feedback.
+    ShowTextAndWait(feedbackStr, e.s.feedbackTextColor, winOn.h, dur, false);
+    
 end
-
-% Display feedback.
-ShowTextAndWait(feedbackStr, e.s.feedbackTextColor, winOn.h, dur, false);
 
 
 %%%% create unique ID for current response

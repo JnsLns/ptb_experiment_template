@@ -33,7 +33,8 @@ e.s.multisampling = 3;
 
 % actual screen size in mm (visible image) as accurately as possible.
 %e.s.expScreenSize_mm = [474, 291]; % Miro
-e.s.expScreenSize_mm = [531 299]; % Gecko  
+%e.s.expScreenSize_mm = [531 299]; % Gecko  
+e.s.expScreenSize_mm = [800 339]; % Ultra-wide screen
 
 % Participant's distance from screen in millimeters
 e.s.viewingDistance_mm = 500;

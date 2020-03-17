@@ -71,6 +71,11 @@ winsOff.targetResponse.screen = expScreen;
 winsOff.targetResponse.rect = winOn.rect;
 winsOff.targetResponse.clearEachTrial = false;
 
+% offscreen window for post stimulus mask
+winsOff.postStimMask.bgColor = e.s.bgColor;
+winsOff.postStimMask.screen = expScreen;
+winsOff.postStimMask.rect = winOn.rect;
+winsOff.postStimMask.clearEachTrial = false;
 
 % Open the windows by iterating over struct 'winsOff' (leave this as is
 % unless you want to open windows in a different manner)
