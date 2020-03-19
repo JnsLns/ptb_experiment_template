@@ -2,6 +2,7 @@
 trial generation and experiment code. Here's the status of each:*
 * *Experiment scripts are done, documented, and tested to some extent.* 
 * *Trial generation works but could use some coherent documentation.*
+* *Analysis scripts still need to be ported from an earlier iteration and thus are not available yet.*
 
 *In addition to the basic docs below, each modifiable code file itself contains relatively detailed instructions on how to use it.*
 
