@@ -1,6 +1,6 @@
 *__STATUS NOTE:__ This code is work in progress. The code has two major components:
 trial generation and experiment code. Here's the status of each:*
-* Experiment scripts are done, documented, and tested to some extent. 
+* *Experiment scripts are done, documented, and tested to some extent.* 
 * *Trial generation works but could use some coherent documentation.*
 
 *In addition to the basic docs below, each modifiable code file itself contains relatively detailed instructions on how to use it.*
