@@ -1,10 +1,9 @@
 *__STATUS NOTE:__ This code is work in progress. The code has two major components:
 trial generation and experiment code. Here's the status of each:*
-* *Experiment scripts are largely done and somewhat tested, but may profit from some additional bug hunting.*
-* *Trial generation works but is not very well documented as of yet.*
+* *Experiment scripts are done, documented, and tested to some extent.* 
+* *Trial generation works but could use some coherent documentation.*
 
-*The documentation below is somewhat work in progress and may thus seem a little erratic at times. Note however
-that the code itself contains relatively detailed instructions on how to use it.*
+*In addition to the basic docs below, each modifiable code file itself contains relatively detailed instructions on how to use it.*
 
 # Psychophysics experiment template using MATLAB & Psychtoolbox 3
 
