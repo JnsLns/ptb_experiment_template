@@ -5,8 +5,8 @@ e.s.resCols = struct;
 
 % add row numbers to e.s.resCols for results matrix columns that will hold
 % trial data. (when results are written to e.results, trial data from
-% will also be written to the corresponding results row;
-% the row numbers for these data are computed and stored here.
+% the triallist will also be written to the corresponding results row;
+% the row numbers for these data are computed and stored here).
 
 startAtCol = 1; % first column number in e.s.resCols to use
 

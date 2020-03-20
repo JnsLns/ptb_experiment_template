@@ -67,9 +67,9 @@ tg.s.postStimMaskColor = 'white';   % Color of post-stimulus mask
 tg.s.allowedLocResponseTime = 2;    % Max duration to make location response
 tg.s.allowedTgtResponseTime = 2;    % Max duration to make tgt presence response
 tg.s.feedbackBeepCorrect = ...      % Properties (freq, amplitude, duration) of
-[600, 0.3, 0.075];                  % beep when target presence resp. correct
+[600, 0.3, 0.05];                   % beep when target presence resp. correct
 tg.s.feedbackBeepIncorrect = ...    % Properties (freq, amplitude, duration) of
-[300, 0.3, 0.075];                  % beep when target presence resp. INcorrect
+[100, 0.3, 0.05];                   % beep when target presence resp. INcorrect
 tg.s.yesKeyName = 'x';              % name of yes-key for target present response
 tg.s.noKeyName = 'y';               % name of no-key for target present response
 tg.s.instructionTextFont = 'Arial'; % font for instruction test
@@ -120,14 +120,14 @@ tg.s.tgtShapeCode = 0;
 
 % Stimulus color specification. Color codes in triallist correspond to
 % element number in this array. 
-% TODO: Adjust these to have the correct colors used by Hazeltine!
-tg.s.stimColors{1} = [70 0 0]/255; % orange
-tg.s.stimColors{2} = [0 0 255]/255; % blue
-tg.s.stimColors{3} = [255 255 0]/255; % yellow
-tg.s.stimColors{4} = [100 0 100]/255; % purple
-tg.s.stimColors{5} = [100 100 100]/255; % gray
-tg.s.stimColors{6} = [255 0 0]/255; % red
-tg.s.stimColors{7} = [0 255 0]/255; % green TARGET COLOR!
+% Colors are adjusted to accord with those used by Hazeltine.
+tg.s.stimColors{1} = [254 219 80]/255; % orange
+tg.s.stimColors{2} = [70 138 255]/255; % blue
+tg.s.stimColors{3} = [232 216 69]/255; % yellow
+tg.s.stimColors{4} = [175 117 249]/255; % purple
+tg.s.stimColors{5} = [204 231 255]/255; % gray
+tg.s.stimColors{6} = [228 96 104]/255; % red
+tg.s.stimColors{7} = [92 197 128]/255; % green TARGET COLOR!
 
 tg.s.tgtColorCode = 7;
  
