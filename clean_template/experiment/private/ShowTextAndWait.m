@@ -1,5 +1,5 @@
 function keyName = ShowTextAndWait(string, color, onscreenWin, waitSecs, waitForKeyPress)
-% function keyName = ShowTextAndWait(string, win, color, waitSecs, waitForKeyPress)
+% function keyName = ShowTextAndWait(string, color, onscreenWin, waitSecs, waitForKeyPress)
 %    
 % Present centered text 'string' in onscreen window 'onscreenWin' and wait
 % for 'waitSecs' seconds.

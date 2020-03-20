@@ -61,7 +61,7 @@ tg.s.durOnStart = 1;                % Time that pointer must dwell in starting p
 tg.s.durWaitForStart = inf;         % Time to wait for participant to assume strating position 
 tg.s.durPreStimFixation = 0.5;      % Time fixation cross is shown after starting position has been 
                                     % assumed and before stimuli are presented 
-tg.s.durItemPresentation = 0.1;     % Duration of stimulus presentation
+tg.s.durItemPresentation = 0.057;   % Duration of stimulus presentation
 tg.s.durPostStimMask = 0.057;       % Duration of white mask after stimulus presentation
 tg.s.postStimMaskColor = 'white';   % Color of post-stimulus mask
 tg.s.allowedLocResponseTime = 2;    % Max duration to make location response

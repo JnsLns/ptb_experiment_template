@@ -56,7 +56,7 @@ pauseKey = 'Pause';
 e.s.trajCols.x = 1; % pointer coordinates
 e.s.trajCols.y = 2;
 e.s.trajCols.t = 3; % pc time
-
+ 
 % Note about trajectories: When storing trajectories in 'e.trajectories'
 % only the first of any directly successive data points that have the
 % same position data is kept.
