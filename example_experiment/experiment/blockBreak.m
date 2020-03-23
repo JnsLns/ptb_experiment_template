@@ -26,9 +26,16 @@ if exist('doBlockBreak','var') && doBlockBreak  % ** DO NOT MODIFY LINE**
     
     % ADD YOUR CODE HERE
     
-    % Show text and wait for button press
-    ShowTextAndWait(...
-    e.s.blockBreakString, ...
-    e.s.instructionTextColor, winOn.h, 0.5, true);
+    if trials(curTrial, triallistCols.isPractice)
+        % Show text and wait for button press
+        ShowTextAndWait(...
+        e.s.practiceBlock1Instruction, ...
+        e.s.instructionTextColor, winOn.h, 0.5, true); 
+    else     
+        % Show text and wait for button press
+        ShowTextAndWait(...
+        e.s.blockBreakString, ...
+        e.s.instructionTextColor, winOn.h, 0.5, true);
+    end
 
 end                                             % ** DO NOT MODIFY LINE**
