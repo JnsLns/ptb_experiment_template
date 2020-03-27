@@ -66,7 +66,7 @@ e.s.trajCols.t = 3; % pc time
 %%%%%%%%%%%%%%%%%%%%%%%%%%%% END OF SETTINGS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 try                         % ** DO NOT MODIFY **
-preparations;               % ** DO NOT MODIFY **
+preparations;               %  ** DO NOT MODIFY **
 openOnscreenWindow;         % ** DO NOT MODIFY **
 
 openOffscreenWindows;       % Open any Psychtoolbox offscreen windows you
@@ -109,6 +109,7 @@ end                        % ** DO NOT MODIFY **
 presentGoodbye;            % Things to be presented after the experiment
 
 cleanUp;                   % ** DO NOT MODIFY **    
-catch                      % ** DO NOT MODIFY **   
-cleanUp;                   % ** DO NOT MODIFY **   
+catch ME                   % ** DO NOT MODIFY **    
+cleanUp;                   % ** DO NOT MODIFY **
+rethrow(ME)                % ** DO NOT MODIFY **
 end                        % ** DO NOT MODIFY **

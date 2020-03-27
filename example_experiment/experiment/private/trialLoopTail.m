@@ -16,16 +16,6 @@ if doSave
     save(savePath, 'e');
 end
 
-% set break code to be run before next trial if next trial is in new block.
-doBlockBreak = false;
-if e.s.useTrialBlocks && ...
-   e.s.breakBetweenBlocks && ...
-   curTrial ~= size(trials,1) && ...
-   rerunTrialLater ~= 1 && ...
-   trials(curTrial, triallistCols.block) ~= trials(curTrial+1, triallistCols.block)                        
-    doBlockBreak = true; 
-end   
-
 % go to next trial...
 curTrial = curTrial + 1;
 

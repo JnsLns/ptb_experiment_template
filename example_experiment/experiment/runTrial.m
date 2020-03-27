@@ -222,7 +222,7 @@ if ~out.abortCode
     
     % present items for fixed time
     deltatItems = GetSecs - out.tStimOnset_pc;
-    while deltatItems <= e.s.durItemPresentation
+    while deltatItems <= trials(curTrial, triallistCols.stimDuration)
         
         % get position of mouse pointer (in pres area frame, visual angle)
         [mouse_xy_pa_va, mouse_xy_ptb_px] = ...

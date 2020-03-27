@@ -22,20 +22,14 @@
 % Code within this if-statement is executed before each block, except for
 % the very first block:
 
-if exist('doBlockBreak','var') && doBlockBreak  % ** DO NOT MODIFY LINE**
+if doBlockBreak                                 % ** DO NOT MODIFY LINE**
+           
+        % Get string to show during break
+        str = e.s.preBlockText{trials(curTrial, triallistCols.block)};
     
-    % ADD YOUR CODE HERE
-    
-    if trials(curTrial, triallistCols.isPractice)
         % Show text and wait for button press
         ShowTextAndWait(...
-        e.s.practiceBlock1Instruction, ...
-        e.s.instructionTextColor, winOn.h, 0.5, true); 
-    else     
-        % Show text and wait for button press
-        ShowTextAndWait(...
-        e.s.blockBreakString, ...
+        str, ...
         e.s.instructionTextColor, winOn.h, 0.5, true);
-    end
-
+    
 end                                             % ** DO NOT MODIFY LINE**

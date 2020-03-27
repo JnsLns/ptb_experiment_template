@@ -136,6 +136,7 @@ tg.s.experimentName = 'hazeltine97';% This will be appended to the name of
 
 %%% Trial shuffle and block settings                                    
                                     
+tg.s.useTrialBlocks = true;         % trials are blocked.
 tg.s.shuffleTrialOrder = true;      % If true, the order of trials in the triallist
                                     % loaded from the file generated here is
                                     % shuffled in the experimental script before
@@ -143,10 +144,7 @@ tg.s.shuffleTrialOrder = true;      % If true, the order of trials in the triall
                                     % the order created here is changed!). Note that 
                                     % if blocks are used (tg.s.useTrialBlocks),
                                     % shuffling will occur only within blocks.
-tg.s.useTrialBlocks = true;         % trials are blocked.
-tg.s.breakBetweenBlocks = true;     % Execute code in blockBreak.m (pause)
-                                    % before each new block of trials.                                    
-
+                                    
 %%% Input settings                                   
 
 tg.s.yesKeyName = 'x';              % yes-key for target present response
@@ -200,6 +198,8 @@ tg.s.durPreStimFixation = 0.5;      % Time fixation cross is shown after
                                     % starting position has been held for
                                     % the above duration (and before stimuli)
 
+practiceBlockStimDurations = [0.5, 0.2, 0.2]; % Stim durations for practice
+                                              % blocks (numbers 1,2,6)
 tg.s.initialStimDuration = 0.100;   % Duration of stimulus presentation
                                     % that is initially assigned to all
                                     % experimental trials (will be adjusted
@@ -215,11 +215,30 @@ tg.s.allowedTgtResponseTime = 2;    % Max duration to make tgt presence response
 tg.s.durPostStimMask = 0.057;       % Duration [s] of monochrome mask shown
                                     % briefly after stimulus presentation
     
-                                    
-%%% Strings & Feedback parameters
+         
+%%% Define instructions and breaks before blocks                                    
 
-tg.s.blockBreakString = ...         % Text shown during breaks btw blocks. 
-'Pause. Taste drücken um fortzufahren.';
+tg.s.breakBeforeBlocks = 1:9;       % blockBreak.m will be executed before
+                                    % these blocks. Numbers correspond to
+                                    % the value in column tg.s.triallistCols.block
+                                    % within triallist. When this number 
+                                    % changes from one block to the next, 
+                                    % blockBreak.m will be executed. 
+tg.s.preBlockText = cell(1,9);      % The cells of this array will hold a
+                                    % string for those blocks specified in the
+                                    % above setting. The string is displayed
+                                    % during the break before the respective block.
+block1text = ['Uebungsblock 1/2.', char(10), char(10), 'Beliebige Taste drücken.'];
+block2text = ['Uebungsblock 2/2.', char(10), char(10), 'Beliebige Taste drücken.'];
+block6text = ['Uebungsblock.', char(10), char(10), 'Beliebige Taste drücken.'];
+otherBlocksText = ['Pause.', char(10), char(10), 'Beliebige Taste drücken zum Fortfahren.'];                                     
+tg.s.preBlockText{1} = block1text;
+tg.s.preBlockText{2} = block2text;
+tg.s.preBlockText{6} = block6text;
+tg.s.preBlockText([3:5,7:9]) = {otherBlocksText};
+
+
+%%% Strings & Feedback parameters
 
 tg.s.feedbackBeepCorrect = ...      % Properties (freq, amplitude, duration) of
 [600, 0.3, 0.05];                   % beep when target presence resp. correct
@@ -675,7 +694,6 @@ co = shuffle(co);
 % after the third experimental block (i.e., after block number 5).
 practiceBlocks = {};
 practiceBlockNumbers = [1,2,6];
-practiceBlockStimDurations = [500, 200, 200];
 tp_inds = 1:12;
 co_inds = 1:6;
 bp_a_inds = 1:4;
@@ -790,6 +808,7 @@ save(['day2_' trialFileSavePathName], 'tg')
 
 % Remove common_functions from path                   % ** DO NOT MODIFY **
 rmpath(genpath(pathToAdd))                            % ** DO NOT MODIFY **
-catch                                                 % ** DO NOT MODIFY **
+catch ME                                              % ** DO NOT MODIFY **
 rmpath(genpath(pathToAdd))                            % ** DO NOT MODIFY **
+rethrow(ME)
 end                                                   % ** DO NOT MODIFY **
