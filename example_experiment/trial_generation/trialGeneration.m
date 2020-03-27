@@ -228,14 +228,18 @@ tg.s.preBlockText = cell(1,9);      % The cells of this array will hold a
                                     % string for those blocks specified in the
                                     % above setting. The string is displayed
                                     % during the break before the respective block.
-block1text = ['Uebungsblock 1/2.', char(10), char(10), 'Beliebige Taste drücken.'];
-block2text = ['Uebungsblock 2/2.', char(10), char(10), 'Beliebige Taste drücken.'];
-block6text = ['Uebungsblock.', char(10), char(10), 'Beliebige Taste drücken.'];
-otherBlocksText = ['Pause.', char(10), char(10), 'Beliebige Taste drücken zum Fortfahren.'];                                     
+block1text = ['Uebungsblock 1/2.', newline, newline, 'Beliebige Taste drücken um zu starten.'];
+block2text = ['Uebungsblock 2/2.', newline, newline, 'Beliebige Taste drücken um zu starten.'];
+block3text = ['Uebung beendet.', newline, newline, 'Taste drücken um Experiment zu starten.'];
+block6text = ['Uebungsblock.', newline, newline, 'Beliebige Taste drücken um zu starten.'];
+block7text = ['Uebung beendet.', newline, newline, 'Taste drücken um Experiment zu starten.'];
+otherBlocksText = ['Pause.', newline, newline, 'Beliebige Taste drücken zum Fortfahren.'];                                     
 tg.s.preBlockText{1} = block1text;
 tg.s.preBlockText{2} = block2text;
+tg.s.preBlockText{3} = block3text;
 tg.s.preBlockText{6} = block6text;
-tg.s.preBlockText([3:5,7:9]) = {otherBlocksText};
+tg.s.preBlockText{7} = block7text;
+tg.s.preBlockText([4,5,8,9]) = {otherBlocksText};
 
 
 %%% Strings & Feedback parameters

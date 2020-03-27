@@ -22,7 +22,8 @@ if ~exist('rerunTrialLater', 'var')
     rerunTrialLater = false;
 end
 
-% set break code to be run before next trial if next trial is in new block.
+% ensure that blockBreak.m will be run before next trial if breaks enabled
+% and next trial is in new block.
 doBlockBreak = false;
 % note that the value of rerunTrialLater is still that set during the last
 % trial, so if true it means that a trial from the last block is repeated
