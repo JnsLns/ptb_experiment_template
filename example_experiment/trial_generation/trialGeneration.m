@@ -343,7 +343,7 @@ triallistColsFields = ...
     'vertSizes', nItems; ...    % vertical item extent 
     'shapes', nItems; ...       % item shape identity codes (index into tg.s.stimShapes)
     'colors', nItems; ...       % item color codes (index into tg.s.stimColors)
-    'lineWidths', nItems ...    % item line widths  
+    'lineWidths', nItems; ...   % item line widths  
     'stimDuration', 1 ...       % presentation time for stimuli
     };
 
@@ -639,7 +639,7 @@ for b = [3,4,5,7,8,9]
     tmp(:, tg.s.triallistCols.block) = b;           
     % add non-practice code
     tmp(:, tg.s.triallistCols.isPractice) = 0;       
-    tmp(:, tg.s.triallistCols.stimDuration) = initialStimDuration;
+    tmp(:, tg.s.triallistCols.stimDuration) = tg.s.initialStimDuration;
     
     triallist = cat(1, triallist, tmp);
     
@@ -700,7 +700,7 @@ for b = practiceBlockNumbers
     % add practice code
     tmp(:, tg.s.triallistCols.isPractice) = 1;       
     % add stim duration
-    tmp(:, tg.s.triallistCols.stimDuration) = practiceBlockStimDurations;       
+    tmp(:, tg.s.triallistCols.stimDuration) = practiceBlockStimDurations(1);       
     practiceBlockStimDurations(1) = [];
     
     % store in cell array temporarily
