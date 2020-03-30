@@ -123,7 +123,7 @@ addpath(genpath(pathToAdd))                           % ** DO NOT MODIFY **
 
 % Note: Size and position measures are in degrees visual angle ('_va')
 % unless fieldnames are postfixed with '_mm' (millimeters). All position
-% data is in the presentaion-area-based coordinate frame.
+% data is in the presentation-area-based coordinate frame.
 
 
 trialFileSavePathName = ...         % File name for trial file (two will be
@@ -132,17 +132,37 @@ trialFileSavePathName = ...         % File name for trial file (two will be
                                     % run; will be prefixed day1 and day2)    
  
 tg.s.experimentName = 'hazeltine97';% This will be appended to the name of 
-                                    % each results file name                                    
+                                    % each results file name when running
+                                    % experiment.
 
 %%% Trial shuffle and block settings                                    
                                     
-tg.s.useTrialBlocks = true;         % trials are blocked.
+tg.s.useTrialBlocks = true;         % Trials are blocked, which means
+                                    % -- trial shuffling (see below) will
+                                    %    occur only within blocks.
+                                    % -- code in blockBreak.m (see experiment
+                                    %    script) will be run before the blocks
+                                    %    specified in 'tg.s.breakBeforeBlockNumbers',
+                                    %    allowing, for instance, to implement
+                                    %    breaks/instructions before certain
+                                    %    blocks. 
+                                    % -- a field 'block' is expected in
+                                    %    'tg.s.triallistCols' and a corres-
+                                    %    ponding column in 'tg.triallist',
+                                    %    specifying the block number each
+                                    %    trial belongs to as an integer
+                                    %    (these numbers don't need to be
+                                    %    contiguous or ordered but unique; 
+                                    %    all trials belonging to the same
+                                    %    block must be in consecutive rows
+                                    %    or the experimental script will 
+                                    %    throw an error).                                                                    
 tg.s.shuffleTrialOrder = true;      % If true, the order of trials in the triallist
                                     % loaded from the file generated here is
                                     % shuffled in the experimental script before
                                     % presenting them to the participant (so that
-                                    % the order created here is changed!). Note that 
-                                    % if blocks are used (tg.s.useTrialBlocks),
+                                    % the order created here is changed!).
+                                    % If blocks are used (tg.s.useTrialBlocks),
                                     % shuffling will occur only within blocks.
                                     
 %%% Input settings                                   
@@ -218,12 +238,13 @@ tg.s.durPostStimMask = 0.057;       % Duration [s] of monochrome mask shown
          
 %%% Define instructions and breaks before blocks                                    
 
-tg.s.breakBeforeBlocks = 1:9;       % blockBreak.m will be executed before
+tg.s.breakBeforeBlockNumbers = 1:9; % blockBreak.m will be executed before
                                     % these blocks. Numbers correspond to
                                     % the value in column tg.s.triallistCols.block
                                     % within triallist. When this number 
                                     % changes from one block to the next, 
-                                    % blockBreak.m will be executed. 
+                                    % blockBreak.m will be executed. Must
+                                    % be a row vector of integers.
 tg.s.preBlockText = cell(1,9);      % The cells of this array will hold a
                                     % string for those blocks specified in the
                                     % above setting. The string is displayed

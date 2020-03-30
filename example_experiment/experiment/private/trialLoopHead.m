@@ -17,19 +17,14 @@ sequNum = sequNum + 1;
 % close PTB windows. Reopen if resumed.
 pauseAndResume;
 
-% initialize rerunTrialLater
-if ~exist('rerunTrialLater', 'var')
-    rerunTrialLater = false;
-end
-
-% ensure that blockBreak.m will be run before next trial if breaks enabled
-% and next trial is in new block.
+% set blockBreak.m to be run before the current trial if block breaks are
+% enabled and next trial is in new block. Note: rerunTrialLater==1 means
+% that the last trial was set to be repeated so that there is at least one
+% trial left in current block.
 doBlockBreak = false;
-% note that the value of rerunTrialLater is still that set during the last
-% trial, so if true it means that a trial from the last block is repeated
-% so that there is at least one trial left in current block.
-if ~rerunTrialLater && e.s.useTrialBlocks    
-    % in case it's not trial 1, check whether block just changed
+if (~exist('rerunTrialLater', 'var') || ~rerunTrialLater) && ...
+    e.s.useTrialBlocks    
+    % in case it's not trial 1, check whether block number just changed
     if curTrial ~= 1
         blockNumChanged = ...
             trials(curTrial, triallistCols.block) ~= ...
@@ -39,10 +34,10 @@ if ~rerunTrialLater && e.s.useTrialBlocks
     end
     % in case block number changed, check whether break desired for this block
     if blockNumChanged && ...
-            any(trials(curTrial, triallistCols.block) == e.s.breakBeforeBlocks)
+            any(trials(curTrial, triallistCols.block) == e.s.breakBeforeBlockNumbers)
         doBlockBreak = true;
     end
 end
 
-% Set trial to not be repeated by default.
+% By default, set trial to not be repeated
 rerunTrialLater = false;

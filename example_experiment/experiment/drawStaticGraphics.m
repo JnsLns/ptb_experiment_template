@@ -3,7 +3,7 @@
 % The coordinate frame for drawing is of course the Psychtoolbox frame,
 % units are pixels. Use functions 'vaToPx' and 'paVaToPtbPx' to convert
 % from visual angle to that frame. See folder 'common_functions' for these
-% functions documentations and other conversion functions you may use.
+% functions' documentations and other conversion functions you may use.
 
 % Draw fixation cross to center of winsOff.fix.rect. 
 fr_px = vaToPx(e.s.fixRadius_va, e.s.spatialConfig)*2;
