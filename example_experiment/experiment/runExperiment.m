@@ -1,7 +1,7 @@
 function runExperiment
 % Run to execute the entire experiment
 
-settings;
+experimentSettings;
 
 try                          
   
