@@ -1,11 +1,3 @@
-% Add common_functions folder to MATLAB path temporarily 
-% (will be removed again when the experiment ends).
-[curFilePath,~,~] = fileparts(mfilename('fullpath'));
-[pathstr, ~, ~] = fileparts(curFilePath);
-dirs = regexp(pathstr, filesep, 'split');
-pathToAdd = fullfile(dirs{1:end-1}, 'common_functions');
-addpath(genpath(pathToAdd))
-
 % Initialize results matrix
 e.results = [];
 

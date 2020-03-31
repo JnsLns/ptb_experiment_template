@@ -5,22 +5,23 @@
 %
 %                __What offscreen windows are needed for__
 %
-% There are two ways an offscreen window can be used:
+% There are two ways an offscreen windows can be used:
 % 
-% (1) Drawing different stimuli to it *each* trial. Draw to such windows
-%     in 'drawChangingGraphics.m', possibly according to trial-specific 
-%     parameters from the trial list ('trials'). Set 'clearEachTrial' to
-%     'true' for those windows (see below), so that remaining images are
-%     deleted from them after each trial.
+% (1) Drawing different stimuli to it *each trial*. Draw to such windows
+%     in 'drawChangingGraphics.m', which is executed once at the outset of
+%     every trial. You probably want to draw things depending on some
+%     trial-specific parameters stored in the trial list ('trials').
+%     Set 'clearEachTrial' to 'true' for these windows (see below), so that
+%     remaining images are deleted from them after each trial.
 %
 % (2) Drawing something to it *once* at the outset of the experiment (in 
-%     (drawStaticGraphics.m). The image can then be reused any time by
+%     (drawStaticGraphics.m). The image can then be reused any time, by
 %     copying the respective offscreen window to the onscreen window. Good
 %     for things that do not need to change over trials, such as a
 %     fixation cross.
 %     For this use case, define one offscreen window for each static image 
 %     needed in the course of the experiment. Set 'clearEachTrial' to
-%     'false' (see below) for these windows, to prevent the image from
+%     'false' for these windows (see below), to prevent the image from
 %     being deleted between trials.
 %
 %
@@ -32,9 +33,15 @@
 % winsOff.myFirstWindow = [];
 % winsOff.mySecondWindow = [];
 %
-% This will open two offscreen windows with default settings. To change the
-% default settings, add any of the following sub-fields to the respective
-% window's field (e.g., winsOff.myFirstWindow.bgColor = [0 0 0]):
+% That's it. The above will open two offscreen windows with default settings.
+% To change the default settings, add any of the following sub-fields to
+% the respective window's field. For instance:
+%
+% winsOff.myFirstWindow.bgColor = [0 0 0];
+%
+% This will change the background color of myFirstWindow. The other possible
+% field names / properties are:
+%
 %
 % Sub-field name              Type/effect                       Default 
 % --------------  ---------------------------------------  ----------------
@@ -56,9 +63,10 @@
 %
 % The struct 'winsOff' will persist and be accessible in the other
 % modifieable experiment script files. A field 'h' will be added auto-
-% matically. This field will hold the window pointer returned by
-% the Psychtoolbox command Screen('OpenOffScreenWindow',...). Use this
-% pointer when when drawing to or copying the respective window later.
+% matically to each sub-field of winsOff. It will hold the window pointer
+% to the window, which can be passed to Psychtoolbox functions that need a
+% window pointer as input. For instance, use this pointer when when drawing
+% to a window later or when copying it to the onscreen window for display.
               
 
 winsOff.stims.clearEachTrial = true; % to draw stimuli to                                     

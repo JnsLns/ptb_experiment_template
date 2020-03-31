@@ -4,7 +4,7 @@
 % elements.
 %
 % The first step should be to record the desired data in one or more
-% arbitrary variables during the trial (i.e., within runTrial.m).
+% arbitrary variables during the trial (i.e., within oneTrial.m).
 %
 % In the current file, a field in struct 'e' should be added for each of
 % these variables (on the first trial only, of course). Each of these
@@ -26,12 +26,13 @@
 % element is added to the array in each trial - even if the respective data
 % was not recorded during the trial for some reason; so simply make sure
 % your variable is initialized to, say, nan or [] at the start of
-% 'runTrial.m'.
+% 'oneTrial.m'.
 %
 % I further suggest to define an index-struct (in the vein of e.s.resCols)
 % for each type of custom data. Do this in the experiment settings at the
-% outset of 'main.m' and add it as a field of 'e.s'. It will enable indexing
-% columns and/or rows of the custom data arrays by name during analysis.
+% outset of 'settings.m' and add it as a field of 'e.s'. It will enable
+% indexing columns and/or rows of the custom data arrays by name during
+% analysis.
 
 
 %%%% Store trajectory 
