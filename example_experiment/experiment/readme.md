@@ -72,7 +72,6 @@ coordinate reference frames. See the list of the most useful ones below. TODO
 ### Folder \internalExperimentScripts
 Inner workings to make the experiment run. Best not modify these files.
 
-### Folder \internalExperimentScripts
 
 ### Folder \trialFiles
 Put files created in trial generation here.
