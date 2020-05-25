@@ -20,10 +20,17 @@ e.s.expScreenSize_px = tmp(3:4);         % get screen res
 e.s.spatialConfig.viewingDistance_mm = e.s.viewingDistance_mm;
 e.s.spatialConfig.expScreenSize_mm = e.s.expScreenSize_mm;
 e.s.spatialConfig.expScreenSize_px = e.s.expScreenSize_px;
-e.s.spatialConfig.presArea_va = tg.s.presArea_va;   
+% Default for presentation area extent: [0,0] = origin in screen center
+if ~isfield(tg.s, 'presArea_va')
+    pa = [0,0];
+else
+    pa = tg.s.presArea_va;
+end
+e.s.spatialConfig.presArea_va = pa;   
 
 % copy experimental setup data (not trials) from trial generation struct
-% (tg.s) to experimental output struct (e.s); except for tg.s.triallistCols.
+% (tg.s) to experimental output struct (e.s); except for tg.s.triallistCols
+% which is dealt with below.
 for fn = fieldnames(tg.s)'    
     if strcmp(fn{1}, 'triallistCols')
         continue; 
@@ -36,8 +43,13 @@ for fn = fieldnames(tg.s)'
 end
  
 % Request save path or warn in case saving is disabled
-if doSave   
-    savePath = requestSavePath(e.s.experimentName);    
+if doSave       
+    % add experiment name field if not specified (postfixed to file name)
+    if ~isfield(e.s, 'experimentName')        
+        e.s.experimentName = '';
+    end
+    % Get path through user input
+    savePath = requestSavePath(e.s.experimentName);
 else
     resp = ...
     questdlg('Saving is disabled, results will not be recorded.', 'Warning', ...
@@ -53,7 +65,10 @@ triallistCols = tg.s.triallistCols;
 clear tg; % tg won't be needed anymore
 
 % In case blocks enabled, check that trials of different blocks are
-% not mixed in the trial list.
+% not mixed in the trial list.  If field not defined, create it and disable.
+if ~isfield(e.s, 'useTrialBlocks')
+    e.s.useTrialBlocks = false;
+end
 if e.s.useTrialBlocks
     blockNums = [rand(); trials(:, triallistCols.block)];
     uniqueBlockNums = unique(blockNums);
@@ -61,10 +76,13 @@ if e.s.useTrialBlocks
         error('Found trials with shared block number in non-consecutive trial list rows!')
     end    
 end
-
-% shuffle trial order if desired
-if e.s.shuffleTrialOrder        
-    % only within blocks if blocks enabled
+   
+% shuffle trial order if desired (if field not defined, create & set to false)
+% only within blocks if blocks enabled
+if ~isfield(e.s, 'shuffleTrialOrder')
+   e.s.shuffleTrialOrder = false; 
+end
+if e.s.shuffleTrialOrder            
     if e.s.useTrialBlocks
        blockNums = trials(:, triallistCols.block);
        uniqueBlockNums = unique(blockNums);
@@ -78,6 +96,39 @@ if e.s.shuffleTrialOrder
     else 
        trials = trials(randperm(size(trials, 1)),:);            
     end        
+end
+
+% shuffle block order if desired (if trial blocking enabled but field not
+% defined, create it and set to false)
+if e.s.useTrialBlocks 
+    if ~isfield(e.s, 'shuffleBlockOrder')
+        e.s.shuffleBlockOrder = false;
+    end
+    if e.s.shuffleBlockOrder        
+        uniqueBlockNums = unique(trials(:, triallistCols.block));
+        nBlocks = numel(uniqueBlockNums);
+        newBlockOrder = uniqueBlockNums(randperm(nBlocks));
+        for curBlockNum = newBlockOrder' % TEST            
+            curRows = trials(:, triallistCols.block) == curBlockNum;            
+            trials = cat(1, trials, trials(curRows,:));
+            trials(curRows, :) = [];
+        end
+    end
+end
+
+% In case 'e.s.breakBeforeBlockNumbers' is not defined, the default is to
+% break before each block except before the first one.
+if e.s.useTrialBlocks && ~isfield(e.s, 'breakBeforeBlockNumbers')        
+    allBlockNumbers = unique(trials(:, triallistCols.block));
+    firstBlockNumber = trials(1, triallistCols.block);      
+    allBlockNumbers(allBlockNumbers == firstBlockNumber) = [];    
+    e.s.breakBeforeBlockNumbers = allBlockNumbers;
+end
+
+% Default background color for all windows is gey (if not defined during
+% trial generation)
+if ~isfield(e.s, 'bgColor')
+    e.s.bgColor = 'grey';
 end
 
 % Convert color-defining field in e.s from strings to RGB

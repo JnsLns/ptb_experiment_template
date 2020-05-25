@@ -5,6 +5,79 @@ trial generation and experiment code. Here's the status of each:*
 
 *In addition to the basic docs below, each modifiable code file itself contains relatively detailed instructions on how to use it.*
 
+# TODO
+- Mouse speed multiplier, calibration, 
+- How to use mouse input with controlled mapping
+- Motion tracking input
+
+# Presentation area
+
+The presentation area is an imagined rectangle centered within the screen.
+Its side lengths are set in degrees of visual angle during trial
+generation, through 'tg.s.presArea_va'. For instance:
+
+tg.s.presArea_va = [20, 10];    % [horizontal, vertical] 
+
+It serves as a coordinate frame in which stimulus positions should be
+defined during trial generation. The origin is at the bottom left
+corner, the positive x-axis points to the right and the positive
+y-axis points upward. Degrees of visual angle should be used as units.
+
+Using the presentation area as coordinate frame means that stimuli
+positions are defined relative to the screen center rather than in 
+relation to screen borders, making stimulus positioning independent from
+screen size. Thus, different screens can easily be used for the same 
+experiment while keeping stimulus positions constant. The only thing
+that needs to be adjusted when switching screens is the physical screen
+size ('e.s.expScreenSize_mm' in generalSettings.m).
+
+If the field 'presArea_va' is not defined during trial generation, the
+default [0,0] will be used. This means that the coordinate origin for
+stimulus definition will be in the screen center, which should be
+convenient in most cases. 
+
+
+# Optional settings during trial generation
+
+--- tg.s.useTrialBlocks
+
+Boolean, default if undefined: false. If set to true, trials are blocked.
+This allows implementing pauses for the participants or running other code
+between blocks. In detail, if 'tg.s.useTrialBlocks' is true:
+
+Each trial in 'tg.triallist' must be marked as belonging to one block. For
+this, define 'tg.s.triallistCols.block' and assign to it the number of a
+column of the trial list ('tg.triallist'). This column must contain integers
+that identify the block number for each trial. Arbitrary integers may be
+used but each block must have a unique number and all trials with the same
+number must be in consecutive rows (else an error will be thrown).                                                                    
+
+Any code in 's5a_blockBreak.m' (folder 'paradigmDefinition') will be
+executed before each block but the first one. Optionally, this can be
+further controlled by defining 'tg.s.breakBeforeBlockNumbers' and assigning
+to it an array of block numbers. 's5a_blockBreak.m' will then be executed
+only before the specified blocks (which may include the first one).
+
+Trial shuffling will occur only within and not across blocks (see
+'tg.s.shuffleTrialOrder'), that is, block order is preserved.
+
+--- tg.s.shuffleTrialOrder
+  
+Boolean, default if undefined: false. If set to true, the order of trials
+in the triallist will be shuffled at the outset of the experimental script,
+so that each participant will see a different trial order. If blocks are
+used (see 'tg.s.useTrialBlocks'), shuffling will occur only within blocks.     
+                                          
+--- tg.s.shuffleBlockOrder             
+                                       
+Boolean, default if undefined: false. If set to true, the order of blocks
+in the triallist will be shuffled at the outset of the experimental script,
+so that each participant will see a different block order. Obviously, this
+only comes to effect if blocks are used (see 'tg.s.useTrialBlocks').
+
+
+
+
 # Psychophysics experiment template using MATLAB & Psychtoolbox 3
 
 This template is designed to speed up the development of psychophsics experiments
