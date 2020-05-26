@@ -24,11 +24,12 @@ tg.s.shuffleTrialOrder = true;         % Shuffle blocks at start of experiment
                                        % Default if undefined: false
                                        % See Readme.md for details.                                       
 
-tg.s.presArea_va = [40, 30];        % [horizontal, vertical] extent of
-                                    % presentation area [°visual angle]
-                                    % Default if undefined: [0, 0] (i.e., 
-                                    % the coordinate origin will be in the
-                                    % screen center).
+tg.s.presArea_va = [40, 30];           % [horizontal, vertical] extent of
+                                       % presentation area in °visual
+                                       % angle.
+                                       % Default if undefined: [0, 0] (i.e., 
+                                       % the coordinate origin will be in
+                                       % the screen center).
                                     % See Readme.md                                          
                                     
 tg.s.onscreenWindowTextFont = 'Arial';    % Default font for onscreen window. 
