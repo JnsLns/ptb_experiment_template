@@ -182,7 +182,9 @@ if ~out.abortCode
         [mouse_xy_pa_va, mouse_xy_ptb_px] = ...
             getMouseRemapped_pa_ptb(e.s.mouseMovementMultiplier, e.s.spatialConfig);
         
-        checkStartingPosition;
+        % Check whether cursor in starting position
+        tipAtStart = ...
+        checkCursorInCircle(mouse_xy_pa_va, e.s.startPos_va, e.s.startRadius_va);
         
         % if start pos left, abort trial
         if ~tipAtStart
@@ -228,9 +230,9 @@ if ~out.abortCode
         [mouse_xy_pa_va, mouse_xy_ptb_px] = ...
             getMouseRemapped_pa_ptb(e.s.mouseMovementMultiplier, e.s.spatialConfig);
         
-        % Check whether tip position is in correct location and pointer is
-        % angled correctly. This is indicated by variable tipAtStart.
-        checkStartingPosition;
+        % Check whether cursor in starting position
+        tipAtStart = ...
+        checkCursorInCircle(mouse_xy_pa_va, e.s.startPos_va, e.s.startRadius_va);
         
         % if start pos left, abort trial
         if ~tipAtStart
@@ -276,9 +278,9 @@ if ~out.abortCode
         [mouse_xy_pa_va, mouse_xy_ptb_px] = ...
             getMouseRemapped_pa_ptb(e.s.mouseMovementMultiplier, e.s.spatialConfig);
         
-        % Check whether tip position is in correct location.
-        % This is indicated by variable tipAtStart.
-        checkStartingPosition;
+        % Check whether cursor in startin position
+        tipAtStart = ...
+        checkCursorInCircle(mouse_xy_pa_va, e.s.startPos_va, e.s.startRadius_va);
         
         % if start pos left, abort trial
         if ~tipAtStart
