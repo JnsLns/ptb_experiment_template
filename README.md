@@ -6,9 +6,8 @@ trial generation and experiment code. Here's the status of each:*
 *In addition to the basic docs below, each modifiable code file itself contains relatively detailed instructions on how to use it.*
 
 # TODO
-- Mouse speed multiplier, calibration, 
-- How to use mouse input with controlled mapping
-- Motion tracking input
+- mouse stuff documentation... new anonymous function getMouseRM...
+- Motion tracking input (later... after Coras experiment)
 
 # Presentation area
 
@@ -35,6 +34,23 @@ If the field 'presArea_va' is not defined during trial generation, the
 default [0,0] will be used. This means that the coordinate origin for
 stimulus definition will be in the screen center, which should be
 convenient in most cases. 
+
+# Rough trial generation overview
+
+
+1) Define settings as fields of 'tg.s'; these apply to whole experiment
+   - built-in optional settings, see Readme.md, in short:
+   - custom settings (not trial-specific)
+   - define tg.s.triallistCols MANDATORY
+
+2) Make trial list (tg.triallist)
+   - Each trial one row. 
+   - This is the info that you will use in the experiment script to
+     customize each trial (in files named 's5*.m' in folder
+     paradigmDefinition.m)
+   - Suggestion: include unique ID
+
+3) Save (maybe do that automaitcally?)
 
 
 # Optional settings during trial generation
@@ -75,6 +91,45 @@ in the triallist will be shuffled at the outset of the experimental script,
 so that each participant will see a different block order. Obviously, this
 only comes to effect if blocks are used (see 'tg.s.useTrialBlocks').
 
+
+# TriallistCols and similar (integrate with existing col structs doc)
+
+% Fields and number of columns for tg.s.triallistCols (struct holding column
+% indices of trial matrix). 
+
+tg.s.triallistCols.trialID = 1;
+tg.s.triallistCols.block = 2;
+tg.s.triallistCols.tgt = 2;
+tg.s.triallistCols.horzPos = 3:5; 
+tg.s.triallistCols.vertPos = 6:8;
+
+% Say you have three stimulus items in each display. To get the horizontal
+% positions of all items in, say, trial 10, do:
+
+horzPosAll = tg.triallist(10, tg.s.triallistCols.horzPos);
+
+% Now say in each trial one of the three stimuls items plays a special
+% role, for instance as a target item. In each trial you use a the column
+% number 'tg.s.triallistCols.tgt' to store which of the three items is the
+% target. So to get the horizontal position of the target item in a given
+% trial, say 20, do:
+
+% get which of the three items is the target item in trial 20
+tgtItemNumber = tg.triallist(20, tg.s.triallistCols.tgt);
+% then combine that info with the column numbers for horizontal positions
+% to retrieve the target items' horizontal position.
+horzPosTgt = tg.triallist(20, tg.s.triallistCols.horzPos(tgtItemNumber));
+
+% The names (triallist, triallistCols, resCols) are admittedly a little
+% cumbersome, which represents a tradeoff against accessibility. Rename the
+% variables yourself when working with, to arrive at less code.
+
+% Temporary rename
+tl = tg.triallist;
+tCols = tg.s.triallistCols;
+
+% This is the same as the entire previous example:
+horzPosTgt = tl(20, tCols.horzPos(tl(20, tCols.tgt)));
 
 
 
