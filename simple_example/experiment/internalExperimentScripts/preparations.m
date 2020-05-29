@@ -143,10 +143,10 @@ HideCursor;
 % trial properties).
 createResCols;
 
-% when a desired mouse screen-desk-ratio was defined during trial generation
-% define anonymous function for getting remapped mouse position.
+% Define anonymous function getMouseRM for getting remapped mouse position,
+% if desired mouse screen-desk-ratio was defined during trial generation.
 if isfield(e.s, 'desiredMouseScreenToDeskRatioXY')
-    % check if raw ratio is defined as well
+    % make sure raw ratio is defined as well
     if ~isfield(e.s, 'rawMouseScreenToDeskRatio') || isnan(e.s.rawMouseScreenToDeskRatio)
         error(['When tg.s.desiredMouseScreenToDeskRatioXY is set in trial ', ...
             'generation (which is the case), then e.s.rawMouseScreenToDeskRatio ',...
@@ -155,6 +155,8 @@ if isfield(e.s, 'desiredMouseScreenToDeskRatioXY')
     getMouseRM = @() getMouseRemapped(e.s.rawMouseScreenToDeskRatio, ...
         e.s.desiredMouseScreenToDeskRatioXY, ...
         e.s.spatialConfig);    
+elseif isfield(e.s, 'rawMouseScreenToDeskRatio')
+    e.s = rmfield(e.s, 'rawMouseScreenToDeskRatio'); % unneeded in this case       
 end
 
 

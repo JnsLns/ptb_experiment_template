@@ -7,7 +7,7 @@ function [x_ptb_px, y_ptb_px] = paVaToPtbPx(x_pa_va, y_pa_va, spatialConfig)
 % corner, x-axis increasing to the right, y-axis increasing downward). 
 %
 % The first two arguments are x,y values that are to be transformed
-% (vectors possible). spatialConfig is a stuct that holds information about
+% (vectors possible). spatialConfig is a struct that holds information about
 % the spatial setup of the experiment, with fields:
 %
 % viewingDistance_mm 	Distance of participant from screen in mm

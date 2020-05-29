@@ -25,9 +25,9 @@ e.s.multisampling = 3;
 pauseKey = 'Pause';
 
 % Ratio of mouse cursor movement distance on the screen and mouse movement
-% on the desk, as arising from mouse system settings. Required for
-% using getMouseRM to stream/remap mouse movement (see Readme.md).
-% Comment out or set nan if unused.
+% on the desk, as arising from mouse system settings. Required for using
+% getMouseRM to stream/remap mouse movement (see Readme.md). No effect
+% otherwise.
 % e.s.rawMouseScreenToDeskRatio = nan;
 
 
