@@ -1,15 +1,6 @@
 function [mouse_xy_pa_va, mouse_xy_ptb_px] = getMouseRemapped(rawRatio, desiredRatioXY, spatialConfig)
 % function [mouse_xy_pa_va, mouse_xy_ptb_px] = getMouseRemapped(rawRatio, desiredRatioXY, spatialConfig)
 %
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% NOTE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% A convenient way to call this function is built into the experimental
-% template. It can be invoked via getMouseRM(), that is, without arguments.
-% It will return the output arguments described here. This works within
-% the m-files located in the folder 'paradigmDefinition' and requires
-% setting 'tg.s.desiredMouseScreenToDeskRatio' in trial generation and
-% 'e.s.rawMouseScreenToDeskRatio' in generalSettings.m.
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
 % Wraps GetMouse() from Psychtoolbox to obtain mouse position while changing 
 % the mapping from mouse movement on the desk to cursor movement on the
 % screen, in order to instead satisfy the mapping specified by 'desiredRatioXY'.
@@ -23,6 +14,14 @@ function [mouse_xy_pa_va, mouse_xy_ptb_px] = getMouseRemapped(rawRatio, desiredR
 % whenever changing screen size, resolution, or mouse speed (see
 % documentation of getMouseScreenToDeskRatio for details).
 %
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% NOTE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% A convenient way to call this function is built into the experimental
+% template: It can be invoked without arguments via the anonymous function
+% getMouseRM(), returning the output arguments described here. This works
+% within the m-files located in the folder 'paradigmDefinition' and
+% requires 'tg.s.desiredMouseScreenToDeskRatio' to be defined in trial
+% generation and 'e.s.rawMouseScreenToDeskRatio' in generalSettings.m.
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %                               ___Input___
 %

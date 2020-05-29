@@ -31,15 +31,34 @@ e.s.spatialConfig.presArea_va = pa;
 % copy experimental setup data (not trials) from trial generation struct
 % (tg.s) to experimental output struct (e.s); except for tg.s.triallistCols
 % which is dealt with below.
+overrideWarningHasFired = false;
 for fn = fieldnames(tg.s)'    
     if strcmp(fn{1}, 'triallistCols')
         continue; 
-    end    
-    if isfield(e.s, fn{1})
-        error(['Field ', fn{1}, ' was about to be copied from tg.s', ...
-            ' to e.s, but already exists in e.s']);
-    end
-    e.s.(fn{1}) = tg.s.(fn{1});    
+    end                
+    % throw error if field already exists in 'e.s.', but only if that
+    % behavior is not overridden for debugging. If overridden, warn once.
+    if isfield(e.s, fn{1})        
+        if ~isfield(e.s, 'expScriptSettingsOverrideTrialGenSettings') || ...
+                e.s.expScriptSettingsOverrideTrialGenSettings == false            
+            error(['Field ', fn{1}, ' was about to be copied from tg.s', ...
+                ' to e.s, but already exists in e.s']);            
+        else            
+            if ~overrideWarningHasFired
+                warndlg(['Note that ''e.s.expScriptSettingsOverrideTrialGenSettings'' is ', ...
+                    'true, which is intended for testing and debugging. It means ', ...
+                    'that any fields in struct ''e.s'' that are defined in the ', ...
+                    'experimental scripts override the values of fields with the ', ...
+                    'same name in struct ''tg.s'' (from trial generation) instead ', ...
+                    'of throwing an error. This should be remedied before running ', ...
+                    'the final experiment.'])
+                overrideWarningHasFired = true;
+            end  
+            continue; % use value that is already in 'e.s'
+        end        
+    end     
+    % copy over
+    e.s.(fn{1}) = tg.s.(fn{1});        
 end
  
 % Request save path or warn in case saving is disabled
