@@ -12,77 +12,30 @@
 %      trials(curTrial, triallistCols.whateverYouAreLookingFor)
 
 
-% some abbreviations for columns in triallist
-vps = triallistCols.vertPosStart;  % positions
-vpe = triallistCols.vertPosEnd;
-hps = triallistCols.horzPosStart;
-hpe = triallistCols.horzPosEnd;
-vss = triallistCols.vertSizesStart;  % extent
-vse = triallistCols.vertSizesEnd;
-hss = triallistCols.horzSizesStart;
-hse = triallistCols.horzSizesEnd;
-sshs = triallistCols.shapesStart;        
-sshe = triallistCols.shapesEnd;        
-scs  = triallistCols.colorsStart;        
-sce  = triallistCols.colorsEnd;        
-lws  = triallistCols.lineWidthsStart;        
-lwe  = triallistCols.lineWidthsEnd;        
+% First get stimulus info from the trial list for the current trial:
+colors = trials(curTrial, triallistCols.color);
+horzPos = trials(curTrial, triallistCols.horzPos);
 
-% triallist row for current trial
-ct = trials(curTrial,:);
+% We didn't specify vertical positions, because these will always be zero
+vertPos = zeros(numel(horzPos));
 
-% item positions in psychtoolbox coordinates / pixels
-[x_pos, y_pos] = paVaToPtbPx(ct(hps:hpe), ct(vps:vpe), e.s.spatialConfig);
+% Convert item positions to Psychtoolbox frame and pixels (can be done for
+% all items at once)
+[x_ptb, y_ptb] = paVaToPtbPx(horzPos, vertPos, e.s.spatialConfig);
 
-% item extent in pixels
-x_ext = vaToPx(ct(hss:hse), e.s.spatialConfig);
-y_ext = vaToPx(ct(vss:vse), e.s.spatialConfig);
+% Convert item radius from °v.a. to pixels (is the same for all items)
+r_px = vaToPx(e.s.stimRadius, e.s.spatialConfig);
 
-% letter identities, colors, and linewidths (codes)
-shapeCodes = ct(sshs:sshe);
-colorCodes = ct(scs:sce);
-lineWidths = vaToPx(ct(lws:lwe), e.s.spatialConfig);
 
-% Draw items
-for i = 1:sshe-sshs+1
+% Draw the items via Psychtoolbox to stimulus offscreen window 
+Screen('DrawDots', ...
+    winsOff.stims.h, ...
+    [x_ptb, y_ptb], ...
+    r_px * 2, ...
+    e.s.startMarkerColor, ...
+    [], 1);
 
-    % skip nan entries in shapeCodes (i.e., stimIdentities)
-    if ~isnan(shapeCodes(i))
-        
-        % straight-line letters (non-targets)
-        if shapeCodes(i) ~= 0  
-    
-            lineItem(winsOff.stims.h, ...
-                     [x_ext(i) y_ext(i)], ...      
-                     [3 3], ...
-                     e.s.stimShapes{shapeCodes(i)}, ...
-                     lineWidths(i), ...
-                     e.s.stimColors{colorCodes(i)}, ...
-                     [x_pos(i), y_pos(i)], ...
-                     true, ...
-                     lineWidths(i), ...
-                     e.s.bgColor);
-        
-        % letter O (target)
-        else                         
-            
-            % note: the circle will be inscribed in the rect regardless of
-            % the line width.
-            Screen('FrameOval', ...
-                   winsOff.stims.h, ...
-                   e.s.stimColors{colorCodes(i)}, ...
-                   [x_pos(i) - x_ext(i)/2, ...
-                    y_pos(i) - y_ext(i)/2, ...
-                    x_pos(i) + x_ext(i)/2, ...
-                    y_pos(i) + y_ext(i)/2], ...
-                    lineWidths(i), ...
-                    lineWidths(i));
-            
-        end
-        
-    end
-    
-end
+
 
 
 

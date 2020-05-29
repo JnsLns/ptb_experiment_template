@@ -24,8 +24,4 @@
 %    (set in trial generation as 'tg.s.breakBeforeBlockNumbers').
 
           
-% Get string to show during break
-str = e.s.preBlockText{trials(curTrial, triallistCols.block)};
 
-% Show text and wait for button press
-ShowTextAndWait(str, e.s.instructionTextColor, winOn.h, 0.5, true);

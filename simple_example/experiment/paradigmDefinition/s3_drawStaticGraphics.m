@@ -5,25 +5,31 @@
 % from visual angle to that frame. See folder 'common_functions' for these
 % functions' documentations and other conversion functions you may use.
 
-% Draw fixation cross to center of winsOff.fix.rect. 
-fr_px = vaToPx(e.s.fixRadius_va, e.s.spatialConfig)*2;
-flw_px = vaToPx(e.s.fixLineWidth_va, e.s.spatialConfig);
-lineItem(winsOff.fix.h, [fr_px fr_px], [3 3], {[4 6],[2 8]}, flw_px, ...
-         e.s.fixColor, [winsOff.fix.rect(3)/2, winsOff.fix.rect(4)/2])    
 
-% Draw start marker to winsOff.startMarker.h
- [sm_xy_ptb_px(1), sm_xy_ptb_px(2)] = ...
-    paVaToPtbPx(e.s.startPos_va(1), e.s.startPos_va(2), e.s.spatialConfig);
-Screen('DrawDots', winsOff.startMarker.h, sm_xy_ptb_px, ...
-        vaToPx(e.s.startMarkerRad_va, e.s.spatialConfig)*2, ...
-        e.s.startMarkerColor, [], 1);
+
+%%%% Draw start marker to offscreen window winsOff.startMarker.h
+
+% To draw the start marker using a Psychtoolbox function, we need
+% Psychtoolbox coordinates and pixel units. But we have defined the
+% position in the presentation-area-frame and in degrees of visual angle
+% during trial generation. So we first need to convert them:
+
+% Convert positions
+x = e.s.startMarkerPos(1);
+y = e.s.startMarkerPos(2);
+[x_ptb, y_ptb] = paVaToPtbPx(x, y, e.s.spatialConfig);
+
+% Convert size
+r = e.s.startMarkerRadius;
+r_px = vaToPx(r, e.s.spatialConfig);
+
+% Finally, use Psychtoolbox function to plot the start marker
+Screen('DrawDots', ...
+    winsOff.startMarker.h, ...
+    [x_ptb, y_ptb], ...
+    r_px * 2, ...
+    e.s.startMarkerColor, ...
+    [], 1);
     
-% Draw white mask to presentation area in winsOff.postStimMask.h
-[msk_x_ptb_px, msk_y_ptb_px] = ...
-    paVaToPtbPx(...
-    [0, e.s.presArea_va(1)], ...
-    [0, e.s.presArea_va(2)],...
-    e.s.spatialConfig);
-Screen('FillRect', winsOff.postStimMask.h, e.s.postStimMaskColor, ...
-    [msk_x_ptb_px(1), msk_y_ptb_px(2), msk_x_ptb_px(2), msk_y_ptb_px(1)]);
+
 

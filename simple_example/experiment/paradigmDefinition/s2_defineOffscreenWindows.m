@@ -15,7 +15,7 @@
 %     remaining images are deleted from them after each trial.
 %
 % (2) Drawing something to it *once* at the outset of the experiment (in 
-%     (drawStaticGraphics.m). The image can then be reused any time, by
+%     drawStaticGraphics.m). The image can then be reused any time, by
 %     copying the respective offscreen window to the onscreen window. Good
 %     for things that do not need to change over trials, such as a
 %     fixation cross.
@@ -71,11 +71,7 @@
 
 winsOff.stims.clearEachTrial = true; % to draw stimuli to                                     
 winsOff.empty = [];                  % empty screen
-winsOff.startMarker = [];            % for start marker
-winsOff.fix = [];                    % for fixation cross
-winsOff.targetResponse = [];         % for target presence response
-winsOff.postStimMask = [];           % for post stimulus mask
-
+winsOff.startMarker = [];            % for mouse cursor start marker
 
 
 
