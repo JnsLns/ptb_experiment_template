@@ -43,7 +43,7 @@ tg.triallist(2, tlc.target) = 3;           % dot 3 is the target
 tg.triallist(3, tlc.trialID) = 3;            
 tg.triallist(3, tlc.color) = 1;            % use color 1
 tg.triallist(3, tlc.horzPos) = [-5,0,5];   % horizontal positions
-tg.triallist(3, tlc.target) = 3;           % dot 3 is the target
+tg.triallist(3, tlc.target) = 1;           % dot 3 is the target
 
 % Note that the target number in column 'tlcs.target' can later be used
 % to get the horizontal position of the target, e.g. in trial 3:
@@ -63,7 +63,7 @@ tg.s.shuffleTrialOrder = true;   % reserved field name, makes sure trial
 
 tg.s.stimColors = {[1 0 0], [0 1 0]};  % red and green
 
-tg.s.stimRadius = 1;             % radius of dot stimuli (°visual angle)
+tg.s.stimRadius = 0.5;           % radius of dot stimuli (°visual angle)
 
 tg.s.mouseCursorColor = [0 0 0]; % color of mouse cursor
 
@@ -73,8 +73,15 @@ tg.s.startMarkerPos = [0, -10];  % this is the position of the start marker
                                  % where participants will have to move the
                                  % mouse to start a trial.                                 
 
-tg.s.startMarkerRadius = 2;      % ...and its radius
+tg.s.startMarkerRadius = 0.5;    % ...and its radius
+tg.s.startMarkerColor = [0 0 0]; % ...and its color
 
+tg.s.durOnStart = 1;             % Consecutive seconds mouse cursor needs
+                                 % to be on start marker for stimuli
+                                 % to be shown.
+
+tg.s.desiredMouseScreenToDeskRatioXY = [1,1]; % TODO
+                                 
 % The experiment will record mouse trajecories in matrix from. I define a
 % column-struct here as a custom paradigm-setting so I'll know later what
 % the matrix' columns contain:
@@ -87,6 +94,7 @@ tg.s.trajCols.t = 3;              % time stamp will be in column 3
 %%%%%%%%%%%%%%%%%% Save (to folder ../experiment/trialFiles') %%%%%%%%%%%%%
 
 fileName = 'exampleTrials.mat';
+% Save to folder 'trialFiles' in experiment directory, using relative path
 savePath = fullfile(fileparts(mfilename('fullpath')), '..', ...
     'experiment', 'trialFiles', fileName);
 save(savePath, 'tg');

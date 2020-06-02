@@ -1,12 +1,11 @@
-function screenToDesk = getMouseScreenToDeskRatio(distWorld_mm, screenSizeXY_mm, screenResXY_px)
-% function screenToDesk = getMouseScreenToDeskRatio(distWorld_mm, screenSizeXY_mm, screenResXY_px)
+function screenToDesk = getMouseScreenToDeskRatio(screenSizeXY_mm, screenResXY_px, distWorld_mm)
+% function screenToDesk = getMouseScreenToDeskRatio(screenSizeXY_mm, screenResXY_px, distWorld_mm)
 %
 % This function helps measuring the ratio of cursor movement distance on
 % the screen and mouse movement distance on the desk (screen / desk). For
 % this the function requests a straight, vertical mouse movement over a
 % predefined length as a movement sample. The user is notified of the
-% required steps via message boxes. Results will be most accurate when
-% mouse speed is set as low as possible in the system settings.
+% required steps via message boxes. 
 %
 % %%%%%%%%%%%%%%%%%%%%%%% IMPORTANT NOTE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % The ratio is highly dependent on the system setting of mouse speed,
@@ -23,21 +22,14 @@ function screenToDesk = getMouseScreenToDeskRatio(distWorld_mm, screenSizeXY_mm,
 % across the screen for every 10 millimeters the mouse moves on the desk
 % (2:1 mapping); for this, obtain the raw ratio using the current function
 % and then, during the experiment use getMouseRemapped(screenToDesk, 2, ...)
-% and plot a mouse cursor at the position returned by that function
+% (or simply getMouseRM(), see Readme.md) and plot a mouse cursor at the
+% position returned by that function
 %
 % Note that this function works properly only if the raw mouse-pointer
 % mapping is the same in horizontal and vertical direction, which is
-% usually the case.
+% however usually the case.
 %
 %                            ___Input___
-%
-% distWorld_mm      Scalar giving the distance that the mouse will be moved
-%                   across the desk as a sample movement, in millimeters.
-%                   Larger distances will result in better estimates of the
-%                   ratio. However, setting the value too high may result
-%                   in reaching the screen borders during calibration,
-%                   which results in invalid output (a warning will be
-%                   issued in this case).
 %
 % screenSizeXY_mm   2-element row vector giving the horizontal and vertical
 %                   extent of the visible area of the screen. 
@@ -49,6 +41,11 @@ function screenToDesk = getMouseScreenToDeskRatio(distWorld_mm, screenSizeXY_mm,
 %                   screen number of a connected screen from which these
 %                   values should be acquired. 
 %
+% distWorld_mm      Optional, default 500 mm. Scalar giving the distance
+%                   that the mouse will be moved across the desk as a
+%                   sample movement, in millimeters. Larger distances will
+%                   result in better estimates of the ratio.
+%
 % 
 %                           ___Output___
 %
@@ -57,11 +54,14 @@ function screenToDesk = getMouseScreenToDeskRatio(distWorld_mm, screenSizeXY_mm,
 %                  by desk).
 
 
-% third arg not defined --> use res of first screen
-% third arg is scalar --> use the screen denoted by that scalar
-% this arg is vector --> retain that vector and use as res
-whichScreen = [];
+% Default args
+
 if nargin < 3
+    distWorld_mm = 500;
+end
+
+whichScreen = [];
+if nargin < 2
     whichScreen = 0;
 elseif numel(screenResXY_px) == 1
     whichScreen = screenResXY_px;
@@ -71,41 +71,53 @@ if ~isempty(whichScreen)
     screenResXY_px = ss(3:4);
 end
 
-% Ratio of pixels to physical size
-pxPerMm = screenResXY_px./screenSizeXY_mm;
+% Compute ratio of pixels to physical size
+pxPerMm = mean(screenResXY_px./screenSizeXY_mm);
 
-% Get initial position
+% Preparation
 pause(0.2);
-waitfor(msgbox('Reminder: Disable mouse acceleration before calibration and during experiments that use the determined value. If mouse speed is later changed in system/mouse driver settings calibration has to be renewed.'));
-msgbox('Place the mouse in the starting position. Do not move it until instructed to. Press any keyboard key when ready.');
-KbWait;
+waitfor(msgbox(['Reminder: Disable mouse acceleration before calibration ', ...
+                'and during experiments that use the determined value. If ', ...
+                'mouse speed is later changed in system/mouse driver ', ...
+                'settings calibration has to be renewed.']));
 pause(0.5);
 
-% Move mouse and get final position
-SetMouse(ceil(screenResXY_px(1)/2),screenResXY_px(2)-ceil(screenResXY_px(2)/10));
-msgbox(['Press any keyboard key to close this message. When instructed to, move the mouse forward along a straight line of ' num2str(distWorld_mm) ' millimeters.']);
+% Instruction
+msgbox(['When instructed to, move the mouse forward along a straight line ', ...
+       'of ', num2str(distWorld_mm), ' millimeters. The straighter the line, ', ...
+       'and the more precise the distance moved, the more accurate the ',...
+       'computed ratio will be. Tip: Press the mouse against a fixed ruler along ',...
+       'which you slide it (the direction of movement does not matter). ', ...
+       'Place the mouse in the starting position now. Then press any KEYBOARD ', ...
+       'KEY to close this message.']);
 KbWait;
 pause(0.5)
+
+% Get the movement and measure distance
 msgbox('Move the mouse now. Press any keyboard key when done moving.');
-[mx1,my1] = GetMouse();
-while 1 % during movement check that screenborder isn't reached
-    [mx,my] = GetMouse();
-    if any([mx,my]==screenResXY_px-1) || any([mx,my]==[0 0])
-        waitfor(errordlg('Cursor reached screen border. Returned value will not be valid. Try again with a smaller value for distWorld_mm and/or decrease mouse speed in system settings.'));
-        break;
-    end
-    if KbCheck
-        break;
-    end
+scrSz = ss-1;
+start_x = ceil(scrSz(3)/2);
+start_y = ceil(scrSz(4)/2);
+robot = java.awt.Robot;
+robot.mouseMove(start_x, start_y);
+distScreen_px = 0;
+while 1    
+    x = java.awt.MouseInfo.getPointerInfo().getLocation().getX();
+    y = java.awt.MouseInfo.getPointerInfo().getLocation().getY();                
+    if KbCheck || any(x == [0,scrSz(3)])  || any(y == [0,scrSz(4)])        
+        distScreen_px = distScreen_px + norm(([start_x, start_y] - [x,y]));                        
+        robot.mouseMove(start_x, start_y);
+        disp(distScreen_px)
+        if KbCheck
+            break;
+        end      
+    end                                
 end
-[mx2,my2] = GetMouse();
 
 % x,y distance travelled on screen
-distScreenXY_px = abs([mx2,my2]-[mx1,my1]);
-distScreenXY_mm = distScreenXY_px ./ pxPerMm;
+distScreen_mm = distScreen_px / pxPerMm;
 
 % Compute ratio
-distScreen_mm = sqrt(sum(distScreenXY_mm.^2));
 screenToDesk = distScreen_mm / distWorld_mm;
 
 msgbox(['Screen to world ratio is ' num2str(screenToDesk)]);

@@ -83,7 +83,6 @@
 % 'false' before each trial.
 
 % Set default values for some variables
-out.abortCode = 0;      % this may change later...
 out.sequNum = sequNum;  % ordinal position at which trial was presented
 
 % Initialize matrix for trajectory data (custom data that will be saved not
@@ -99,110 +98,54 @@ trajectory = [];
 
 
 
-%%%% PHASE 1: Wait for participant to assume starting position
-
-% Go on when they have kept starting pos for e.s.durOnStart
-% If not in start pos within e.s.durWaitForStart, abort trial (code 1).
+%%%% PHASE 1: Wait for participant to move to start marker
 
 % Copy start marker offscreen window to onscreen window & present
 Screen('CopyWindow', winsOff.startMarker.h, winOn.h);
 Screen('Flip', winOn.h, []);
 
-tOnStart = 0;
-deltatOnStart = 0;
-startScreenOnset = GetSecs;
+% Initialize time counters
+tOnStart = 0;               % time point where last moved onto start marker
+deltatOnStart = 0;          % consecutive seconds dwelled on start marker
+
+% Loop until participant has dwelled on marker for 'e.s.durOnStart' seconds
 while deltatOnStart <= e.s.durOnStart        
     
-    % get position of mouse pointer (in pres area frame, visual angle)
-    [mouse_xy_pa_va, mouse_xy_ptb_px] = getMouseRM();        
+    %%% Check whether cursor on start marker
     
-    % determine distance to starting position
-    distFromStart_va = ...
-        dist3d([mouse_xy_pa_va, 0], [e.s.startPos_va, 0], [0 0 1]);
+    % get mouse cursor position (in pres.-area frame, deg. visual angle)    
+    mouseXY = getMouseRM();        
     
-    % Check whether it is within starting region
-    if distFromStart_va < e.s.startRadius_va
-        tipAtStart = 1;
-    else
-        tipAtStart = 0;
-    end
+    % Check whether cursor is on start marker
+    cursorOnStart = ...
+        checkCursorInCircle(mouseXY, e.s.startMarkerPos, e.s.startMarkerRadius);                    
     
-    % what happens next depends on how long pointer has been on/off marker:
-    % (1) if pts in starting position
-    %   (A) and was not during last iteration     -> start timer
-    %   (B) and already was during last iteration -> increment timer
-    % (2) if pts not in starting position
-    %   (A) but was in last iteration             -> reset counter to zero
-    %   (B) and never was and max wait time up    -> abort trial
-    if tipAtStart                                                     % (1)
-        if deltatOnStart == 0                                         % (A)
+    % start or increment timer if on start marker, else reset it to zero
+    if cursorOnStart                                                          
+        if deltatOnStart == 0                                         
             tOnStart = GetSecs;
-        end
-        deltatOnStart = GetSecs - tOnStart;                           % (B)
-    elseif ~tipAtStart                                                % (2)
-        if  deltatOnStart ~= 0  &&  deltatOnStart < e.s.durOnStart    % (A)
-            deltatOnStart = 0;
-        elseif GetSecs - startScreenOnset > e.s.durWaitForStart       % (B)
-            out.abortCode = 1;
-            break;
-        end
+        end        
+        deltatOnStart = GetSecs - tOnStart;            
+    else                
+        deltatOnStart = 0;
     end       
     
-    % Draw pointer / start marker
+    %%% Re-draw cursor
+    
+    % use start marker window as "background" (copy to onscreen win)      
     Screen('CopyWindow', winsOff.startMarker.h, winOn.h);
-    Screen('DrawDots', winOn.h, mouse_xy_ptb_px, ...
-        vaToPx(e.s.cursorRad_va, e.s.spatialConfig)*2, e.s.cursorColor, [], 1);
-        
-    % Refresh
+    % Convert mouse position back to PTB coordinates, draw cursor
+    [mouseXY_ptb(1), mouseXY_ptb(2)] = ...
+        paVaToPtbPx(mouseXY(1), mouseXY(2), e.s.spatialConfig);
+    Screen('DrawDots', winOn.h, mouseXY_ptb, ...
+            vaToPx(e.s.mouseCursorRadius, e.s.spatialConfig) * 2, ...
+            e.s.mouseCursorColor, [], 1);        
+    % Show 
     Screen('Flip', winOn.h, []);    
     
 end
 
 
-
-%%%% PHASE 2: Show fixation cross
-
-% for e.s.durPreStimFixation seconds.
-% If during that time participant leaves start pos., abort trial (code 2).
-
-out.tFixOnset_pc = nan;
-
-if ~out.abortCode
-    
-    % copy fix window to onscreen window
-    Screen('CopyWindow', winsOff.fix.h, winOn.h);
-    [~, out.tFixOnset_pc, ~, ~] = Screen('Flip',winOn.h,[]);
-    
-    deltatFix = GetSecs - out.tFixOnset_pc;
-    
-    while deltatFix <= e.s.durPreStimFixation
-        
-        % get position of mouse pointer (in pres area frame, visual angle)
-        [mouse_xy_pa_va, mouse_xy_ptb_px] = getMouseRM();
-        
-        % Check whether cursor in starting position
-        tipAtStart = ...
-        checkCursorInCircle(mouse_xy_pa_va, e.s.startPos_va, e.s.startRadius_va);
-        
-        % if start pos left, abort trial
-        if ~tipAtStart
-            out.abortCode = 2;
-            break;
-        end
-        
-        % Increment timer
-        deltatFix = GetSecs - out.tFixOnset_pc;
-        
-        % Refresh display and draw pointer
-        Screen('CopyWindow', winsOff.fix.h, winOn.h);
-        Screen('DrawDots', winOn.h, mouse_xy_ptb_px, ...
-            vaToPx(e.s.cursorRad_va, e.s.spatialConfig)*2, ...
-            e.s.cursorColor, [], 1);
-        Screen('Flip', winOn.h, []);
-        
-    end
-    
-end
 
 
 
@@ -228,11 +171,11 @@ if ~out.abortCode
         [mouse_xy_pa_va, mouse_xy_ptb_px] =  getMouseRM();
         
         % Check whether cursor in starting position
-        tipAtStart = ...
+        cursorOnStart = ...
         checkCursorInCircle(mouse_xy_pa_va, e.s.startPos_va, e.s.startRadius_va);
         
         % if start pos left, abort trial
-        if ~tipAtStart
+        if ~cursorOnStart
             out.abortCode = 3;
             break;
         end
@@ -275,11 +218,11 @@ if ~out.abortCode
         [mouse_xy_pa_va, mouse_xy_ptb_px] = getMouseRM();            
         
         % Check whether cursor in startin position
-        tipAtStart = ...
+        cursorOnStart = ...
         checkCursorInCircle(mouse_xy_pa_va, e.s.startPos_va, e.s.startRadius_va);
         
         % if start pos left, abort trial
-        if ~tipAtStart
+        if ~cursorOnStart
             out.abortCode = 3;
             break;
         end

@@ -16,8 +16,8 @@
 colors = trials(curTrial, triallistCols.color);
 horzPos = trials(curTrial, triallistCols.horzPos);
 
-% We didn't specify vertical positions, because these will always be zero
-vertPos = zeros(numel(horzPos));
+% We didn't specify vertical positions because these will always be zero
+vertPos = zeros(1, numel(horzPos));
 
 % Convert item positions to Psychtoolbox frame and pixels (can be done for
 % all items at once)
@@ -26,11 +26,10 @@ vertPos = zeros(numel(horzPos));
 % Convert item radius from °v.a. to pixels (is the same for all items)
 r_px = vaToPx(e.s.stimRadius, e.s.spatialConfig);
 
-
 % Draw the items via Psychtoolbox to stimulus offscreen window 
 Screen('DrawDots', ...
     winsOff.stims.h, ...
-    [x_ptb, y_ptb], ...
+    [x_ptb; y_ptb], ...
     r_px * 2, ...
     e.s.startMarkerColor, ...
     [], 1);

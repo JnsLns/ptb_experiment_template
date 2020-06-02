@@ -11,7 +11,7 @@ doSave = true;
 % Actual screen size in millimeters (extent of visible image). Measure this
 % as accurately as possible, as it determines how accurately the requested
 % stimulus sizes and positions will be realized.
-e.s.expScreenSize_mm = [800 339]; 
+e.s.expScreenSize_mm = [797 333]; 
 
 % Participant's viewing distance from the screen in millimeters
 e.s.viewingDistance_mm = 600;
@@ -28,7 +28,7 @@ pauseKey = 'Pause';
 % on the desk, as arising from mouse system settings. Required for using
 % getMouseRM to stream/remap mouse movement (see Readme.md). No effect
 % otherwise.
-% e.s.rawMouseScreenToDeskRatio = nan;
+e.s.rawMouseScreenToDeskRatio = 48.3;
 
 
 

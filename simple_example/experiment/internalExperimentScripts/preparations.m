@@ -173,9 +173,9 @@ if isfield(e.s, 'desiredMouseScreenToDeskRatioXY')
     end        
     getMouseRM = @() getMouseRemapped(e.s.rawMouseScreenToDeskRatio, ...
         e.s.desiredMouseScreenToDeskRatioXY, ...
-        e.s.spatialConfig);    
+        e.s.spatialConfig);  
 elseif isfield(e.s, 'rawMouseScreenToDeskRatio')
-    e.s = rmfield(e.s, 'rawMouseScreenToDeskRatio'); % unneeded in this case       
+    e.s = rmfield(e.s, 'rawMouseScreenToDeskRatio'); % unneeded in this case
 end
 
 
