@@ -217,7 +217,7 @@ end
 
 
 % Determine and store whether target was selected
-out.correct = (triallistCols.target == out.chosenItem);
+out.correct = (trials(curTrial, triallistCols.target) == out.chosenItem);
 
 % create unique ID for current response. It doesn't hurt and allows
 % identifying trials unambigously if ever needed.

@@ -1,8 +1,13 @@
 
 %%%% Store results in e.results
 
-% Initialize the new results row to nans
-maxCol = max(structfun(@(x) x, e.s.resCols)); % max col in e.s.resCols
+% Find max col number in e.s.resCols and initialize new results row to 
+% nan vector of that length.
+usedColNums = [];
+for fname = fieldnames(e.s.resCols)'
+    usedColNums = [usedColNums, e.s.resCols.(fname{1})];
+end
+maxCol = max(usedColNums);
 newResRow = nan(1,maxCol);
 
 % in case there are new results columns since the last time, i.e., a new
@@ -16,31 +21,14 @@ end
 
 % write from fields of struct 'out' to new results row
 for fName = fieldnames(out)'
-
-    f = fName{1};    
-    if numel(out.(f)) > 1
-        newResRow(e.s.resCols.([f, 'Start']):e.s.resCols.([f, 'End'])) = ...
-            out.(f);
-    else
-        newResRow(e.s.resCols.(f)) = out.(f);
-    end
-
+    f = fName{1};               
+    newResRow(e.s.resCols.(f)) = out.(f);    
 end
 
 % write from current trial row to new results row
 for fName = fieldnames(triallistCols)'
-
     f = fName{1};
-    if charEndsWith(f,'End')
-        continue;
-    elseif charEndsWith(f,'Start')
-        f = f(1:end-5);
-        newResRow(e.s.resCols.([f, 'Start']):e.s.resCols.([f, 'End'])) = ...
-            trials(curTrial, triallistCols.([f, 'Start']):triallistCols.([f, 'End']));
-    else
-        newResRow(e.s.resCols.(f)) = trials(curTrial, triallistCols.(f));
-    end
-
+    newResRow(e.s.resCols.(f)) = trials(curTrial, triallistCols.(f));   
 end
 
 % append row to results matrix

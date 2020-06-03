@@ -17,7 +17,7 @@ for fName = fieldnames(out)'
     if ~isfield(e.s.resCols, fn)    
         e.s.resCols = colStruct(fn, numel(out.(fn)), e.s.resCols);            
     else        
-        if numel(e.s.resCols.(fn)) == numel(out.(fn))
+        if numel(e.s.resCols.(fn)) ~= numel(out.(fn))             
             error(['Number of elements of output object in ', ...
                 '''out.', fn ,''' does not match number', ...
                 ' of columns specified in ''e.s.resCols''.']);
