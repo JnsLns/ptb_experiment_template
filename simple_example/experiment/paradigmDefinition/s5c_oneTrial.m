@@ -3,7 +3,7 @@
 %
 % Everything in here can be modified freely. Present to the participants
 % whatever you like and get responses, by specifying the sequential structure
-% of the trials. Use the offscreen windows that were drawn to earlier, 
+% of the trials. Use the offscreen windows that were drawn to earlier,
 % copying them to the onscreen window when needed. Use info from the trial
 % list to further customize individual trials.
 %
@@ -14,7 +14,7 @@
 %
 %
 %             __Copying to onscreen window and presenting__
-% 
+%
 % The window pointer of the onscreen window is 'winOn.h'. So simply do:
 % Screen('CopyWindow', winsOff.someWindow.h, winOn.h);
 %
@@ -29,7 +29,7 @@
 % while 1
 %   Screen('CopyWindow', winsOff.someWindow.h, winOn.h);
 %   Screen('DrawDots', ...);       % Draw some dots, such as a mouse cursor
-%   Screen('Flip', winOn.h, []);   % refresh 
+%   Screen('Flip', winOn.h, []);   % refresh
 % end
 %
 %
@@ -89,12 +89,8 @@ out.sequNum = sequNum;  % ordinal position at which trial was presented
 % in 'e.results' but 'e.trajectories', which is accomplished in the file
 % storeCustomOutputData.m).
 trajectory = [];
-    
 
 
-% -------------------------------------------------------------------------
-% PRESENTATION STARTS HERE
-% -------------------------------------------------------------------------
 
 
 
@@ -109,187 +105,91 @@ tOnStart = 0;               % time point where last moved onto start marker
 deltatOnStart = 0;          % consecutive seconds dwelled on start marker
 
 % Loop until participant has dwelled on marker for 'e.s.durOnStart' seconds
-while deltatOnStart <= e.s.durOnStart        
+while deltatOnStart <= e.s.durOnStart
     
     %%% Check whether cursor on start marker
     
-    % get mouse cursor position (in pres.-area frame, deg. visual angle)    
-    mouseXY = getMouseRM();        
+    % get mouse cursor position (in pres.-area frame, deg. visual angle)
+    mouseXY = getMouseRM();
     
     % Check whether cursor is on start marker
     cursorOnStart = ...
-        checkCursorInCircle(mouseXY, e.s.startMarkerPos, e.s.startMarkerRadius);                    
+        checkCursorInCircle(mouseXY, e.s.startMarkerPos, e.s.startMarkerRadius);
     
     % start or increment timer if on start marker, else reset it to zero
-    if cursorOnStart                                                          
-        if deltatOnStart == 0                                         
+    if cursorOnStart
+        if deltatOnStart == 0
             tOnStart = GetSecs;
-        end        
-        deltatOnStart = GetSecs - tOnStart;            
-    else                
+        end
+        deltatOnStart = GetSecs - tOnStart;
+    else
         deltatOnStart = 0;
-    end       
+    end
     
     %%% Re-draw cursor
     
-    % use start marker window as "background" (copy to onscreen win)      
+    % use start marker window as "background" (copy to onscreen win)
     Screen('CopyWindow', winsOff.startMarker.h, winOn.h);
     % Convert mouse position back to PTB coordinates, draw cursor
     [mouseXY_ptb(1), mouseXY_ptb(2)] = ...
         paVaToPtbPx(mouseXY(1), mouseXY(2), e.s.spatialConfig);
     Screen('DrawDots', winOn.h, mouseXY_ptb, ...
-            vaToPx(e.s.mouseCursorRadius, e.s.spatialConfig) * 2, ...
-            e.s.mouseCursorColor, [], 1);        
-    % Show 
-    Screen('Flip', winOn.h, []);    
+        vaToPx(e.s.mouseCursorRadius, e.s.spatialConfig) * 2, ...
+        e.s.mouseCursorColor, [], 1);
+    % Show
+    Screen('Flip', winOn.h, []);
     
 end
 
 
+%%%% PHASE 2: Show stimuli and wait for participant to click one dot
 
+% Copy stimulus offscreen window to onscreen window
+Screen('CopyWindow', winsOff.stims.h, winOn.h);
+% present stimuli, store onset time
+[~, out.tStimOnset, ~, ~] = Screen('Flip', winOn.h, []);
 
-
-%%%% PHASE 3: Present stimuli
-
-% If participant moves off starting position, abort trial (code 3).
-
-out.tStimOnset_pc = nan;
-
-if ~out.abortCode
+% wait for response (pointer at screen surface)
+loopCounter = 0; 
+while 1
     
-    % Copy offscreen window with stims and start marker to onscreen window
-    Screen('CopyWindow', winsOff.stims.h, winOn.h);
+    loopCounter = loopCounter + 1;
     
-    % present items
-    [~,out.tStimOnset_pc,~,~] = Screen('Flip', winOn.h, []);
+    % get mouse cursor position (in pres.-area frame, deg. visual angle)
+    mouseXY = getMouseRM();
     
-    % present items for fixed time
-    deltatItems = GetSecs - out.tStimOnset_pc;
-    while deltatItems <= trials(curTrial, triallistCols.stimDuration)
+    % Get time for trajectory time stamp
+    timeStamp = GetSecs;
         
-        % get position of mouse pointer (in pres area frame, visual angle)
-        [mouse_xy_pa_va, mouse_xy_ptb_px] =  getMouseRM();
-        
-        % Check whether cursor in starting position
-        cursorOnStart = ...
-        checkCursorInCircle(mouse_xy_pa_va, e.s.startPos_va, e.s.startRadius_va);
-        
-        % if start pos left, abort trial
-        if ~cursorOnStart
-            out.abortCode = 3;
-            break;
-        end
-        
-        % Increment timer
-        deltatItems = GetSecs - out.tStimOnset_pc;
-       
-        % Refresh display and draw pointer
-        Screen('CopyWindow', winsOff.stims.h, winOn.h);
-        Screen('DrawDots', winOn.h, mouse_xy_ptb_px, ...
-            vaToPx(e.s.cursorRad_va, e.s.spatialConfig)*2, ...
-            e.s.cursorColor, [], 1);
-        Screen('Flip', winOn.h, []);
-        
-    end
+    % record cursor position to prepared trajectory matrix
+    trajectory(loopCounter, ...
+        [e.s.trajCols.x, ...
+        e.s.trajCols.y, ...
+        e.s.trajCols.t]) = [mouseXY, timeStamp];
     
-end
-
-
-
-%%%% PHASE 3 B: Post stimulus mask
-
-% If participant moves off starting position, abort trial (code 3).
-
-out.tPostStimMaskOnset_pc = nan;
-
-if ~out.abortCode
-    
-    % Copy offscreen window with mask to onscreen window
-    Screen('CopyWindow', winsOff.postStimMask.h, winOn.h);
-    
-    % present mask
-    [~,out.tPostStimMaskOnset_pc,~,~] = Screen('Flip', winOn.h, []);
-    
-    % present mask for fixed time, monitor pointer position
-    deltatMask = GetSecs - out.tPostStimMaskOnset_pc;
-    while deltatMask <= e.s.durPostStimMask
-        
-        % get position of mouse pointer (in pres area frame, visual angle)
-        [mouse_xy_pa_va, mouse_xy_ptb_px] = getMouseRM();            
-        
-        % Check whether cursor in startin position
-        cursorOnStart = ...
-        checkCursorInCircle(mouse_xy_pa_va, e.s.startPos_va, e.s.startRadius_va);
-        
-        % if start pos left, abort trial
-        if ~cursorOnStart
-            out.abortCode = 3;
-            break;
-        end
-        
-        % Increment timer
-        deltatMask = GetSecs - out.tPostStimMaskOnset_pc;               
-        
-    end
-    
-end
-
-
-
-%%%% PHASE 4: Location response
-
-% wait for click
-% If allowed response time exceeded, abort trial (code 4).
-
-out.tLocResponseOnset_pc = nan;
-out.tLocResponseOffset_pc = nan;
-out.tClick_pc = nan; 
-
-if ~out.abortCode
-    
-    % clear onscreen window and get location response onset time
-    [~,out.tLocResponseOnset_pc,~,~] = Screen('Flip', winOn.h, []);
-    
-    % wait for response (pointer at screen surface)
-    loopCounter = 0;
-    while 1
-        
-        loopCounter = loopCounter + 1;
-        
-        % get position of mouse pointer (in pres area frame, visual angle)
-        [mouse_xy_pa_va, mouse_xy_ptb_px] = getMouseRM();
-        pcTime = GetSecs;                
-        
-        % if max time is up, leave loop and abort trial
-        if pcTime - out.tLocResponseOnset_pc > e.s.allowedLocResponseTime
-            out.tLocResponseOffset_pc = pcTime;
-            out.abortCode = 4;
-            break;
-        end
+    % when participant clicks, proceed, storing click time and movement time
+    [~,~,mouseButtons] = GetMouse;
+    if any(mouseButtons)
                 
-        % record pointer position
-        trajectory(loopCounter, ...
-            [e.s.trajCols.x, ...
-            e.s.trajCols.y, ...
-            e.s.trajCols.t]) = [mouse_xy_pa_va, pcTime];
-                        
-        % store time and proceed upon mouse click
-        [~,~,mouseButtons] = GetMouse;
-        if any(mouseButtons)
-            out.tLocResponseOffset_pc = pcTime;
-            out.tClick_pc = pcTime;
-            break;
-        end
+        out.tClick = timeStamp;
+        out.movementTime = out.tClick - out.tStimOnset;
         
-        % Refresh display and draw pointer        
-        Screen('DrawDots', winOn.h, mouse_xy_ptb_px, ...
-            vaToPx(e.s.cursorRad_va, e.s.spatialConfig)*2, ...
-            e.s.cursorColor, [], 1);
-        Screen('Flip', winOn.h, []);
+        if check
+        out.clickedOnItem = 
+        
+        break;
         
     end
     
+    % Refresh display and draw pointer
+    Screen('DrawDots', winOn.h, mouse_xy_ptb_px, ...
+        vaToPx(e.s.cursorRad_va, e.s.spatialConfig)*2, ...
+        e.s.cursorColor, [], 1);
+    Screen('Flip', winOn.h, []);
+    
 end
+
+
 
 
 
@@ -302,13 +202,13 @@ out.tgtPresentResponse = nan;
 out.tTgtPresentResponseOnset_pc = nan;
 out.tgtPresentResponseRT = nan;
 
-if ~out.abortCode        
+if ~out.abortCode
     
     % copy response window to onscreen window and show
     Screen('CopyWindow', winsOff.targetResponse.h, winOn.h);
     [~, out.tTgtPresentResponseOnset_pc, ~, ~] = Screen('Flip',winOn.h,[]);
     
-    while 1                
+    while 1
         
         % if max time is up, leave loop and abort trial
         if GetSecs - out.tTgtPresentResponseOnset_pc > e.s.allowedTgtResponseTime
@@ -342,7 +242,7 @@ if ~out.abortCode
 end
 
 % clear onscreen window
-Screen('Flip', winOn.h, []); 
+Screen('Flip', winOn.h, []);
 
 
 
@@ -364,71 +264,71 @@ out.responseCorrect = nan;
 out.responseType = nan;
 
 if ~out.abortCode
-
+    
     ttype = trials(curTrial, triallistCols.trialType);
     
-    if ttype == 1                       % tgt present trial         
+    if ttype == 1                       % tgt present trial
         
-        if out.tgtPresentResponse == 1          % hit (1)            
+        if out.tgtPresentResponse == 1          % hit (1)
             out.responseCorrect = 1;
-            out.responseType = 1;             
-        elseif out.tgtPresentResponse == 0      % miss (2)         
+            out.responseType = 1;
+        elseif out.tgtPresentResponse == 0      % miss (2)
             out.responseCorrect = 0;
-            out.responseType = 2;             
+            out.responseType = 2;
         end
         
     elseif ttype == 2                   % both present trial
         
         if out.tgtPresentResponse == 1          % illusory conjunction (3)
-            out.responseCorrect = 0;   
-            out.responseType = 3;             
-        elseif out.tgtPresentResponse == 0      % correct rejection BP (4)             
+            out.responseCorrect = 0;
+            out.responseType = 3;
+        elseif out.tgtPresentResponse == 0      % correct rejection BP (4)
             out.responseCorrect = 1;
-            out.responseType = 4;             
-        end        
-    
-    elseif ttype == 3                   % color only trial       
+            out.responseType = 4;
+        end
         
-        if out.tgtPresentResponse == 1          % feature error (5)            
-            out.responseCorrect = 0;   
-            out.responseType = 5;             
-        elseif out.tgtPresentResponse == 0      % correct rejection CO (6)            
+    elseif ttype == 3                   % color only trial
+        
+        if out.tgtPresentResponse == 1          % feature error (5)
+            out.responseCorrect = 0;
+            out.responseType = 5;
+        elseif out.tgtPresentResponse == 0      % correct rejection CO (6)
             out.responseCorrect = 1;
-            out.responseType = 6;             
-        end    
-                
+            out.responseType = 6;
+        end
+        
     end
     
 end
- 
+
 
 %%%% Feedback
 
 % Determine appropriate feedback
 if out.abortCode == 0
-        
+    
     if out.responseCorrect == 1
-        bp = e.s.feedbackBeepCorrect;        
-    elseif out.responseCorrect == 0        
-        bp = e.s.feedbackBeepIncorrect;        
-    end        
+        bp = e.s.feedbackBeepCorrect;
+    elseif out.responseCorrect == 0
+        bp = e.s.feedbackBeepIncorrect;
+    end
     
     Beeper(bp(1), bp(2), bp(3));
     
-elseif out.abortCode ~= 0   
+elseif out.abortCode ~= 0
     
     dur = e.s.feedback.dur_abort;
     
-    if out.abortCode == 1        
-        feedbackStr = e.s.feedback.notMovedToStart;       
-    elseif out.abortCode == 2        
-        feedbackStr = e.s.feedback.leftStartInFix;        
-    elseif out.abortCode == 3        
-        feedbackStr = e.s.feedback.leftStartInStim;        
-    elseif out.abortCode == 4        
-        feedbackStr = e.s.feedback.exceededLocRT;        
-    elseif out.abortCode == 5        
-        feedbackStr = e.s.feedback.exceededTgtRT;                
+    if out.abortCode == 1
+        feedbackStr = e.s.feedback.notMovedToStart;
+    elseif out.abortCode == 2
+        feedbackStr = e.s.feedback.leftStartInFix;
+    elseif out.abortCode == 3
+        feedbackStr = e.s.feedback.leftStartInStim;
+    elseif out.abortCode == 4
+        feedbackStr = e.s.feedback.exceededLocRT;
+    elseif out.abortCode == 5
+        feedbackStr = e.s.feedback.exceededTgtRT;
     end
     
     % Display feedback.
