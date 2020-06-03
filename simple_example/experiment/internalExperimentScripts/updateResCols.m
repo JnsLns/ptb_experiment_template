@@ -2,19 +2,19 @@
 % to e.s.resCols that weren't present on previous trials.
 for fName = fieldnames(out)'
     
-    % Check that object in the field is integer or column vector
+    % Check that object in the field is integer or row vector
     sz = size(out.(fName{1}));
     if numel(sz)>2 || sz(1) > 1
         error(['Output objects in fields of struct ''out'' must ', ...
-            'be integers or column vectors but ''out.', fName{1}, ...
+            'be integers or row vectors but ''out.', fName{1}, ...
             ''' has size [', num2str(sz), '].']);
     end        
-    
+        
     % for the first trial where current field of 'out' is used (i.e., does
     % not exist in e.s.resCols yet): add field (or start/end fields) to
     % e.s.resCols
-    if ~isfield(e.s.resCols, fName{1}) && ...
-       ~isfield(e.s.resCols, [fName{1}, 'Start'])                                
+    if ~isfield(e.s.resCols, fName{1})
+    
         e.s.resCols = colStruct(fName{1}, sz(2), e.s.resCols);
         
     % if current field of 'out' already exists in 'e.s.resCols', check that 

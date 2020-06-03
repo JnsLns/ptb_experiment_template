@@ -82,15 +82,16 @@
 % to aborted trials. Note that 'rerunTrialLater' is automatically reset to
 % 'false' before each trial.
 
-% Set default values for some variables
-out.sequNum = sequNum;  % ordinal position at which trial was presented
+
 
 % Initialize matrix for trajectory data (custom data that will be saved not
-% in 'e.results' but 'e.trajectories', which is accomplished in the file
-% storeCustomOutputData.m).
+% in 'e.results' but 'e.trajectories', which will be accomplished in the
+% file storeCustomOutputData.m).
 trajectory = [];
 
-
+% Store ordinal position at which trial was presented. Can't hurt to have
+% that in case we reorder rows at some point during later analysis.
+out.sequNum = sequNum;  
 
 
 
@@ -142,7 +143,14 @@ while deltatOnStart <= e.s.durOnStart
 end
 
 
+
 %%%% PHASE 2: Show stimuli and wait for participant to click one dot
+
+% Get stimulus centers and radiuses. We'll need those later to check
+% whether the mouse cursor is within an item
+stimsX = trials(curTrial, triallistCols.horzPos);
+stimsY = zeros(1, numel(stimsX)); % vertical position is always zero
+stimsXY = [stimsX', stimsY'];
 
 % Copy stimulus offscreen window to onscreen window
 Screen('CopyWindow', winsOff.stims.h, winOn.h);
@@ -158,196 +166,63 @@ while 1
     % get mouse cursor position (in pres.-area frame, deg. visual angle)
     mouseXY = getMouseRM();
     
-    % Get time for trajectory time stamp
-    timeStamp = GetSecs;
-        
     % record cursor position to prepared trajectory matrix
+    timeStamp = GetSecs;
     trajectory(loopCounter, ...
         [e.s.trajCols.x, ...
         e.s.trajCols.y, ...
         e.s.trajCols.t]) = [mouseXY, timeStamp];
     
-    % when participant clicks, proceed, storing click time and movement time
+    % when participant clicks, store times and response specifics, then
+    % proceed
     [~,~,mouseButtons] = GetMouse;
-    if any(mouseButtons)
-                
+    if any(mouseButtons)                
+        
         out.tClick = timeStamp;
-        out.movementTime = out.tClick - out.tStimOnset;
+        out.movementTime = out.tClick - out.tStimOnset;        
         
-        if check
-        out.clickedOnItem = 
-        
-        break;
+        % check whether an item was clicked; if so, store that and store
+        % which item was clicked; if not, set trial to be rerun and mark
+        % in results matrix that the trial was rerun.
+        [inStim, whichStim] = checkCursorInCircle(mouseXY, stimsXY, e.s.stimRadius);
+        if inStim
+            out.clickedOnItem = 1;
+            out.chosenItem = whichStim;
+            out.trialRepeatedLater = 0;
+        else
+            out.clickedOnItem = 0;
+            out.chosenItem = nan;            
+            out.trialRepeatedLater = 1;
+            rerunTrialLater = true;
+        end
+        break;        
         
     end
     
-    % Refresh display and draw pointer
-    Screen('DrawDots', winOn.h, mouse_xy_ptb_px, ...
-        vaToPx(e.s.cursorRad_va, e.s.spatialConfig)*2, ...
-        e.s.cursorColor, [], 1);
+   
+    %%% Re-draw cursor
+    
+    % use stim window as "background" (copy to onscreen win)
+    Screen('CopyWindow', winsOff.stims.h, winOn.h);
+    % Convert mouse position back to PTB coordinates, draw cursor
+    [mouseXY_ptb(1), mouseXY_ptb(2)] = ...
+        paVaToPtbPx(mouseXY(1), mouseXY(2), e.s.spatialConfig);
+    Screen('DrawDots', winOn.h, mouseXY_ptb, ...
+        vaToPx(e.s.mouseCursorRadius, e.s.spatialConfig) * 2, ...
+        e.s.mouseCursorColor, [], 1);
+    % Show
     Screen('Flip', winOn.h, []);
-    
+        
 end
 
 
+% Determine and store whether target was selected
+out.correct = (triallistCols.target == out.chosenItem);
 
-
-
-%%%% PHASE 5: Target presence keyboard response
-
-% wait for yes/no button to be pressed.
-% if allowed response time exceeded, abort trial (code 5)
-
-out.tgtPresentResponse = nan;
-out.tTgtPresentResponseOnset_pc = nan;
-out.tgtPresentResponseRT = nan;
-
-if ~out.abortCode
-    
-    % copy response window to onscreen window and show
-    Screen('CopyWindow', winsOff.targetResponse.h, winOn.h);
-    [~, out.tTgtPresentResponseOnset_pc, ~, ~] = Screen('Flip',winOn.h,[]);
-    
-    while 1
-        
-        % if max time is up, leave loop and abort trial
-        if GetSecs - out.tTgtPresentResponseOnset_pc > e.s.allowedTgtResponseTime
-            out.abortCode = 5;
-            break;
-        end
-        
-        % Check keyboard
-        [keyIsDown, secs, keyCode, ~] = KbCheck;
-        
-        % Store response
-        if keyIsDown
-            
-            if strcmp(KbName(keyCode), e.s.yesKeyName)
-                out.tgtPresentResponse = 1;
-            elseif strcmp(KbName(keyCode), e.s.noKeyName)
-                out.tgtPresentResponse = 0;
-            end
-            
-            % store RT and proceed
-            if ~isnan(out.tgtPresentResponse)
-                out.tgtPresentResponseRT = ...
-                    secs - out.tTgtPresentResponseOnset_pc;
-                break;
-            end
-            
-        end
-        
-    end
-    
-end
-
-% clear onscreen window
-Screen('Flip', winOn.h, []);
-
-
-
-
-% -------------------------------------------------------------------------
-% PRESENTATION ENDS HERE (except for possible feedback)
-% -------------------------------------------------------------------------
-
-
-%%%% set trial to be rerun if it was aborted
-if out.abortCode ~= 0
-    rerunTrialLater = true;
-end
-
-
-%%%% Determine correctness and type of target presence response
-
-out.responseCorrect = nan;
-out.responseType = nan;
-
-if ~out.abortCode
-    
-    ttype = trials(curTrial, triallistCols.trialType);
-    
-    if ttype == 1                       % tgt present trial
-        
-        if out.tgtPresentResponse == 1          % hit (1)
-            out.responseCorrect = 1;
-            out.responseType = 1;
-        elseif out.tgtPresentResponse == 0      % miss (2)
-            out.responseCorrect = 0;
-            out.responseType = 2;
-        end
-        
-    elseif ttype == 2                   % both present trial
-        
-        if out.tgtPresentResponse == 1          % illusory conjunction (3)
-            out.responseCorrect = 0;
-            out.responseType = 3;
-        elseif out.tgtPresentResponse == 0      % correct rejection BP (4)
-            out.responseCorrect = 1;
-            out.responseType = 4;
-        end
-        
-    elseif ttype == 3                   % color only trial
-        
-        if out.tgtPresentResponse == 1          % feature error (5)
-            out.responseCorrect = 0;
-            out.responseType = 5;
-        elseif out.tgtPresentResponse == 0      % correct rejection CO (6)
-            out.responseCorrect = 1;
-            out.responseType = 6;
-        end
-        
-    end
-    
-end
-
-
-%%%% Feedback
-
-% Determine appropriate feedback
-if out.abortCode == 0
-    
-    if out.responseCorrect == 1
-        bp = e.s.feedbackBeepCorrect;
-    elseif out.responseCorrect == 0
-        bp = e.s.feedbackBeepIncorrect;
-    end
-    
-    Beeper(bp(1), bp(2), bp(3));
-    
-elseif out.abortCode ~= 0
-    
-    dur = e.s.feedback.dur_abort;
-    
-    if out.abortCode == 1
-        feedbackStr = e.s.feedback.notMovedToStart;
-    elseif out.abortCode == 2
-        feedbackStr = e.s.feedback.leftStartInFix;
-    elseif out.abortCode == 3
-        feedbackStr = e.s.feedback.leftStartInStim;
-    elseif out.abortCode == 4
-        feedbackStr = e.s.feedback.exceededLocRT;
-    elseif out.abortCode == 5
-        feedbackStr = e.s.feedback.exceededTgtRT;
-    end
-    
-    % Display feedback.
-    ShowTextAndWait(feedbackStr, e.s.feedbackTextColor, winOn.h, dur, false);
-    
-end
-
-
-%%%% create unique ID for current response
-
-% I suggest keeping this. It doesn't hurt and allows you to identify trials
-% unambigously should you require to do so.
-
+% create unique ID for current response. It doesn't hurt and allows
+% identifying trials unambigously if ever needed.
 out.reponseID = round(rand()* 1e+12);
-if isfield(e.s.resCols, 'responseID')
-    while any(e.results(:, e.s.resCols.responseID) == responseID)
-        out.reponseID = round(rand()* 1e+12);
-    end
-end
+
 
 
 

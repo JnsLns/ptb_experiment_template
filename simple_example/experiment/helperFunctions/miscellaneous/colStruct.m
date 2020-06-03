@@ -2,65 +2,111 @@
 function str = colStruct(fieldname, nCols, str)
 % function str = colStruct(fieldname, nCols, str)
 %
-% Create/extend a struct that in each of its fields holds a column number
-% which addresses into data matrices generated in the context of
-% experiments (e.g., trial lists, results lists). (This then allows to
-% address that column through a field name, which makes addressing into
-% those data matrices easier, i.e., you don't have to recall which column
-% holds what data).
+% Create/extend a struct that in each of its fields holds a column number,
+% or a row vector of column numbers, that address into a data matrix. In
+% context of experiments these data matrices would be things like trial
+% lists, results lists, etc.. 
+% Having a "column struct" (colStruct) allows to address into columns
+% through a field name, which makes addressing into those data matrices
+% easier, i.e., you don't have to recall which column holds what data.
+% Also, addressing by name means you don't have to hardcode column numbers,
+% so that code can be more flexibly reused. All you have to do is to carry
+% along the column struct.
 %
-% __Example__ 
 %
-% s = colStruct('itemsize', 5)  % Omitting argument str creates new struct!
-%                               % If nCols is larger than 1, two fields
-%                               % will be created holding the start and end
-%                               % column numbers for the given span and the
-%                               % given field name will be prefixed with
-%                               % 'Start' and 'End', respectively.
+%                              ___Input___
 %
-% s = colStruct('nItems', 1, s) % Including an existing struct name as argument
-%                               % 'str' adds a new field to the specified
-%                               % struct.
+% fieldname        string. Name of the new field to be added to the struct.
 %
-% --> Result:
+% nCols            integer. Number of column indices into the target data
+%                  matrix that the field should hold.
 %
-% s = 
+% str              struct. The struct that you want to extend with the nre
+%                  field. If this argument is ommitted, a new struct will
+%                  be created.
 %
-%  struct with fields:
 %
-%    itemsizeStart: 1
-%      itemsizeEnd: 5
-%           nItems: 6
+%                             ___Output___
+%
+% str              Column struct.
+%
+%
+%                       ___Examples and notes___
+%
+%
+% For instance, if you have a column struct
+%
+%     s = 
+% 
+%       struct with fields:
+% 
+%          trialNumber: 1
+%          stimulusPositions: [2 3 4]
+%
+% then, to retrieve stimulus positions from a matrix, instead of doing 
+%
+%     stimPositions = triallist(row, [1,2,3]);
+%
+% you can do
+%
+%     stimPositions = triallist(row, s.stimulusPositions);
+%
+% The current function is for automatically creating or automatically
+% extending a column struct with a new field. To create a new column
+% struct, omit the last argument. To extend an existing one, supply it as
+% the last argument. For instance:
+% 
+%        s = colStruct('foo', 1);     % create new column struct 
+%        s = colStruct('bar', 2, s)   % and extend it
+%
+%        s = 
+%
+%          struct with fields:
+%
+%            foo: 1
+%            bar: [2 3]
+%
+% Note that the column numbers will be automatically chosen and low numbers
+% are chosen first. Thus, if in an existing column struct non-contiguous
+% numbers are used and then a new multi-column field is added, the column
+% numbers may not be contiguous (this is not a problem):
+%
+%        s = colStruct('foo', 1);
+%        s.bar = 3;                % skipping column 2
+%        s = colStruct('baz', 2, s)
+%
+%        s = 
+%
+%          struct with fields:
+%
+%            foo: 1
+%            bar: 3
+%            baz: [2 4]
 
-
+% new struct
 if nargin < 3 || numel(fieldnames(str)) == 0
-    str = struct;
-    maxCol = 0;
-else
-    % Get max column value already in use
-    maxCol = max(structfun(@(x) x, str));
-end
 
-if nCols > 1
+    str = struct;
+    newCols = 1:nCols;
+
+% existing struct    
+else
     
-    fname1 = [fieldname, 'Start'];
-    fname2 = [fieldname, 'End'];
-    
-    if ismember(fname1, fieldnames(str))
-        error(['Field ' fname1 ' already exists.']);        
-    end        
-    
-    str.(fname1) = maxCol + 1;
-    str.(fname2)   = maxCol + nCols;
-    
-elseif nCols == 1
-    
+    % Check that field does not exist already
     if ismember(fieldname, fieldnames(str))
         error(['Field ' fieldname ' already exists.']);
     end
     
-    str.(fieldname) = maxCol + 1;
+    % Gather column numbers already in use
+    usedColNums = [];
+    for fname = fieldnames(str)'
+        usedColNums = [usedColNums, str.(fname{1})];
+    end
+    
+    % find the 'nCols' lowest unused column numbers.
+    newCols = find(~ismember(1:max(usedColNums)+nCols, usedColNums), nCols);
     
 end
 
-end
+str.(fieldname) = newCols;
+
