@@ -17,9 +17,8 @@
 % -- 'e.s.useTrialBlocks' is true (set as 'tg.s.useTrialBlocks' in trial
 %    generation)
 % -- The block number of the current trial is different from that of the
-%    previous trial (block number for each trial must be found in 
-%    column 'triallistCols.block' of 'trials'; set in trial generation as
-%    'tg.s.triallistCols.block' and 'triallist').
+%    previous trial (block number for each trial must be found in column
+%    trials.block; set in trial generation as 'triallist').
 % -- The current block number is specified in 'e.s.breakBeforeBlockNumbers'
 %    (set in trial generation as 'tg.s.breakBeforeBlockNumbers').
 
