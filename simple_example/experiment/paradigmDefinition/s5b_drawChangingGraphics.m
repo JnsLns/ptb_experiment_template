@@ -6,15 +6,20 @@
 % functions documentations and other conversion functions you may use.
 %
 % Whatever you draw here will probably based on what is defined in the
-% trial list for the current trial. Access the current trial's parameters
+% trial list, for the current trial. Access the current trial's parameters
 % from the trial list like this:
 %
-%      trials(curTrial, triallistCols.whateverYouAreLookingFor)
+%      trials.whateverYouAreLookingFor(curTrial,:)
 
 
 % First get stimulus info from the trial list for the current trial:
-colors = trials(curTrial, triallistCols.color);
-horzPos = trials(curTrial, triallistCols.horzPos);
+colors = trials.colors(curTrial,:);
+horzPos = trials.horzPos(curTrial,:);
+
+% Convert the coded colors from the trial list into RGB colors based on how
+% we defined the colors during trial generation and put into a vector to
+% pass to Psychtoolbox function later.
+colors = cell2mat(e.s.stimColors(colors)')';
 
 % We didn't specify vertical positions because these will always be zero
 vertPos = zeros(1, numel(horzPos));
@@ -31,7 +36,7 @@ Screen('DrawDots', ...
     winsOff.stims.h, ...
     [x_ptb; y_ptb], ...
     r_px * 2, ...
-    e.s.startMarkerColor, ...
+    colors, ...
     [], 1);
 
 

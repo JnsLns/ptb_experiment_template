@@ -21,27 +21,28 @@ tg.triallist = table();
 row = 0;
 
 row = row+1;
-tg.triallist.trialID(row,:) = 1;
-tg.triallist.color(row,:) = 2;              % use color 2
+tg.triallist.trialID(row,:) = 1;            % just to identify trials
+tg.triallist.colors(row,:) = [1, 2, 1];     % use color 1, 2, and 1 (target has color 2)
 tg.triallist.horzPos(row,:) = [-2, 0, 1];   % horizontal positions
 tg.triallist.target(row,:) = 2;             % dot 2 is the target
 
 row = row+1;
 tg.triallist.trialID(row,:) = 2;
-tg.triallist.color(row,:) = 1;
+tg.triallist.colors(row,:) = [1, 1, 2];
 tg.triallist.horzPos(row,:) = [-5, 0, 5];
 tg.triallist.target(row,:) = 3;
 
 row = row+1;
 tg.triallist.trialID(row,:) = 3;
-tg.triallist.color(row,:) = 1;
+tg.triallist.colors(row,:) = [2, 1, 1];
 tg.triallist.horzPos(row,:) = [-5, 0, 10];
 tg.triallist.target(row,:) = 1;
 
-% Note that the number of the target item 'tg.triallist.target(row)' can be
-% used as index into 'tg.triallist.horzPos(row,:)' to find the horizontal
-% position of the target. By keeping any multi-column variables in the
-% table in the same item-based order, storing item numbers 
+% Note that the number of the target item 'tg.triallist.target(row,:)' can
+% be used as index into 'tg.triallist.horzPos(row,:)' to find the horizontal
+% position of the target. The same goes for colors. Keeping items in the
+% same order in all multi-column table-variables means you can use item
+% numbers to get an item's properties.
 
 
 %%%%%%%%%%%%%%%%%%%%% Define some paradigm-level settings %%%%%%%%%%%%%%%%%
