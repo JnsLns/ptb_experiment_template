@@ -26,15 +26,13 @@ if (~exist('rerunTrialLater', 'var') || ~rerunTrialLater) && ...
     e.s.useTrialBlocks    
     % in case it's not trial 1, check whether block number just changed
     if curTrial ~= 1
-        blockNumChanged = ...
-            trials(curTrial, triallistCols.block) ~= ...
-            trials(curTrial-1, triallistCols.block);
+        blockNumChanged = trials.block(curTrial) ~= trials.block(curTrial-1);                    
     else
         blockNumChanged = 1;
     end
     % in case block number changed, check whether break desired for this block
     if blockNumChanged && ...
-            any(trials(curTrial, triallistCols.block) == e.s.breakBeforeBlockNumbers)
+            any(trials.block(curTrial) == e.s.breakBeforeBlockNumbers)                               
         doBlockBreak = true;
     end
 end
