@@ -1,4 +1,7 @@
 
+
+%%%%%%%%%%%% CONTINUE HERE %%%%%%%%%%%%%%%%
+
 % extend e.s.resCols with column numbers for fields in struct 'out' (which
 % stores things from the trial that will go into 'e.results')
 updateResCols;    
