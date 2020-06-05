@@ -29,13 +29,9 @@ end
 e.s.spatialConfig.presArea_va = pa;   
 
 % copy experimental setup data (not trials) from trial generation struct
-% (tg.s) to experimental output struct (e.s); except for tg.s.triallistCols
-% which is dealt with below.
+% (tg.s) to experimental output struct (e.s)
 overrideWarningHasFired = false;
-for fn = fieldnames(tg.s)'    
-    if strcmp(fn{1}, 'triallistCols')
-        continue; 
-    end                
+for fn = fieldnames(tg.s)'           
     % throw error if field already exists in 'e.s.', but only if that
     % behavior is not overridden for debugging. If overridden, warn once.
     if isfield(e.s, fn{1})        
@@ -80,7 +76,6 @@ end
 
 % Transfer trial data to variables that will be used throughout rest of code  
 trials = tg.triallist;
-triallistCols = tg.s.triallistCols;
 clear tg; % tg won't be needed anymore
 
 % In case blocks enabled, check that trials of different blocks are
@@ -89,7 +84,7 @@ if ~isfield(e.s, 'useTrialBlocks')
     e.s.useTrialBlocks = false;
 end
 if e.s.useTrialBlocks
-    blockNums = [rand(); trials(:, triallistCols.block)];
+    blockNums = [rand(); trials.block];            
     uniqueBlockNums = unique(blockNums);
     if any(sum(abs(diff(blockNums == uniqueBlockNums'))) > 2)
         error('Found trials with shared block number in non-consecutive trial list rows!')
@@ -103,7 +98,7 @@ if ~isfield(e.s, 'shuffleTrialOrder')
 end
 if e.s.shuffleTrialOrder            
     if e.s.useTrialBlocks
-       blockNums = trials(:, triallistCols.block);
+       blockNums = trials.block;
        uniqueBlockNums = unique(blockNums);
        for bn = uniqueBlockNums'
             indFirst = find(blockNums==bn, 1, 'first');
@@ -124,11 +119,11 @@ if e.s.useTrialBlocks
         e.s.shuffleBlockOrder = false;
     end
     if e.s.shuffleBlockOrder        
-        uniqueBlockNums = unique(trials(:, triallistCols.block));
+        uniqueBlockNums = unique(trials.block);
         nBlocks = numel(uniqueBlockNums);
         newBlockOrder = uniqueBlockNums(randperm(nBlocks));
         for curBlockNum = newBlockOrder' % TEST            
-            curRows = trials(:, triallistCols.block) == curBlockNum;            
+            curRows = trials.block == curBlockNum;            
             trials = cat(1, trials, trials(curRows,:));
             trials(curRows, :) = [];
         end
@@ -138,8 +133,8 @@ end
 % In case 'e.s.breakBeforeBlockNumbers' is not defined, the default is to
 % break before each block except before the first one.
 if e.s.useTrialBlocks && ~isfield(e.s, 'breakBeforeBlockNumbers')        
-    allBlockNumbers = unique(trials(:, triallistCols.block));
-    firstBlockNumber = trials(1, triallistCols.block);      
+    allBlockNumbers = unique(trials.block);    
+    firstBlockNumber = trials.block(1);
     allBlockNumbers(allBlockNumbers == firstBlockNumber) = [];    
     e.s.breakBeforeBlockNumbers = allBlockNumbers;
 end
@@ -155,12 +150,6 @@ colorDefinition;
 
 % Hide mouse cursor
 HideCursor;
-
-% Construct e.s.resCols (holds column indices for 'e.results'. It is
-% initialized here by transferring the indices from 'triallistCols', since
-% on each trial not only results are stored in 'e.results', but also all
-% trial properties).
-createResCols;
 
 % Define anonymous function getMouseRM for getting remapped mouse position,
 % if desired mouse screen-desk-ratio was defined during trial generation.
