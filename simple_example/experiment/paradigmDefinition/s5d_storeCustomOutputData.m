@@ -8,7 +8,7 @@
 %
 % In the current file, a field in struct 'e' should be added for each of
 % these variables (on the first trial only, of course). Each of these
-%fields should initially hold an empty one-dimensional array (typically a
+% fields should initially hold an empty one-dimensional array (typically a
 % cell array). For instance, do this for each field you need:
 %
 % if ~isfield(e,'desiredFieldName')
@@ -52,4 +52,4 @@ if size(trajectory,1) > 0
 end
 
 % store in trajectory array
-e.trajectories{end+1} = trajectory;
+e.trajectories{end+1, 1} = trajectory;

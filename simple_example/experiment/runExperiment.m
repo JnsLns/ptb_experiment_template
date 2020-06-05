@@ -12,7 +12,7 @@ try
                     'paradigmDefinition', ...
                     'helperFunctions', ...
                     'customFiles'};
-    pathsAdded = {}; 
+    pathsAdded = {};  
     for pNum = 1:numel(subdirsToAdd)
         p = subdirsToAdd{pNum};
         p = fullfile(curFilePath, p);
