@@ -10,8 +10,8 @@
 %
 %              __Accessing the current trial's properties__
 %
-% trials(curTrial, triallistCols.whateverYouAreLookingFor)
-%
+%   trials.whateverYouAreLookingFor(curTrial, :)
+% 
 %
 %             __Copying to onscreen window and presenting__
 %
@@ -20,7 +20,8 @@
 %
 % To then present the image, flip from the onscreen window's frontbuffer
 % to the backbuffer:
-% Screen('Flip', winOn.h, []);
+%
+% Screen('Flip', winOn.h);
 %
 % If you need to draw things that change each frame, such as a mouse
 % cursor, note that Screen('Flip', ...) clears the backbuffer by default,
@@ -29,42 +30,24 @@
 % while 1
 %   Screen('CopyWindow', winsOff.someWindow.h, winOn.h);
 %   Screen('DrawDots', ...);       % Draw some dots, such as a mouse cursor
-%   Screen('Flip', winOn.h, []);   % refresh
+%   Screen('Flip', winOn.h);       % refresh
 % end
 %
 %
 %                 __Store things in results matrix__
 %
-% To store a given value in the results matrix ('e.results'), create a
+% To store a given value in the results table ('e.results'), create a
 % field in pre-existing struct 'out', and store the variable whose value
 % you want to record in that field (e.g. out.myResultValue = myResultValue).
 % Create one field for each variable you want to store. Whatever is in the
 % fields of 'out' at the end of the trial will be transferred to the
-% results matrix. Also, 'e.s.resCols' is automatically generated, which
-% allows you to later see which column numbers of 'e.results' correspond
-% to which field of 'out'. (e.g., 'e.s.resCols.RT' may hold the column
-% number of response time if you did 'out.RT = RT' during the trial).
+% results matrix. 
 %
-% However, you can only store vector data or scalars in the fields of
-% 'out'. Vector data will occupy multiple columns in 'e.results', which is
-% reflected by two instead of one field being created in 'e.s.resCols'.
-% As usual, these will be named after the corresponding field in 'out' but
-% with 'Start' and 'End' appended, respectively, and address the outer
-% columns of the column span in 'e.results' occupied by the vector data.
 % Note that the data written to a field of 'out' must have the same size
 % as the data written to it when it was used for the first time (pad with
 % nans if necessary).
 %
 % Never delete or empty 'out' manually, this is done automatically.
-%
-%
-%                   __Store custom output data__
-%
-% Output data that does not fit the results matrix (i.e., that is not a
-% scalar nor a reasonably small fixed-length vector of numeric data) can be
-% stored as well. For this, store that data in some arbitrary variable in
-% the current file and adjust storeCustomOutputData.m accordingly (see
-% documentation there).
 %
 %
 %             __Set current trial to be repeated later__
@@ -84,13 +67,14 @@
 
 
 
-% Initialize matrix for trajectory data (custom data that will be saved not
-% in 'e.results' but 'e.trajectories', which will be accomplished in the
-% file storeCustomOutputData.m).
-trajectory = [];
+% Initialize empty table for mouse trajectory data. It will store
+% x-position, y-position (both in degrees visual angle), and a time stamp. 
+out.trajectory = array2table(zeros(0,3), 'VariableNames', {'x','y','t'});
 
 % Store ordinal position at which trial was presented. Can't hurt to have
-% that in case we reorder rows at some point during later analysis.
+% that in case we reorder rows at some point during later analysis. (note
+% that sequNum is a "built-in" variable that holds the iteration number of
+% the trial loop)
 out.sequNum = sequNum;  
 
 
@@ -148,7 +132,7 @@ end
 
 % Get stimulus centers and radiuses. We'll need those later to check
 % whether the mouse cursor is within an item
-stimsX = trials(curTrial, triallistCols.horzPos);
+stimsX = trials.horzPos(curTrial,:);
 stimsY = zeros(1, numel(stimsX)); % vertical position is always zero
 stimsXY = [stimsX', stimsY'];
 
@@ -166,12 +150,10 @@ while 1
     % get mouse cursor position (in pres.-area frame, deg. visual angle)
     mouseXY = getMouseRM();
     
-    % record cursor position to prepared trajectory matrix
-    timeStamp = GetSecs;
-    trajectory(loopCounter, ...
-        [e.s.trajCols.x, ...
-        e.s.trajCols.y, ...
-        e.s.trajCols.t]) = [mouseXY, timeStamp];
+    % record cursor position to prepared trajectory matrix        
+    out.trajectory.x(loopCounter) = mouseXY(1);
+    out.trajectory.y(loopCounter) = mouseXY(2);
+    out.trajectory.t(loopCounter) = GetSecs;
     
     % when participant clicks, store times and response specifics, then
     % proceed
@@ -217,7 +199,7 @@ end
 
 
 % Determine and store whether target was selected
-out.correct = (trials(curTrial, triallistCols.target) == out.chosenItem);
+out.correct = (trials.target(curTrial) == out.chosenItem);
 
 % create unique ID for current response. It doesn't hurt and allows
 % identifying trials unambigously if ever needed.
