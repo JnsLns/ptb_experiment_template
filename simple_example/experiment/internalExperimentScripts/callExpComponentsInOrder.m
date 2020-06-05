@@ -16,8 +16,7 @@ while curTrial <= size(trials,1)
         s5a_blockBreak;
     end
     s5b_drawChangingGraphics;
-    s5c_oneTrial;
-    s5d_storeCustomOutputData;
+    s5c_oneTrial;    
     trialLoopTail;
 end
 

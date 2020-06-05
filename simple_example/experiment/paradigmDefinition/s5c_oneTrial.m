@@ -67,9 +67,9 @@
 
 
 
-% Initialize empty table for mouse trajectory data. It will store
+% Initialize empty matrix for mouse trajectory data. It will store
 % x-position, y-position (both in degrees visual angle), and a time stamp. 
-out.trajectory = array2table(zeros(0,3), 'VariableNames', {'x','y','t'});
+trajectory = [];
 
 % Store ordinal position at which trial was presented. Can't hurt to have
 % that in case we reorder rows at some point during later analysis. (note
@@ -150,11 +150,9 @@ while 1
     % get mouse cursor position (in pres.-area frame, deg. visual angle)
     mouseXY = getMouseRM();
     
-    % record cursor position to prepared trajectory matrix        
-    out.trajectory.x(loopCounter) = mouseXY(1);
-    out.trajectory.y(loopCounter) = mouseXY(2);
-    out.trajectory.t(loopCounter) = GetSecs;
-    
+    % record pointer position (x,y,t)
+    trajectory(loopCounter, :) = [mouseXY, GetSecs];
+        
     % when participant clicks, store times and response specifics, then
     % proceed
     [~,~,mouseButtons] = GetMouse;
@@ -205,6 +203,18 @@ out.correct = (trials.target(curTrial) == out.chosenItem);
 % identifying trials unambigously if ever needed.
 out.reponseID = round(rand()* 1e+12);
 
+% some post-processing on the trajectory data to save some disk space: of
+% any directly successive rows in trajectory that have identical position
+% data, remove all but the first row (this happens since the loop above
+% runs faster than the mouse is polled). 
+if size(trajectory,1) > 0
+    rem = trajectory(:, [e.s.trajCols.x, e.s.trajCols.y]);
+    rem = [ones(1, size(rem,2)); diff(rem,1,1)];
+    rem = all(rem' == 0);
+    trajectory(rem, :) = [];
+end
 
-
+% Convert trajectory matrix to a table with some sensible column names and
+% store it in out, to that it will as well be saved in the results table
+out.trajectory = array2table(trajectory, 'VariableNames', {'x','y','t'});
 
