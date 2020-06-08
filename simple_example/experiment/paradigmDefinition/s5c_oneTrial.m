@@ -158,7 +158,7 @@ while 1
     [~,~,mouseButtons] = GetMouse;
     if any(mouseButtons)                
         
-        out.tClick = timeStamp;
+        out.tClick = GetSecs();
         out.movementTime = out.tClick - out.tStimOnset;        
         
         % check whether an item was clicked; if so, store that and store
