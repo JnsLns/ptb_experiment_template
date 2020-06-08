@@ -1,8 +1,26 @@
 function tblOut = forceAppendTable(targetTbl, appendTbl)
-
-% TODO
+% function tblOut = forceAppendTable(targetTbl, appendTbl)
 %
-% Variables that exist in both input tables must have the same data type.
+% Append table to another table (along the first dimension) even if the two
+% tables do not share all or any variables. Any unshared variables will be
+% padded with nans (if data in source table is numeric) or with empty cell
+% arrays (if data in source table is non-numeric). Variable order in the
+% output table is the same as in 'targetTbl' with any additional variables
+% coming from 'appendTbl' added at the end, in the order they appear in 
+% 'appendTbl'. Note that data in variables shared by the input tables must
+% be eligible for table concatenation as usual. Tested only with numeric
+% array and cell arrays.
+%
+%                           ___Inputs___
+%
+% targetTbl     Table to which the other table will be appended.
+%
+% appendTbl     Table that will be appended to the other table.
+%
+%
+%                          ___Outputs___
+%
+% tblOut        Source tables merged into one.
 
 % add unshared variable to each of the two tables
 targetTbl_extended = addUnsharedTableVars(targetTbl, appendTbl);
