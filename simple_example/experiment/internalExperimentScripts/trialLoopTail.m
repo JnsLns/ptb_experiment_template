@@ -1,11 +1,5 @@
 
 
-%%%%%%%%%%%% CONTINUE HERE %%%%%%%%%%%%%%%%
-
-% extend e.s.resCols with column numbers for fields in struct 'out' (which
-% stores things from the trial that will go into 'e.results')
-updateResCols;    
-
 % store contents of fields of 'out' in the correspondingly named columns
 % of e.results.
 storeResults;     

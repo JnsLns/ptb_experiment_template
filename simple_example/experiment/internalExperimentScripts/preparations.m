@@ -1,5 +1,3 @@
-% Initialize results matrix
-e.results = [];
 
 % Psychtoolbox settings                       
 PsychDefaultSetup(2);               % some default Psychtoolbox settings
