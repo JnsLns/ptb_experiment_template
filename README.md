@@ -35,8 +35,14 @@ default [0,0] will be used. This means that the coordinate origin for
 stimulus definition will be in the screen center, which should be
 convenient in most cases. 
 
-# Rough trial generation overview
+# miscellaneous
 
+ending a field in tg.s with color means that it will be converted :
+%%% Convert color strings ('white, 'black', 'grey') in fields of 'e.s' whose
+%   names end on 'Color' to PTB color lookup table index.
+
+
+# Rough trial generation overview
 
 TODO HERE: Explain how target number and similar works with fields in 
  	       in triallistCols that contain row vectors (update that in 
@@ -51,19 +57,18 @@ TODO HERE: Explain how target number and similar works with fields in
 % scripts. The trial file must contain a nested struct 'tg' (for "trial
 % generation") with the following field-names and structure:
 %
-%  tg                    
-%  ?? triallist           <- matrix in which each row corresponds to one trial
-%  ?? s                   <- sub-fields hold paradigmn-level settings
-%      ?? triallistCols   <- sub-fields hold indices into triallist columns
-%      ?   ?
-%      ?   ...             <- custom fields for column indices
-%     ...                  <- custom fields for paradigm-level settings
-%                             (there are some reserved field names with
-%                             prespecified functionality, described below)
+%  tg
+%  tg.triallist    <- table in which each row corresponds to one trial
+%  tg.s.someField      <- sub-fields hold paradigmn-level setting
+					      custom fields for paradigm-level settings
+%                         (there are some reserved field names with
+%                         prespecified functionality, described below)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                       Steps in creating a trial-file                    %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% TODO: ADJUST TO TABLE USAGE
 
 % 1) Create a list of trials and store it in 'tg.triallist'.
 %
