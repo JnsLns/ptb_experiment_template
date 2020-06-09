@@ -8,6 +8,14 @@ trial generation and experiment code. Here's the status of each:*
 # TODO
 - mouse stuff documentation... new anonymous function getMouseRM...
 - Motion tracking input (later... after Coras experiment)
+- Describe files in internalScripts that might be useful to users
+- take a look at readme.md in simple_example/experiment and incorporate 
+  useful stuff here. 
+-ending a field in tg.s with color means that it will be converted :
+%%% Convert color strings ('white, 'black', 'grey') in fields of 'e.s' whose
+%   names end on 'Color' to PTB color lookup table index.
+- State somewhere which variable can be assessed where under what name
+	tg.triallist --> trials     after preparations.m, i.e. staring with
 
 # Presentation area
 
@@ -34,12 +42,6 @@ If the field 'presArea_va' is not defined during trial generation, the
 default [0,0] will be used. This means that the coordinate origin for
 stimulus definition will be in the screen center, which should be
 convenient in most cases. 
-
-# miscellaneous
-
-ending a field in tg.s with color means that it will be converted :
-%%% Convert color strings ('white, 'black', 'grey') in fields of 'e.s' whose
-%   names end on 'Color' to PTB color lookup table index.
 
 
 # Rough trial generation overview

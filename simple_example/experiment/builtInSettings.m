@@ -1,6 +1,10 @@
 
-%%% General settings needed for all experiments using the template code
-%      (in other words: adjust values, but don't remove variables)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                             Built-in settings                           %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% These are general settings needed for all experiments. In other words:
+% adjust their values, but don't remove variables.
 
 % Save results to file? If enabled, will ask for a participant code and
 % save path at the outset of the experiment. 

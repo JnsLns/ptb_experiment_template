@@ -1,5 +1,5 @@
-generalSettings;
-s1_paradigmSpecificSettings;
+builtInSettings;
+s1_customSettings;
 
 % Things to prepare before trials
 preparations;
