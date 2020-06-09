@@ -22,6 +22,8 @@ function tblOut = forceAppendTable(targetTbl, appendTbl)
 %
 % tblOut        Source tables merged into one.
 
+
+
 % add unshared variable to each of the two tables
 targetTbl_extended = addUnsharedTableVars(targetTbl, appendTbl);
 appendTbl_extended = addUnsharedTableVars(appendTbl, targetTbl);
@@ -29,6 +31,12 @@ appendTbl_extended = addUnsharedTableVars(appendTbl, targetTbl);
 % sort to-be-appended table to have same variable order as targetTbl
 sortOrder = targetTbl_extended.Properties.VariableNames;
 appendTbl_extended = rearrangeTableVars(appendTbl_extended, sortOrder);
+
+% existing logical arrays in unshared variables need to be converted to
+% double arrays because addUnsharedTableVars uses NaN-filled (=double)
+% arrays and concatenation requires same data type.
+targetTbl.Properties.Variables
+appendTbl.Properties.Variables
 
 % append to target 
 tblOut = [targetTbl_extended; appendTbl_extended];

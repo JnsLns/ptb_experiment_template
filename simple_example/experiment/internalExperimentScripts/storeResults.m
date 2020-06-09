@@ -23,12 +23,19 @@
 % but correctly??
 
 
+if curTrial == 3
+   sca
+   ShowCursor();
+   a = 1;
+end
+    
+
 % initialize results table
 if ~isfield(e, 'results')
     e.results = table();
 end
 
-% untested prototype:
+% working prototype... must be tested more :
 newResultsRow = struct2table(out, 'AsArray', true);
 newResultsRow = [newResultsRow, trials(curTrial,:)];
 e.results = forceAppendTable(e.results, newResultsRow);
