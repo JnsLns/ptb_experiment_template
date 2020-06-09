@@ -1,6 +1,6 @@
 
 
-% store contents of fields of 'out' in the correspondingly named columns
+% store contents of fields of 'out' in the correspondingly named variables
 % of e.results.
 storeResults;     
 

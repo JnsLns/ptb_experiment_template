@@ -19,7 +19,7 @@ end
                                                                                    
 % open onscreen window 
 winOn.bgColor = e.s.bgColor;
-winOn.screen = expScreen;
+winOn.screen = useScreenNumber;
 winOn.rect = [0 0 e.s.expScreenSize_px];
 [winOn.center(1), winOn.center(2)] = RectCenter(winOn.rect);
 winOn.font = e.s.onscreenWindowTextFont;

@@ -5,7 +5,9 @@ Screen('Preference', 'VisualDebuglevel', 3); % suppress PTB splash screen
 
 % Determine experimental screen
 screens = Screen('Screens');        % get all connected screens
-expScreen = max(screens);           % use last screen as stimulus display
+if ~exist('useScreenNumber', 'var') || isempty(useScreenNumber)
+    useScreenNumber = max(screens); % use last screen as stimulus display
+end
 
 % Load list of trials and settings from file
 [e.s.trialsFileName, trialsPath] = uigetfile('*.mat', 'Select trial file.');
@@ -13,7 +15,7 @@ load([trialsPath, e.s.trialsFileName]);
 
 % Get/store spatial configuration of experimental setup (serves as input
 % to CRF/unit conversion functions)
-tmp = get(expScreen,'ScreenSize');
+tmp = get(useScreenNumber, 'ScreenSize');
 e.s.expScreenSize_px = tmp(3:4);         % get screen res
 e.s.spatialConfig.viewingDistance_mm = e.s.viewingDistance_mm;
 e.s.spatialConfig.expScreenSize_mm = e.s.expScreenSize_mm;

@@ -1,8 +1,8 @@
 %%% Convert color strings ('white, 'black', 'grey') in fields of 'e.s' whose
 %   names end on 'Color' to PTB color lookup table index.
 
-white = WhiteIndex(expScreen);
-black = BlackIndex(expScreen);
+white = WhiteIndex(useScreenNumber);
+black = BlackIndex(useScreenNumber);
 grey = white/2;
 
 % convert

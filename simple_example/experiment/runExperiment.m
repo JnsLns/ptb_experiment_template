@@ -12,13 +12,13 @@ try
                     'paradigmDefinition', ...
                     'helperFunctions', ...
                     'customFiles'};
-    pathsAdded = {};  
+    pathsAdded = {};   
     for pNum = 1:numel(subdirsToAdd) 
         p = subdirsToAdd{pNum};
         p = fullfile(curFilePath, p);
         withSubfolders = genpath(p);
         addpath(withSubfolders) 
-        pathsAdded{pNum} = withSubfolders; 
+        pathsAdded{pNum} = withSubfolders;  
     end
     % This script will call all experiment scripts in order.
     callExpComponentsInOrder;
