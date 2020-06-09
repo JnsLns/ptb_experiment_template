@@ -1,62 +1,29 @@
+%%% Move result data from struct 'out' to 'e.results' 
 
- 
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%% I AM HERE... 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-
-
-% TODO:
-% - might have to initialize e.results first in case it is not initialized
-% to table before (does that happen anywhere? preparations?)
-% - append content of fields of struct out to table e.results as a new
-% row.
-% - keep in mind that current trial row from 'trials' should be part of the
-% new results row as well.
-% - Does the below prototype take care of sorting everything correctly,
-% also with the trial data appended? Does it work?
-% - what about boolean data type in table? what about table? seems to work,
-% but correctly??
-
-
-if curTrial == 3
-   sca
-   ShowCursor();
-   a = 1;
-end
-    
-
-% initialize results table
+% initialize results table on first trial
 if ~isfield(e, 'results')
     e.results = table();
 end
 
-% working prototype... must be tested more :
+% convert struct 'out' to table row
 newResultsRow = struct2table(out, 'AsArray', true);
+
+% check that variable names do not overlap with trial list var names
+if any(ismember(trials.Properties.VariableNames, ...
+        newResultsRow.Properties.VariableNames))
+    error(['Field names in struct ''out'' must not overlap with variable ', ...
+        'names of trial list.']);
+end
+
+% add info from trial list 
 newResultsRow = [newResultsRow, trials(curTrial,:)];
+
+% append to result list. Any non-overlapping variables (i.e., fields of
+% 'out' that have not been used in previous trials) will be added to all
+% existing rows of the results list and padded with NaN or empty cell
+% arrays.
 e.results = forceAppendTable(e.results, newResultsRow);
 
 
 
- % THIS IS OLD AND PROBABLY NOT NEEDED ANYMOE
 
-% %%%% Store results in e.results
-% 
-% % write from fields of struct 'out' to new results row
-% for fName = fieldnames(out)'
-%     f = fName{1};               
-%     newResRow(e.s.resCols.(f)) = out.(f);    
-% end
-% 
-% % write from current trial row to new results row
-% for fName = fieldnames(triallistCols)'
-%     f = fName{1};
-%     newResRow(e.s.resCols.(f)) = trials(curTrial, triallistCols.(f));   
-% end
-% 
-% % append row to results matrix
-% e.results(end+1, :) = newResRow;

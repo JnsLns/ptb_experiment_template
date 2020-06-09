@@ -17,7 +17,7 @@ try
         p = subdirsToAdd{pNum};
         p = fullfile(curFilePath, p);
         withSubfolders = genpath(p);
-        addpath(withSubfolders)
+        addpath(withSubfolders) 
         pathsAdded{pNum} = withSubfolders; 
     end
     % This script will call all experiment scripts in order.

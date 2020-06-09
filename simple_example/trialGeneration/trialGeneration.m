@@ -15,36 +15,6 @@
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%% Define some trials %%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-tg.triallist = table();
-row = 0;
-
-row = row+1;
-tg.triallist.trialID(row,:) = 1;            % just to identify trials
-tg.triallist.colors(row,:) = [1, 2, 1];     % use color 1, 2, and 1 (target has color 2)
-tg.triallist.horzPos(row,:) = [-2, 0, 1];   % horizontal positions
-tg.triallist.target(row,:) = 2;             % dot 2 is the target
-
-row = row+1;
-tg.triallist.trialID(row,:) = 2;
-tg.triallist.colors(row,:) = [1, 1, 2];
-tg.triallist.horzPos(row,:) = [-5, 0, 5];
-tg.triallist.target(row,:) = 3;
-
-row = row+1;
-tg.triallist.trialID(row,:) = 3;
-tg.triallist.colors(row,:) = [2, 1, 1];
-tg.triallist.horzPos(row,:) = [-5, 0, 10];
-tg.triallist.target(row,:) = 1;
-
-% Note that the number of the target item 'tg.triallist.target(row,:)' can
-% be used as index into 'tg.triallist.horzPos(row,:)' to find the horizontal
-% position of the target. The same goes for colors. Keeping items in the
-% same order in all multi-column table-variables means you can use item
-% numbers to get an item's properties.
-
-
 %%%%%%%%%%%%%%%%%%%%% Define some paradigm-level settings %%%%%%%%%%%%%%%%%
 
 tg.s.experimentName = 'example'; % reserved field name, affects result file
@@ -56,6 +26,8 @@ tg.s.bgColor = 'white';          % reserved field name, sets background
 tg.s.shuffleTrialOrder = true;   % reserved field name, makes sure trial 
                                  % order is randomized
 
+tg.s.useTrialBlocks = true;      % TODO
+                                 
 tg.s.stimColors = {[1 0 0], [0 1 0]};  % red and green
 
 tg.s.stimRadius = 0.2;           % radius of dot stimuli (°visual angle)
@@ -76,7 +48,42 @@ tg.s.durOnStart = 1;             % Consecutive seconds mouse cursor needs
                                  % to be shown.
 
 tg.s.desiredMouseScreenToDeskRatioXY = [1,1]; % TODO
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% Define some trials %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+tg.triallist = table();
+row = 0;
+
+row = row+1;
+tg.triallist.trialID(row,:) = 1;            % just to identify trials
+tg.triallist.colors(row,:) = [1, 2, 1];     % use color 1, 2, and 1 (target has color 2)
+tg.triallist.horzPos(row,:) = [-2, 0, 1];   % horizontal positions
+tg.triallist.target(row,:) = 2;             % dot 2 is the target
+tg.triallist.block(row,:) = 1;              % Label this trial as belonging
+                                            % belonging to block 1
+
+row = row+1;
+tg.triallist.trialID(row,:) = 2;
+tg.triallist.colors(row,:) = [1, 1, 2];
+tg.triallist.horzPos(row,:) = [-5, 0, 5];
+tg.triallist.target(row,:) = 3;
+tg.triallist.block(row,:) = 1;              
+
+row = row+1;
+tg.triallist.trialID(row,:) = 3;
+tg.triallist.colors(row,:) = [2, 1, 1];
+tg.triallist.horzPos(row,:) = [-5, 0, 10];
+tg.triallist.target(row,:) = 1;
+tg.triallist.block(row,:) = 1;              
+
+% Copy trials from above to form an additional block of trials.
+trialsSecondBlock = tg.triallist;
+trialsSecondBlock.block(:) = 2;
+tg.triallist = [tg.triallist; trialsSecondBlock];
                                  
+
 
 %%%%%%%%%%%%%%%%%% Save (to folder ../experiment/trialFiles') %%%%%%%%%%%%%
 
