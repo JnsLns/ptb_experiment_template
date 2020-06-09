@@ -1,8 +1,6 @@
-%%%% Experiment settings
 
 %%% General settings needed for all experiments using the template code
-
-% Adjust the values to your needs / your hardware setup. 
+%      (in other words: adjust values, but don't remove variables)
 
 % Save results to file? If enabled, will ask for a participant code and
 % save path at the outset of the experiment. 
@@ -32,7 +30,8 @@ pauseKey = 'Pause';
 % Ratio of mouse cursor movement distance on the screen and mouse movement
 % on the desk, as arising from mouse system settings. Required for using
 % getMouseRM to stream/remap mouse movement (see Readme.md). No effect
-% otherwise.
+% otherwise. To determine this value for the current hardware, run
+% getMouseScreenToDesk(), located in /experiment/helperFunctions/mouseInput/.
 e.s.rawMouseScreenToDeskRatio = 48.3;
 
 
