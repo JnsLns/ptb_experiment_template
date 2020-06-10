@@ -1,20 +1,25 @@
-% Draw graphics that are trial-specific to offscreen windows.
-% Use the window pointers stored in struct 'winsOff.myWindow.h'.
-% The coordinate frame for drawing is of course the Psychtoolbox frame,
-% units are pixels. Use functions 'vaToPx' and 'paVaToPtbPx' to convert
-% from visual angle to that frame. See folder 'common_functions' for these
-% functions documentations and other conversion functions you may use.
+%%%%%%%%%  Prepare graphics that change from trial to trial  %%%%%%%%%%%%%%
 %
-% Whatever you draw here will probably based on what is defined in the
-% trial list, for the current trial. Access the current trial's parameters
-% from the trial list like this:
+% Draw graphics that are trial-specific (i.e. stimuli) to the prepared
+% offscreen windows. Use the window pointers stored in struct
+% 'winsOff.myWindow.h'.
+% The coordinate frame for drawing is the Psychtoolbox frame, units are
+% pixels. Use functions 'vaToPx' and 'paVaToPtbPx' to convert from visual
+% angle to that frame. See folder 'helperFuntions/unitConversion' for these
+% functions' documentations and other conversion functions you may use.
 %
-%      trials.whateverYouAreLookingFor(curTrial,:)
+% Access the current trial's parameters like this:
+%
+%                   currentTrial.whatEverYouAreLookingFor
+%
+% 
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 % First get stimulus info from the trial list for the current trial:
-colors = trials.colors(curTrial,:);
-horzPos = trials.horzPos(curTrial,:);
+colors = currentTrial.colors;
+horzPos = currentTrial.horzPos;
 
 % Convert the coded colors from the trial list into RGB colors based on how
 % we defined the colors during trial generation and put into a vector to

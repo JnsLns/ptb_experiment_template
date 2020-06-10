@@ -1,41 +1,39 @@
-%%%% Open PTB offscreen windows 
+%%%%%%%%%%%%%%%%%%%%%%%%% Open PTB offscreen windows %%%%%%%%%%%%%%%%%%%%%%
 %
-% Specify off-screen windows to be opened.
+% Specify any off-screen windows that you will need. In short:
+%
+% winsOff.myWindow = [];    % this defines a window
+% winsOff.myWindow.h        % this is the window pointer available in other
+%                           % script files
 %
 %
 %                __What offscreen windows are needed for__
 %
-% There are two ways an offscreen windows can be used:
+% There are two ways offscreen windows are used:
 % 
-% (1) Drawing different stimuli to it *each trial*. Draw to such windows
+% (1) Drawing new stimuli to it *each trial*. Draw to such windows
 %     in 'drawChangingGraphics.m', which is executed once at the outset of
-%     every trial. You probably want to draw things depending on some
-%     trial-specific parameters stored in the trial list ('trials').
-%     Set 'clearEachTrial' to 'true' for these windows (see below), so that
-%     remaining images are deleted from them after each trial.
+%     every trial. Set 'clearEachTrial' to 'true' for these windows (see
+%     below).
 %
-% (2) Drawing something to it *once* at the outset of the experiment (in 
-%     drawStaticGraphics.m). The image can then be reused any time, by
-%     copying the respective offscreen window to the onscreen window. Good
-%     for things that do not need to change over trials, such as a
-%     fixation cross.
-%     For this use case, define one offscreen window for each static image 
-%     needed in the course of the experiment. Set 'clearEachTrial' to
-%     'false' for these windows (see below), to prevent the image from
-%     being deleted between trials.
+% (2) Drawing something to it only once at the outset of the experiment, in 
+%     'drawStaticGraphics.m' and reuse the same image multiple times. Good
+%     for things that do not need to change over trials, such as a fixation
+%     cross. Define one offscreen window for each image needed in the
+%     course of the experiment. Set 'clearEachTrial' to 'false' (see below).
 %
 %
 %                 __How to specify offscreen windows__
 %
 % Create a struct 'winsOff' and add one field for each offscreen window you
-% would like opened; the fields should be empty. For instance:
+% would like opened. The fields should be empty. For instance:
 %
 % winsOff.myFirstWindow = [];
 % winsOff.mySecondWindow = [];
 %
 % That's it. The above will open two offscreen windows with default settings.
 % To change the default settings, add any of the following sub-fields to
-% the respective window's field. For instance:
+% the respective window's field, like this:
 %
 % winsOff.myFirstWindow.bgColor = [0 0 0];
 %
@@ -59,15 +57,14 @@
 %                 color, RGB-vector (0-1).                 screen window)
 %
 %
-%       __How to access the offscreen windows in other files__
+%       __How to access the offscreen windows in other scripts__
 %
 % The struct 'winsOff' will persist and be accessible in the other
-% modifieable experiment script files. A field 'h' will be added auto-
-% matically to each sub-field of winsOff. It will hold the window pointer
-% to the window, which can be passed to Psychtoolbox functions that need a
-% window pointer as input. For instance, use this pointer when when drawing
-% to a window later or when copying it to the onscreen window for display.
-              
+% script files. Pass the offscreen windows to Psychtoolbox functions
+% using the window pointer 'winsOff.myFirstWindow.h' (the field 'h' will be
+% automatically generated).
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 winsOff.stims.clearEachTrial = true; % to draw stimuli to                                     
 winsOff.empty = [];                  % empty screen

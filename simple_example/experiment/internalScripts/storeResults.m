@@ -9,14 +9,14 @@ end
 newResultsRow = struct2table(out, 'AsArray', true);
 
 % check that variable names do not overlap with trial list var names
-if any(ismember(trials.Properties.VariableNames, ...
+if any(ismember(triallist.Properties.VariableNames, ...
         newResultsRow.Properties.VariableNames))
     error(['Field names in struct ''out'' must not overlap with variable ', ...
         'names of trial list.']);
 end
 
 % add info from trial list 
-newResultsRow = [newResultsRow, trials(curTrial,:)];
+newResultsRow = [newResultsRow, currentTrial];
 
 % append to result list. Any non-overlapping variables (i.e., fields of
 % 'out' that have not been used in previous trials) will be added to all

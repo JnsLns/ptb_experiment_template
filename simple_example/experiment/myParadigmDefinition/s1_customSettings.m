@@ -1,19 +1,19 @@
-%%%%%%%%%%%%%% Settings specific to the implemented paradigm. %%%%%%%%%%%%%
-
-% Add any settings here that are specific to your paradigm and that might
-% need to be changed in between participants without re-running trial
-% generation. This might occur, for instance, for settings that depend on
-% properties of some piece of hardware that might be different when the
-% experiment is run on a different machine.
-%
-% Note however that it is usually a better idea to define as many settings
-% as possible during trial generation, so that their values are fixed in
-% the trial file, as this ensures that they can't be changed accidentally
-% once trials have been generated (yes, it does happen :).
-% As always, any settings defined here that you might want to look up later
-% should be stored in struct 'e.s', to save in the results file.
-
-%%%%%%%%%%%%%%%%%%%%%%% Usage for testing / debugging %%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% Custom settings %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                         %
+% Add any custom settings for your paradigm. Any settings that you might  %
+% want to look up later should be stored in struct 'e.s', others can be   %
+% stored in their own variables.                                          %
+% Generally you should define here only settings that you might need to   %
+% change later, in between participants and without re-running trial      %
+% generation, such as properties of some piece of hardware that might     %
+% change when porting the paradigm between machines.                      %
+% In most cases, it is a better idea to define as many settings as        %
+% possible during trial generation, so that their values are fixed in     %  
+% the trial file, preventing them from being changed accidentally once    %
+% trials have been created.                                               %  
+%                                                                         %
+%                                                                         %
+%                      Usage for testing / debugging                      %
 %                                                                         %
 % It is also possible to override settings that already exist in the trial%
 % file (i.e., in struct 'tg.s'), by re-setting them here. This would      %

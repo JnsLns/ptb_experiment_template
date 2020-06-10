@@ -14,5 +14,5 @@ if doSave
 end
 
 % go to next trial...
-curTrial = curTrial + 1;
+curTrialNumber = curTrialNumber + 1;
 

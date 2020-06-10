@@ -10,7 +10,7 @@ s3_drawStaticGraphics;
 s4_presentInstructions;
 
 % Iterate over trials
-while curTrial <= size(trials,1)
+while curTrialNumber <= size(triallist,1)
     trialLoopHead;
     if doBlockBreak
         s5a_blockBreak;

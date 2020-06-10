@@ -1,17 +1,41 @@
-% This script presents a single trial including feedback and assigns values
-% to struct 'out' (meaning these will go into the results matrix).
+%%%%%%%%%%%%%%%%%%%%%%%%% Run the current trial %%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% Everything in here can be modified freely. Present to the participants
-% whatever you like and get responses, by specifying the sequential structure
-% of the trials. Use the offscreen windows that were drawn to earlier,
-% copying them to the onscreen window when needed. Use info from the trial
-% list to further customize individual trials.
+% This script presents a single trial.
+%
+% In here, you should implement the sequential structure of the trial by
+% presenting things to the participant, wait for a specific time or for
+% participant actions, and then proceed to the next step, and so on.
+% Use the offscreen windows that were drawn to earlier by copying them to
+% the onscreen window when needed. Use info from the trial list to further
+% customize individual trials.
+%
+%            ___Variables that exist at the ouset of this file___
+%
+% ...and which you will probably need:
+%
+% currentTrial     table. Row of current trial from the trial list.
+%                  Contains all properties of the current trial. Access
+%                  trial info like this: 'currentTrial.someTrialProperty'.
+% sequNum          double. total number of trials presented so far,
+%                  including current trial.
+% rerunTrialLater  Boolean. Automatically set to false before each trial.
+%                  Sets whether current trial will be repeated. See below.     
+% out              struct. Empty, re-initialized before each trial. Add
+%                  fields to write to results matrix (see below).                 
+% e.s              Experiment settings
+%
+% ... and which you probably won't need:
+%
+% triallist        table. List of all trials (rows are trials).
+% curTrialNumber   double. Row number of the current trial in 'triallist'.                 
+% winsOff          struct. offscreen windows (pointers: 'winsOff.myWindow.h')
+% winOn            struct. onscreen window (pointer: 'winOn.h')
 %
 %
 %              __Accessing the current trial's properties__
 %
-%   trials.whateverYouAreLookingFor(curTrial, :)
-% 
+% currentTrial.whateverYouAreLookingFor
+%
 %
 %             __Copying to onscreen window and presenting__
 %
@@ -34,26 +58,37 @@
 % end
 %
 %
-%                 __Store things in results matrix__
+%                   __Store things in results table__
 %
-% To store a given value in the results table ('e.results'), create a
-% field in pre-existing struct 'out', and store the variable whose value
-% you want to record in that field (e.g. out.myResultValue = myResultValue).
-% Create one field for each variable you want to store. Whatever is in the
-% fields of 'out' at the end of the trial will be transferred to the
-% results matrix. 
+% To writing things to the results table and thus store them in the output 
+% file, assign data to the pre-existing struct 'out'. This struct will be
+% initialized automatically before each trial, so never delete or empty
+% 'out' manually.
 %
-% Note that the data written to a field of 'out' must have the same size
-% as the data written to it when it was used for the first time (pad with
-% nans if necessary).
+% During the trial simply assign any object to a field of 'out' that you
+% want stored in the results table. Field names can be chosen freely,
+% for instance:
 %
-% Never delete or empty 'out' manually, this is done automatically.
+% out.responseTime = RT;
 %
+% After the trial, this will automatically write the value of 'RT' to the
+% table 'e.results', into a new row and into the table variable named
+% 'responseTime'. If there is no variable in 'e.results' that has the same
+% name as a given field of 'out', such a variable is added to 'e.results'
+% automatically.
+% If a new field name is used only in later trials, existing rows in
+% 'e.results' will be padded with NaN (for numeric and logical data) or
+% with empty cell arrays (for any other data). Once a field name has been
+% used, it must only be assigned data of the same data type on later trials,
+% to allow concatenating it to the results table. If a previously used field
+% is not assigned in a later trial, it will be padded with NaN or empty
+% cell arrays as described above.
+%  
 %
 %             __Set current trial to be repeated later__
 %
 % You can rerun a trial at a later point of the experimental session, by
-% setting 'rerunTrialLater = true;' anywhere in this file. This will move
+% setting 'rerunTrialLater = true;' anywhere in this script. This will move
 % the trial (after it is finished) to a random point in the remaining
 % list of trials (if trial blocks are used, i.e., e.s.useTrialBlocks ==
 % true, then it is moved to a random point within the remainder of the
@@ -66,15 +101,13 @@
 % 'false' before each trial.
 
 
-
-% Initialize empty matrix for mouse trajectory data. It will store
-% x-position, y-position (both in degrees visual angle), and a time stamp. 
+% Initialize empty matrix for mouse trajectory data. It will be used to 
+% record x-position, y-position (both in degrees visual angle), and a time
+% stamp. 
 trajectory = [];
 
 % Store ordinal position at which trial was presented. Can't hurt to have
-% that in case we reorder rows at some point during later analysis. (note
-% that sequNum is a "built-in" variable that holds the iteration number of
-% the trial loop)
+% that in case we reorder rows at some point during later analysis. 
 out.sequNum = sequNum;  
 
 
@@ -132,7 +165,7 @@ end
 
 % Get stimulus centers and radiuses. We'll need those later to check
 % whether the mouse cursor is within an item
-stimsX = trials.horzPos(curTrial,:);
+stimsX = currentTrial.horzPos;
 stimsY = zeros(1, numel(stimsX)); % vertical position is always zero
 stimsXY = [stimsX', stimsY'];
 
@@ -200,7 +233,7 @@ end
 %%% Store / process some additional output data
 
 % Determine and store whether target was selected
-out.correct = (trials.target(curTrial) == out.chosenItem);
+out.correct = (currentTrial.target == out.chosenItem);
 
 % create unique ID for current response. It doesn't hurt and allows
 % identifying trials unambigously if ever needed.

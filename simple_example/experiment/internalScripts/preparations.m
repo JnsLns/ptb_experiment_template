@@ -75,7 +75,7 @@ else
 end
 
 % Transfer trial data to variables that will be used throughout rest of code  
-trials = tg.triallist;
+triallist = tg.triallist;
 clear tg; % tg won't be needed anymore
 
 % In case blocks enabled, check that trials of different blocks are
@@ -84,7 +84,7 @@ if ~isfield(e.s, 'useTrialBlocks')
     e.s.useTrialBlocks = false;
 end
 if e.s.useTrialBlocks
-    blockNums = [rand(); trials.block];            
+    blockNums = [rand(); triallist.block];            
     uniqueBlockNums = unique(blockNums);
     if any(sum(abs(diff(blockNums == uniqueBlockNums'))) > 2)
         error('Found trials with shared block number in non-consecutive trial list rows!')
@@ -98,17 +98,17 @@ if ~isfield(e.s, 'shuffleTrialOrder')
 end
 if e.s.shuffleTrialOrder            
     if e.s.useTrialBlocks
-       blockNums = trials.block;
+       blockNums = triallist.block;
        uniqueBlockNums = unique(blockNums);
        for bn = uniqueBlockNums'
             indFirst = find(blockNums==bn, 1, 'first');
             indLast = find(blockNums==bn, 1, 'last');   
-            block = trials(indFirst:indLast, :);
+            block = triallist(indFirst:indLast, :);
             block = block(randperm(size(block, 1)),:);            
-            trials(indFirst:indLast, :) = block;
+            triallist(indFirst:indLast, :) = block;
        end
     else 
-       trials = trials(randperm(size(trials, 1)),:);            
+       triallist = triallist(randperm(size(triallist, 1)),:);            
     end        
 end
 
@@ -119,13 +119,13 @@ if e.s.useTrialBlocks
         e.s.shuffleBlockOrder = false;
     end
     if e.s.shuffleBlockOrder        
-        uniqueBlockNums = unique(trials.block);
+        uniqueBlockNums = unique(triallist.block);
         nBlocks = numel(uniqueBlockNums);
         newBlockOrder = uniqueBlockNums(randperm(nBlocks));
         for curBlockNum = newBlockOrder' % TEST            
-            curRows = trials.block == curBlockNum;            
-            trials = cat(1, trials, trials(curRows,:));
-            trials(curRows, :) = [];
+            curRows = triallist.block == curBlockNum;            
+            triallist = cat(1, triallist, triallist(curRows,:));
+            triallist(curRows, :) = [];
         end
     end
 end
@@ -133,8 +133,8 @@ end
 % In case 'e.s.breakBeforeBlockNumbers' is not defined, the default is to
 % break before each block except before the first one.
 if e.s.useTrialBlocks && ~isfield(e.s, 'breakBeforeBlockNumbers')        
-    allBlockNumbers = unique(trials.block);    
-    firstBlockNumber = trials.block(1);
+    allBlockNumbers = unique(triallist.block);    
+    firstBlockNumber = triallist.block(1);
     allBlockNumbers(allBlockNumbers == firstBlockNumber) = [];    
     e.s.breakBeforeBlockNumbers = allBlockNumbers;
 end
@@ -169,5 +169,5 @@ end
 
 
 % Preparation for the trial loop
-curTrial = 1;
+curTrialNumber = 1;
 sequNum = 0;

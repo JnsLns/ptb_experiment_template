@@ -1,15 +1,20 @@
-% Present anything before the trials, such as instructions.
+%%%%%%%%%%%%%%%%%%  Present anything before the trials  %%%%%%%%%%%%%%%%%%%
 %
-% The window pointer for the onscreen window is 'winOn.h'.
+% This is the place to show stuff to participants before the experiment
+% starts, such as instructional text.
 %
-% Draw directly to it and/or copy some offscreen window to it:
+% The window pointer for the onscreen window is 'winOn.h'. You can draw
+% directly to it and/or copy some offscreen window to it, like this:
+%
 % Screen('CopyWindow', winsOff.someWindow.h, winOn.h);
-%
-% Present its contents using:
-% Screen('Flip', winOn.h, []) 
+% Screen('Flip', winOn.h); % present what was drawn
 %
 % Note: You can also use the custom convenience function ShowTextAndWait
-% (in private dir) to show centered text and wait for a button press.
+% (in folder 'helperFunctions/miscellaneous') to show centered text and
+% wait for a button press before proceeding.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 % Show welcome text and wait for button press.
 ShowTextAndWait(...

@@ -9,7 +9,7 @@ end
 % Empty the struct that will record results data
 out = struct();
 
-% increment sequential number for results row (ordinal positition within
+% increment sequential number for results row (ordinal position within
 % list of presented trials)
 sequNum = sequNum + 1;
 
@@ -25,17 +25,20 @@ doBlockBreak = false;
 if (~exist('rerunTrialLater', 'var') || ~rerunTrialLater) && ...
     e.s.useTrialBlocks    
     % in case it's not trial 1, check whether block number just changed
-    if curTrial ~= 1
-        blockNumChanged = trials.block(curTrial) ~= trials.block(curTrial-1);                    
+    if curTrialNumber ~= 1
+        blockNumChanged = triallist.block(curTrialNumber) ~= triallist.block(curTrialNumber-1);                    
     else
         blockNumChanged = 1;
     end
     % in case block number changed, check whether break desired for this block
     if blockNumChanged && ...
-            any(trials.block(curTrial) == e.s.breakBeforeBlockNumbers)                               
+            any(triallist.block(curTrialNumber) == e.s.breakBeforeBlockNumbers)                               
         doBlockBreak = true;
     end
 end
 
 % By default, set trial to not be repeated
 rerunTrialLater = false;
+
+% Get row from trial list (as table)
+currentTrial = triallist(curTrialNumber, :);

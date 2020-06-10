@@ -1,9 +1,14 @@
-% Draw graphics that remain unchanged over trials to offscreen windows.
-% Use the window pointers stored in struct 'winsOff.myWindow.h'.
-% The coordinate frame for drawing is of course the Psychtoolbox frame,
-% units are pixels. Use functions 'vaToPx' and 'paVaToPtbPx' to convert
-% from visual angle to that frame. See folder 'common_functions' for these
+%%%%%%% Prepare graphics that stay the same over the experiment %%%%%%%%%%%
+%
+% Draw graphics that remain unchanged over trials to the prepared offscreen
+% windows, such as a fixation cross. Use the window pointers stored in
+% struct 'winsOff.myWindow.h'.
+% The coordinate frame for drawing is the Psychtoolbox frame, units are
+% pixels. Use functions 'vaToPx' and 'paVaToPtbPx' to convert from visual
+% angle to that frame. See folder 'helperFuntions/unitConversion' for these
 % functions' documentations and other conversion functions you may use.
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
@@ -23,7 +28,8 @@ y = e.s.startMarkerPos(2);
 r = e.s.startMarkerRadius;
 r_px = vaToPx(r, e.s.spatialConfig);
 
-% Finally, use Psychtoolbox function to plot the start marker
+% Finally, use Psychtoolbox function to plot the start marker:
+
 Screen('DrawDots', ...
     winsOff.startMarker.h, ...
     [x_ptb, y_ptb], ...
