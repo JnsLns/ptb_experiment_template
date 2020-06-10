@@ -1,4 +1,4 @@
-builtInSettings;
+settings;
 s1_customSettings;
 
 % Things to prepare before trials
@@ -16,7 +16,7 @@ while curTrialNumber <= size(triallist,1)
         s5a_blockBreak;
     end
     s5b_drawChangingGraphics;
-    s5c_oneTrial;    
+    s5c_presentTrial;    
     trialLoopTail;
 end
 

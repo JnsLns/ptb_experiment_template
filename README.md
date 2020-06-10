@@ -1,32 +1,118 @@
-*__STATUS NOTE:__ This code is work in progress. The code has two major components:
-trial generation and experiment code. Here's the status of each:*
-* *Experiment scripts are done, documented, and tested to some extent.* 
-* *Trial generation works but could use some coherent documentation.*
 
-*In addition to the basic docs below, each modifiable code file itself contains relatively detailed instructions on how to use it.*
-
-All paths are given relative to the template root folder 
-
-
-# Order of execution
-
-- The experiment is started by running '''
-
-
+*In addition to this documentation, each modifiable code file itself contains relatively detailed instructions on how to use it.*
 
 # TODO
 - mouse stuff documentation... new anonymous function getMouseRM...
 - Motion tracking input (later... after Coras experiment)
-- Describe files in internalScripts that might be useful to users
 - take a look at readme.md in simple_example/experiment and incorporate 
   useful stuff here. 
+
+## Which files should I edit?
+Here's the main directory and file structure. Folders or files that you can edit are marked. All others should not be modified. In summary, files in folders starting with ```my``` can be modified. In addition, you need to adjust values in ```builtInSettings.m``` to your hardware setup and finally write some code for trial list generation in ```trialGeneration.m```. Files in ```/experiment/infrastructure/``` should not be changed (but can be called in your own code as described later).
+```
+.
++-- experiment
+|	+-- infrastructure
+|	+-- myCustomFiles             <-- store any custom files here
+|	+-- myParadigmDefinition      <-- add code in existing files
+|	+-- myTrialFiles 		      <-- put trial files here (*.mat)
+|	settings.m 			          <-- only adjust values, dont modify code
+|	runExperiment.m 			  
+|
++-- trialGeneration 		      
+	trialGeneration.m             <-- add code that generates trial file
+```
+
+
+## Execution order of script files
+
+The experiment is started by running ```runExperiment```. Experiment files are then executed in the order listed below (the last block of files is located in ```/myParadigmDefinition```) . Under the hood, additional scripts are executed in between, but this need not bother us.[^1] 
+[^1]:If you really must, look at ```/experiment/infrastructure/internalScripts/callExpComponentsInOrder.m``` to see the full program structure.
+```
+runExperiment.m                      
+settings.m
+s1_customSettings.m
+s2_defineOffscreenWindows.m
+s3_drawStaticGraphics.m
+s4_presentInstructions.m
+	s5a_blockBreak.m                |
+	s5b_drawChangingGraphics.m      | loop (one iteration per trial)
+	s5c_presentTrial.m              |
+s6_presentGoodbye.m
+```
+
+
+## What does each file do?
+
+Not much, until you put some code in. In other words, all files in ```/experiment/myParadigmDefinition/``` are empty at first, save for instructions on what kind of code you should write in each file. Here's an overview:
+
+```
+settings.m
+```
+**It is vitally important to set up this file correctly!** It's a bunch of settings needed for every experiment that is based on this code, mostly hardware-related things. More specifically, this contains settings that you might have to change halfway through participants, say because you move over to a different computer (think screen size and such). 
+```
+runExperiment.m                      
+```
+Don't modify this at all, just use it to start the experiment.
+```
+s1_customSettings.m
+```
+Similar to ```settings.m```, but for additional settings required in your own, custom experiment, such as properties of some piece of special hardware. The idea is to put only things here that you might have to adjust at some point. Do **not** put settings here that are vital to be consistent over participants (e.g., presentation times); these should be fixed in the trial file.
+```
+s2_defineOffscreenWindows.m
+```
+Open as many offscreen windows as you need. Drawing graphics to them happens later, though. [^2]
+[^2]:Psychtoolbox uses the concept of offscreen windows. Each window is basically a canvas onto which you can draw something but without showing it on the screen yet. Only when you want to display it on the screen, you copy the offscreen window to the "onscreen window". Drawing in advance can improve presentation timing later.
+```
+s3_drawStaticGraphics.m
+```
+Draw graphics to the prepared offscreen windows. This file is for drawing graphics that do not change over trials, such as a fixation cross. 
+```
+s4_presentInstructions.m
+```
+Do anything you like before the experiment starts. Typically used to display instructional text or other things that the participant needs to see beforehand. 
+```
+s5a_blockBreak.m                
+```
+This file is part of the trial-loop, that is, it is potentially executed once per trial. However, this particular file is executed only if the current trial is part of a new block and if its execution was requested for that block. [TODO]
+```
+s5b_drawChangingGraphics.m      
+```
+This file is part of the trial-loop. It is executed onceon each trial. [TODO]
+```
+s5c_presentTrial.m              
+```
+This file is part of the trial-loop. It is executed onceon each trial. [TODO]
+```
+s6_presentGoodbye.m
+```
+Do anything you like before the experiment ends. Typically used to display a goodbye message or gather post-experiment questionnaire data . 
+
+# Built-in functionality
+Note that all folders in ```/experiment``` are added to the MATLAB path when the experiment is run (so that all files and functions in there can be called from anywhere in the experimental code, including those in ```/experiment/myCustomFiles```). They are removed again once the experiment is complete (or crashes).
+
 -ending a field in tg.s with color means that it will be converted :
 %%% Convert color strings ('white, 'black', 'grey') in fields of 'e.s' whose
 %   names end on 'Color' to PTB color lookup table index.
 - State somewhere which variable can be assessed where under what name
 	tg.triallist --> trials     after preparations.m, i.e. staring with
 
-# Presentation area
+## Reserved field names for trial generation
+## Reusable script snippets
+## Helper functions
+## Pre-existing variables
+
+
+
+# Overview of how to implement an experiment
+# Trial list generation
+tg.s
+tg.triallist
+
+
+# Coordinate systems and units
+
+## Presentation area
 
 The presentation area is an imagined rectangle centered within the screen.
 Its side lengths are set in degrees of visual angle during trial
@@ -255,44 +341,7 @@ so that each participant will see a different block order. Obviously, this
 only comes to effect if blocks are used (see 'tg.s.useTrialBlocks').
 
 
-# TriallistCols and similar (integrate with existing col structs doc)
 
-% Fields and number of columns for tg.s.triallistCols (struct holding column
-% indices of trial matrix). 
-
-tg.s.triallistCols.trialID = 1;
-tg.s.triallistCols.block = 2;
-tg.s.triallistCols.tgt = 2;
-tg.s.triallistCols.horzPos = 3:5; 
-tg.s.triallistCols.vertPos = 6:8;
-
-% Say you have three stimulus items in each display. To get the horizontal
-% positions of all items in, say, trial 10, do:
-
-horzPosAll = tg.triallist(10, tg.s.triallistCols.horzPos);
-
-% Now say in each trial one of the three stimuls items plays a special
-% role, for instance as a target item. In each trial you use a the column
-% number 'tg.s.triallistCols.tgt' to store which of the three items is the
-% target. So to get the horizontal position of the target item in a given
-% trial, say 20, do:
-
-% get which of the three items is the target item in trial 20
-tgtItemNumber = tg.triallist(20, tg.s.triallistCols.tgt);
-% then combine that info with the column numbers for horizontal positions
-% to retrieve the target items' horizontal position.
-horzPosTgt = tg.triallist(20, tg.s.triallistCols.horzPos(tgtItemNumber));
-
-% The names (triallist, triallistCols, resCols) are admittedly a little
-% cumbersome, which represents a tradeoff against accessibility. Rename the
-% variables yourself when working with, to arrive at less code.
-
-% Temporary rename
-tl = tg.triallist;
-tCols = tg.s.triallistCols;
-
-% This is the same as the entire previous example:
-horzPosTgt = tl(20, tCols.horzPos(tl(20, tCols.tgt)));
 
 
 
