@@ -13,7 +13,14 @@
 % (in folder 'helperFunctions/miscellaneous') to show centered text and
 % wait for a button press before proceeding.
 %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%        ___Useful variables that exist at the ouset of this file___
+%
+% e.s        struct. experiment settings
+% winsOff    struct. offscreen windows (pointers: 'winsOff.myWindow.h')
+% winOn      struct. onscreen window (pointer: 'winOn.h')
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 % Show welcome text and wait for button press.

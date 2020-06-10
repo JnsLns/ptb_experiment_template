@@ -4,10 +4,11 @@
 %
 % In here, you should implement the sequential structure of the trial by
 % presenting things to the participant, wait for a specific time or for
-% participant actions, and then proceed to the next step, and so on.
-% Use the offscreen windows that were drawn to earlier by copying them to
-% the onscreen window when needed. Use info from the trial list to further
-% customize individual trials.
+% participant actions, and then proceed to the next phase, and so on.
+% Use the offscreen windows that you drew to earlier, by copying them to
+% the onscreen window when needed. Use info about the current trial to
+% customize what happens ('currentTrial' holds all info).
+%
 %
 %            ___Variables that exist at the ouset of this file___
 %

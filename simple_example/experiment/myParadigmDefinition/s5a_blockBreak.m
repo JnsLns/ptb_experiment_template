@@ -26,6 +26,26 @@
 %
 % See Readme.md for further help.
 %
+%
+%            ___Variables that exist at the ouset of this file___
+%
+% Note that you probably won't need any of these in this script file.
+% 
+% currentTrial     table. Row of current trial from the trial list.
+%                  Contains all properties of the current trial. Access
+%                  trial info like this: 'currentTrial.someTrialProperty'.
+% sequNum          double. total number of trials presented so far,
+%                  including current trial.
+% rerunTrialLater  Boolean. Automatically set to false before each trial.
+%                  Sets whether current trial will be repeated. See below.     
+% out              struct. Empty, re-initialized before each trial. Add
+%                  fields to write to results matrix (see below).                 
+% e.s              Experiment settings
+% triallist        table. List of all trials (rows are trials).
+% curTrialNumber   double. Row number of the current trial in 'triallist'.                 
+% winsOff          struct. offscreen windows (pointers: 'winsOff.myWindow.h')
+% winOn            struct. onscreen window (pointer: 'winOn.h')
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 

@@ -7,6 +7,11 @@
 %                           % script files
 %
 %
+%        ___Useful variables that exist at the ouset of this file___
+%            
+% e.s   experiment settings
+%
+%            
 %                __What offscreen windows are needed for__
 %
 % There are two ways offscreen windows are used:

@@ -8,6 +8,13 @@
 % angle to that frame. See folder 'helperFuntions/unitConversion' for these
 % functions' documentations and other conversion functions you may use.
 %
+%
+%        ___Useful variables that exist at the ouset of this file___
+%
+% e.s        struct. Experiment settings
+% winsOff    struct. offscreen windows (pointers: 'winsOff.myWindow.h')
+% winOn      struct. onscreen window (pointer: 'winOn.h')
+%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 

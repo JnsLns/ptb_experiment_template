@@ -1,4 +1,4 @@
-% Present anything after the trials, such as a goodbye message.
+%%%%%  Present anything after the trials, such as a goodbye message.  %%%%%
 %
 % The window pointer for the onscreen window is 'winOn.h'.
 %
@@ -9,7 +9,10 @@
 % Screen('Flip', winOn.h, []) 
 %
 % Note: You can also use the custom convenience function ShowTextAndWait
-% (in private dir) to show centered text and wait for a button press.
+% (in 'helperFuns/miscellaneous') to show centered text and wait for a
+% button press.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Show goodbye message and wait for button press
 ShowTextAndWait(...
