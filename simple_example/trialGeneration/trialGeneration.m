@@ -1,23 +1,29 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%% Trial generation %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                                                         %
 % Define a triallist and paradigm settings here. See Readme.md for help.  % 
-% Remember, you minimally must define 'tg.triallist' and 'tg.s'           %
+% Or take a look at the example below. You minimally must define a struct %
+% 'tg' with fields 'triallist' and 's' (settings).                        %
 %                                                                         % 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-%%%%%%%%%%%%%%%%%%%%%%         EXAMPLE CODE            %%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%            EXAMPLE             %%%%%%%%%%%%%%%%%%%%%
 
-% All code in this file is example code. It creates a list of three trials
-% and some settings, and saves it to
-% '../experiment/trialFiles/exampleTrials.m'. It can be loaded and
-% presented by the example experiment code. To implement your own trial 
-% generation, delete all code below first.
+% All code in this file is example code. Delete it before implementing your
+% custom trial generation.
+%
+% The example code generates a list of six trials in two blocks and defines
+% some overarching settings. The file is saved to
+% '../experiment/trialFiles/exampleTrials.m' and can be loaded and
+% presented by the example experiment code. 
 
 
 %%%%%%%%%%%%%%%%%%%%% Define some paradigm-level settings %%%%%%%%%%%%%%%%%
 
-% "Reserved" field names, see Readme.md for documentation of these
+
+% Using some "reserved" field names. There is a bunch of these that you
+% can simply set during trial generation and let the internal experiment
+% scripts handle them. See Readme.md for documentation.
 
 tg.s.experimentName = 'example'; % affects result file name
 tg.s.bgColor = 'white';          % sets background color
@@ -25,7 +31,8 @@ tg.s.shuffleTrialOrder = true;   % makes sure trial order is randomized
 tg.s.useTrialBlocks = true;      % tells experiment that trials are blocked
 tg.s.desiredMouseScreenToDeskRatioXY = [1,1]; % modifies mouse "speed"
 
-% Custom field names. These are used in custom experiment code as needed.
+% Custom field names. These can be defined here as needed and used inside
+% custom experiment code.
 
 tg.s.stimColors = {[1 0 0], [0 1 0]};  % red and green
 tg.s.stimRadius = 0.2;           % radius of dot stimuli (°visual angle)
@@ -43,8 +50,10 @@ tg.s.durOnStart = 1;             % Consecutive seconds mouse cursor needs
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%% Define some trials %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-tg.triallist = table();                     % The trial list is a table 
-row = 0;                                
+tg.triallist = table();                     % The trial list must be a table 
+
+row = 0;                                    % We'll add trials row by row
+                                            % for demonstration...
 
 row = row+1;
 tg.triallist.trialID(row,:) = 1;            % just to identify trials
@@ -52,7 +61,7 @@ tg.triallist.colors(row,:) = [1, 2, 1];     % use color 1, 2, and 1 (target has 
 tg.triallist.horzPos(row,:) = [-1, 0, 1];   % horizontal stimulus positions
 tg.triallist.target(row,:) = 2;             % dot 2 is the target
 tg.triallist.block(row,:) = 1;              % Label this trial as belonging
-                                            % belonging to block 1
+                                            % to block 1
 row = row+1;
 tg.triallist.trialID(row,:) = 2;
 tg.triallist.colors(row,:) = [1, 1, 2];
@@ -76,15 +85,16 @@ trialsSecondBlock.block(:) = 2;
 % to the right by three degrees of visual angle.
 trialsSecondBlock.horzPos = trialsSecondBlock.horzPos + 3;
 
-% Then simply append to first block trials
+% Then simply append to first block of trials
 tg.triallist = [tg.triallist; trialsSecondBlock];
 
-%%%%%%%%%%%%%%%%%% Save (to folder ../experiment/trialFiles') %%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%% Save (to folder ../experiment/myTrialFiles') %%%%%%%%%%%%%
 
 fileName = 'exampleTrials.mat';
 % Save to folder 'trialFiles' in experiment directory, using relative path
 savePath = fullfile(fileparts(mfilename('fullpath')), '..', ...
-    'experiment', 'trialFiles', fileName);
+    'experiment', 'myTrialFiles', fileName);
 save(savePath, 'tg');
 
 
