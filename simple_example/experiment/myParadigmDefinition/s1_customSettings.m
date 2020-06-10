@@ -13,7 +13,7 @@
 % trials have been created.    
 %
 %
-%        ___Useful variables that exist at the ouset of this file___
+%        ___Useful variables that exist at the outset of this file___
 %            
 % e.s   experiment settings
 %

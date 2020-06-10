@@ -5,6 +5,15 @@ trial generation and experiment code. Here's the status of each:*
 
 *In addition to the basic docs below, each modifiable code file itself contains relatively detailed instructions on how to use it.*
 
+All paths are given relative to the template root folder 
+
+
+# Order of execution
+
+- The experiment is started by running '''
+
+
+
 # TODO
 - mouse stuff documentation... new anonymous function getMouseRM...
 - Motion tracking input (later... after Coras experiment)

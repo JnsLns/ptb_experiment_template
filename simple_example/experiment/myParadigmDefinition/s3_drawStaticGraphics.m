@@ -9,7 +9,7 @@
 % functions' documentations and other conversion functions you may use.
 %
 %
-%        ___Useful variables that exist at the ouset of this file___
+%        ___Useful variables that exist at the outset of this file___
 %
 % e.s        struct. Experiment settings
 % winsOff    struct. offscreen windows (pointers: 'winsOff.myWindow.h')

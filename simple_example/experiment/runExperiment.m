@@ -17,7 +17,7 @@ try
     pathsAdded = {};   
     for pNum = 1:numel(subdirsToAdd) 
         p = subdirsToAdd{pNum};
-        p = fullfile(curFilePath, p);
+        p = fullfile(curFilePath, p); 
         withSubfolders = genpath(p);
         addpath(withSubfolders) 
         pathsAdded{pNum} = withSubfolders;  

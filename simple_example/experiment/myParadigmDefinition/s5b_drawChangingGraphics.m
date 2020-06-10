@@ -13,7 +13,7 @@
 %                   currentTrial.whatEverYouAreLookingFor
 %
 % 
-%            ___Variables that exist at the ouset of this file___
+%            ___Variables that exist at the outset of this file___
 %
 % ... and which you'll likely need in this script file:
 % 

@@ -27,7 +27,7 @@
 % See Readme.md for further help.
 %
 %
-%            ___Variables that exist at the ouset of this file___
+%            ___Variables that exist at the outset of this file___
 %
 % Note that you probably won't need any of these in this script file.
 % 

@@ -14,7 +14,7 @@
 % wait for a button press before proceeding.
 %
 %
-%        ___Useful variables that exist at the ouset of this file___
+%        ___Useful variables that exist at the outset of this file___
 %
 % e.s        struct. experiment settings
 % winsOff    struct. offscreen windows (pointers: 'winsOff.myWindow.h')

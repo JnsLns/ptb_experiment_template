@@ -7,10 +7,10 @@
 % participant actions, and then proceed to the next phase, and so on.
 % Use the offscreen windows that you drew to earlier, by copying them to
 % the onscreen window when needed. Use info about the current trial to
-% customize what happens ('currentTrial' holds all info).
+% customize what happens ('currentTrial' holds all that info).
 %
 %
-%            ___Variables that exist at the ouset of this file___
+%            ___Variables that exist at the outset of this file___
 %
 % ...and which you will probably need:
 %
@@ -18,14 +18,15 @@
 %                  Contains all properties of the current trial. Access
 %                  trial info like this: 'currentTrial.someTrialProperty'.
 % sequNum          double. total number of trials presented so far,
-%                  including current trial.
-% rerunTrialLater  Boolean. Automatically set to false before each trial.
-%                  Sets whether current trial will be repeated. See below.     
-% out              struct. Empty, re-initialized before each trial. Add
-%                  fields to write to results matrix (see below).                 
+%                  including current trial. 
+% rerunTrialLater  Boolean. Determines whether current trial will be
+%                  repeated. Is automatically set to false before each
+%                  trial. See below.     
+% out              struct. Re-initialized before each trial to be empty.
+%                  Fields become variables in the results table (see below).                 
 % e.s              Experiment settings
 %
-% ... and which you probably won't need:
+% ... and which you probably won't need in this script file:
 %
 % triallist        table. List of all trials (rows are trials).
 % curTrialNumber   double. Row number of the current trial in 'triallist'.                 
