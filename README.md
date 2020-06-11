@@ -8,15 +8,15 @@
   useful stuff here. 
 
 ## Which files should I edit?
-Here's the main directory and file structure. Folders or files that you can edit are marked. All others should not be modified. In summary, files in folders starting with ```my``` can be modified. In addition, you need to adjust values in ```builtInSettings.m``` to your hardware setup and finally write some code for trial list generation in ```trialGeneration.m```. Files in ```/experiment/infrastructure/``` should not be changed (but can be called in your own code as described later).
+Here's the main directory and file structure with folders and files marked that you should edit. All others should not be modified. In summary, files in folders starting with ```my``` can be modified. In addition, you need to adjust values in ```builtInSettings.m``` to your hardware setup and finally write some code for trial list generation in ```trialGeneration.m```. Files in ```/experiment/infrastructure/``` should not be changed (but can be called in your own code as described later).
 ```
 .
 +-- experiment
 |	+-- infrastructure
 |	+-- myCustomFiles             <-- store any custom files here
 |	+-- myParadigmDefinition      <-- add code in existing files
-|	+-- myTrialFiles 		      <-- put trial files here (*.mat)
-|	settings.m 			          <-- only adjust values, dont modify code
+|	+-- myTrialFiles 	      <-- put trial files here (*.mat)
+|	settings.m 		      <-- only adjust values, dont modify code
 |	runExperiment.m 			  
 |
 +-- trialGeneration 		      
@@ -50,19 +50,36 @@ Not much, until you put some code in. In other words, all files in ```/experimen
 settings.m
 ```
 **It is vitally important to set up this file correctly!** It's a bunch of settings needed for every experiment that is based on this code, mostly hardware-related things. More specifically, this contains settings that you might have to change halfway through participants, say because you move over to a different computer (think screen size and such). 
+
 ```
 runExperiment.m                      
 ```
-Don't modify this at all, just use it to start the experiment.
+Don't modify this, just use it to start the experiment. The code takes care of adding the subdirectories of ```/experiment/``` to the MATLAB path for the duration of the experiment.
+
 ```
 s1_customSettings.m
 ```
-Similar to ```settings.m```, but for additional settings required in your own, custom experiment, such as properties of some piece of special hardware. The idea is to put only things here that you might have to adjust at some point. Do **not** put settings here that are vital to be consistent over participants (e.g., presentation times); these should be fixed in the trial file.
+Similar to ```settings.m```, but for additional settings required in your own, custom experiment, such as properties of some piece of special hardware. 
+
+<details>
+<summary>
+Click for details.
+</summary>
+The idea is to put only things here that you might have to adjust at some point. Do **not** put settings here that are vital to be consistent over participants (e.g., presentation times); these should be fixed in the trial file.
+</details>
+
 ```
 s2_defineOffscreenWindows.m
 ```
-Open as many offscreen windows as you need. Drawing graphics to them happens later, though. [^2]
-[^2]:Psychtoolbox uses the concept of offscreen windows. Each window is basically a canvas onto which you can draw something but without showing it on the screen yet. Only when you want to display it on the screen, you copy the offscreen window to the "onscreen window". Drawing in advance can improve presentation timing later.
+Open as many offscreen windows as you need. Drawing graphics to them happens later, though.
+
+<details>
+<summary>
+Click for details.
+</summary>
+Psychtoolbox uses the concept of offscreen windows. Each window is basically a canvas onto which you can draw something but without showing it on the screen yet. Only when you want to display it on the screen, you copy the offscreen window to the "onscreen window". Drawing in advance can improve presentation timing later.
+</details>
+
 ```
 s3_drawStaticGraphics.m
 ```
@@ -74,7 +91,21 @@ Do anything you like before the experiment starts. Typically used to display ins
 ```
 s5a_blockBreak.m                
 ```
-This file is part of the trial-loop, that is, it is potentially executed once per trial. However, this particular file is executed only if the current trial is part of a new block and if its execution was requested for that block. [TODO]
+This file is part of the trial-loop. It is potentially executed once at the outset of each trial. However, this particular file is executed only when block number changes (and some other conditions are met, see details). Typically used to implement breaks for the participant. 
+
+<details>
+<summary>
+Click for details.
+</summary>
+	
+The code in this file is executed at the outset of the trial loop if all of the following conditions are met:
+
+- ```e.s.useTrialBlocks``` is true. Set it as ```tg.s.useTrialBlocks``` in ```trialGeneration.m```. This setting determines whether trials are organized into blocks. If enabled, each trial must have a trial number in ```tg.triallist.block```.
+- The block number of the current trial is different from that of the previous trial.
+- The number of the current trial's block was included in ```tg.s.breakBeforeBlockNumbers```. If ```tg.s.breakBeforeBlockNumbers``` was not specified, the default is to run ```s5a_blockBreak.m``` before each block except the first one.  
+
+</details>
+
 ```
 s5b_drawChangingGraphics.m      
 ```
