@@ -21,23 +21,23 @@ e.s.spatialConfig.viewingDistance_mm = e.s.viewingDistance_mm;
 e.s.spatialConfig.expScreenSize_mm = e.s.expScreenSize_mm;
 e.s.spatialConfig.expScreenSize_px = e.s.expScreenSize_px;
 % Default for presentation area extent: [0,0] = origin in screen center
-if ~isfield(tg.s, 'presArea_va')
+if ~isfield(t.s, 'presArea_va')
     pa = [0,0];
 else
-    pa = tg.s.presArea_va;
+    pa = t.s.presArea_va;
 end
 e.s.spatialConfig.presArea_va = pa;   
 
 % copy experimental setup data (not trials) from trial generation struct
-% (tg.s) to experimental output struct (e.s)
+% (t.s) to experimental output struct (e.s)
 overrideWarningHasFired = false;
-for fn = fieldnames(tg.s)'           
+for fn = fieldnames(t.s)'           
     % throw error if field already exists in 'e.s.', but only if that
     % behavior is not overridden for debugging. If overridden, warn once.
     if isfield(e.s, fn{1})        
         if ~isfield(e.s, 'expScriptSettingsOverrideTrialGenSettings') || ...
                 e.s.expScriptSettingsOverrideTrialGenSettings == false            
-            error(['Field ', fn{1}, ' was about to be copied from tg.s', ...
+            error(['Field ', fn{1}, ' was about to be copied from t.s', ...
                 ' to e.s, but already exists in e.s']);            
         else            
             if ~overrideWarningHasFired
@@ -45,7 +45,7 @@ for fn = fieldnames(tg.s)'
                     'true, which is intended for testing and debugging. It means ', ...
                     'that any fields in struct ''e.s'' that are defined in the ', ...
                     'experimental scripts override the values of fields with the ', ...
-                    'same name in struct ''tg.s'' (from trial generation) instead ', ...
+                    'same name in struct ''t.s'' (from trial generation) instead ', ...
                     'of throwing an error. This should be remedied before running ', ...
                     'the final experiment.'])
                 overrideWarningHasFired = true;
@@ -54,7 +54,7 @@ for fn = fieldnames(tg.s)'
         end        
     end     
     % copy over
-    e.s.(fn{1}) = tg.s.(fn{1});        
+    e.s.(fn{1}) = t.s.(fn{1});        
 end
  
 % Request save path or warn in case saving is disabled
@@ -75,8 +75,8 @@ else
 end
 
 % Transfer trial data to variables that will be used throughout rest of code  
-triallist = tg.triallist;
-clear tg; % tg won't be needed anymore
+triallist = t.triallist;
+clear t; % t won't be needed anymore
 
 % In case blocks enabled, check that trials of different blocks are
 % not mixed in the trial list.  If field not defined, create it and disable.
@@ -156,7 +156,7 @@ HideCursor;
 if isfield(e.s, 'desiredMouseScreenToDeskRatioXY')
     % make sure raw ratio is defined as well
     if ~isfield(e.s, 'rawMouseScreenToDeskRatio') || isnan(e.s.rawMouseScreenToDeskRatio)
-        error(['When tg.s.desiredMouseScreenToDeskRatioXY is set in trial ', ...
+        error(['When t.s.desiredMouseScreenToDeskRatioXY is set in trial ', ...
             'generation (which is the case), then e.s.rawMouseScreenToDeskRatio ',...
             'must be defined in generalSettings.m (which is not the case).']);
     end        

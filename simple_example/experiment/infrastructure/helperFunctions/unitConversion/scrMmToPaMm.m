@@ -16,7 +16,7 @@ function [x_pa_mm, y_pa_mm] = scrMmToPaMm(x_scr_mm, y_scr_mm, spatialConfig)
 % expScreenSize_px      Screen [horz, vert] resolution in pixels
 % presArea_va           Presentation area [width, height] in visual angle
 %                       (usually defined during trial generation and
-%                       found in tg.presArea_va).
+%                       found in t.presArea_va).
 
 ess_mm = spatialConfig.expScreenSize_mm;
 pa_va = spatialConfig.presArea_va;

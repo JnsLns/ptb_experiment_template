@@ -19,7 +19,7 @@ function [mouse_xy_pa_va, mouse_xy_ptb_px] = getMouseRemapped(rawRatio, desiredR
 % template: It can be invoked without arguments via the anonymous function
 % getMouseRM(), returning the output arguments described here. This works
 % within the m-files located in the folder 'paradigmDefinition' and
-% requires 'tg.s.desiredMouseScreenToDeskRatio' to be defined in trial
+% requires 't.s.desiredMouseScreenToDeskRatio' to be defined in trial
 % generation and 'e.s.rawMouseScreenToDeskRatio' in generalSettings.m.
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -49,7 +49,7 @@ function [mouse_xy_pa_va, mouse_xy_ptb_px] = getMouseRemapped(rawRatio, desiredR
 %                   expScreenSize_px    Screen [horz, vert] resolution in pixels
 %                   presArea_va         Presentation area [width, height] in visual angle
 %                                       (usually defined during trial generation and
-%                                       found in tg.presArea_va).
+%                                       found in t.presArea_va).
 %
 %
 %                             ___Output___

@@ -21,13 +21,13 @@
 %                   ___Usage for testing / debugging___
 %                                                                         
 % It is also possible to override settings that already exist in the trial
-% file (i.e., in struct 'tg.s'), by re-setting them here. This would      
+% file (i.e., in struct 't.s'), by re-setting them here. This would      
 % normally throw an error, which can however be disabled by setting:      
 %                                                                         
 % e.s.expScriptSettingsOverrideTrialGenSettings = true;                   
 %                                                                         
 % Setting this means that when a field with the same name exists in 'e.s' 
-% and in 'tg.s', the value from 'e.s' will take precedence. Instead       
+% and in 't.s', the value from 'e.s' will take precedence. Instead       
 % of throwing an error, which is the default behavior, a message box will 
 % warn the user when the experiment is started, but it will then run       
 % normally. This should be used only for debugging.                       

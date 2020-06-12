@@ -16,13 +16,13 @@
 %
 % The code in this file is executed if the following conditions are met:
 %
-% - 'e.s.useTrialBlocks' is true (set as 'tg.s.useTrialBlocks' in trial
+% - 'e.s.useTrialBlocks' is true (set as 't.s.useTrialBlocks' in trial
 %   generation)
 % - The block number of the current trial is different from that of the
 %   previous trial (block number for each trial must be found in column
 %   triallist.block; set in trial generation as 'triallist').
 % - The current block number is specified in 'e.s.breakBeforeBlockNumbers'
-%   (set in trial generation as 'tg.s.breakBeforeBlockNumbers').
+%   (set in trial generation as 't.s.breakBeforeBlockNumbers').
 %
 % See Readme.md for further help.
 %

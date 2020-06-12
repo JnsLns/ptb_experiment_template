@@ -12,7 +12,7 @@ function [va] = mmToVa(mm, spatialConfig)
 % expScreenSize_px      Screen [horz, vert] resolution in pixels
 % presArea_va           Presentation area [width, height] in visual angle
 %                       (usually defined during trial generation and
-%                       found in tg.presArea_va).
+%                       found in t.presArea_va).
 
 vd_mm = spatialConfig.viewingDistance_mm;
 

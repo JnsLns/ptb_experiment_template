@@ -1,4 +1,4 @@
-settings;
+basicSettings;
 s1_customSettings;
 
 % Things to prepare before trials

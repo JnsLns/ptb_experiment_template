@@ -15,7 +15,7 @@ function [x_pa_va, y_pa_va] = ptbPxToPaVa(x_ptb_px, y_ptb_px, spatialConfig)
 % expScreenSize_px      Screen [horz, vert] resolution in pixels
 % presArea_va           Presentation area [width, height] in visual angle
 %                       (usually defined during trial generation and
-%                       found in tg.presArea_va).
+%                       found in t.presArea_va).
 
 % Transform ptb frame in pixels to presentation area frame in mm
 [x_pa_mm, y_pa_mm] = ptbPxToPaMm(x_ptb_px, y_ptb_px, spatialConfig);
