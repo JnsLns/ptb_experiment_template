@@ -1,7 +1,7 @@
 % Check whether pause key is being pressed, if so, halt experiment
 % execution and show a dialog box. If user chooses to resume, reopen
-% psychtoolbox windows whose properties are found in structs winOn and winsOff and re-draw static
-% graphics.
+% psychtoolbox windows whose properties are found in structs winOn and
+% winsOff and re-draw static graphics.
 
 pauseKeyCheck;
 

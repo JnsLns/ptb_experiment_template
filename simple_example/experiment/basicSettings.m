@@ -10,6 +10,18 @@
 % save path at the outset of the experiment. 
 doSave = true;
 
+% TODOTODO
+% Optional, leave empty '' or comment out if unneeded, in which case a save
+% dialog will ask to select a save folder upon experiment start. If instead
+% a path is given here, the results file will be stored there without asking. 
+%savePath = 'd:\repos\git\ptb_experiment_template\simple_example\experiment\myTrialFiles\exampleTrials';
+
+% Optional, leave empty '' or comment out if unneeded, in which case a load
+% dialog will ask to select a trial file upon experiment start. If instead
+% a path and name of a mat-file is given here, this file is loaded as trial
+% file without asking. 
+trialFilePath = 'd:\repos\git\ptb_experiment_template\simple_example\experiment\myTrialFiles\exampleTrials';
+
 % Number of screen to use as experimental screen. If this variable is not 
 % defined or emtpy [], the last number yielded by Screen('Screens') is used
 % by default. 

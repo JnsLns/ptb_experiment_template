@@ -9,9 +9,17 @@ if ~exist('useScreenNumber', 'var') || isempty(useScreenNumber)
     useScreenNumber = max(screens); % use last screen as stimulus display
 end
 
-% Load list of trials and settings from file
-[e.s.trialsFileName, trialsPath] = uigetfile('*.mat', 'Select trial file.');
-load([trialsPath, e.s.trialsFileName]);
+% Load list of trials and settings from file (load dialog if none specified
+% in settings)
+if exist('trialFilePath', 'var') && ~isempty(trialFilePath) 
+    [e.s.trialPath, tmpName, tmpExt] = fileparts(trialFilePath);
+    e.s.trialFileName = [tmpName, tmpExt];    
+else
+    [e.s.trialFileName, e.s.trialPath] = ...
+        uigetfile('*.mat', 'Select trial file.', ...
+        fullfile(expRootDir, 'myTrialFiles', 'select trial file'));
+end
+load(fullfile(e.s.trialPath, e.s.trialFileName));
 
 % Get/store spatial configuration of experimental setup (serves as input
 % to CRF/unit conversion functions)

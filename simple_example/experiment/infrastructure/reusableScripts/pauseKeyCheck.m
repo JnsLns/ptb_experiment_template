@@ -1,5 +1,5 @@
 % Check whether pause key is being pressed (i.e., the key set in
-% generalSettings to be the pause key). If so, variable
+% basicSettings to be the pause key). If so, variable
 % 'pauseKeyPressed' will be true, else it will be false.
 
 pauseKeyDepressed = false;
