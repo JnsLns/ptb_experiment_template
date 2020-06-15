@@ -65,14 +65,20 @@ for fn = fieldnames(t.s)'
     e.s.(fn{1}) = t.s.(fn{1});        
 end
  
-% Request save path or warn in case saving is disabled
+% Request save path if not specified, or warn in case saving is disabled
 if doSave       
     % add experiment name field if not specified (postfixed to file name)
     if ~isfield(e.s, 'experimentName')        
         e.s.experimentName = '';
+    end    
+    if ~exist('savePath', 'var') || isempty(savePath)
+        % Get participant ID and path through user input
+        savePath = requestSavePath(['_', e.s.experimentName], ...
+            fullfile(expRootDir, '..', 'results'));
+    else
+        % Get participant ID from user, use pre-set path
+        savePath = requestSavePath(['_', e.s.experimentName], '', savePath);
     end
-    % Get path through user input
-    savePath = requestSavePath(e.s.experimentName);
 else
     resp = ...
     questdlg('Saving is disabled, results will not be recorded.', 'Warning', ...
