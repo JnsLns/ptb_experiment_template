@@ -4,7 +4,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % These are general settings needed for all experiments. In other words:
-% adjust their values, but don't remove variables.
+% adjust their values, but don't remove variables (unless otherwise noted).
 
 % Save results to file? 
 doSave = true;

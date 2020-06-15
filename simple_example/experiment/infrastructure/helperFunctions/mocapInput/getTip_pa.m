@@ -25,9 +25,12 @@ es.pointer.velocityThreshold, ...
 es.pointer.markerPairings, ...
 es.pointer.expectedDistances, ...
 es.pointer.distanceThreshold);
-    
+
 % apply offset 
 ttp = ttp + es.markerCRFoffset_xyz_mm;
+
+assert(all(size(ttp) == [1,3]), ['Assertion failed.', ...
+    ' Maybe size(e.s.markerCRFoffset_xyz_mm) is not [1 3]?']);
 
 % Convert to presentation area frame
 tipPos_pa = scrMmToPaMm_xyz(ttp, es.spatialConfig);

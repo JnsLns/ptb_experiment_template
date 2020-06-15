@@ -48,6 +48,7 @@ horzPos = currentTrial.horzPos;
 colors = cell2mat(e.s.stimColors(colors)')';
 
 % We didn't specify vertical positions because these will always be zero
+% in out example
 vertPos = zeros(1, numel(horzPos));
 
 % Convert item positions to Psychtoolbox frame and pixels (can be done for
