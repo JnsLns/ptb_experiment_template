@@ -53,7 +53,7 @@ s4_presentInstructions.m      Present pre-trial instructions.
 Executed in a loop, once for each trial
 
 s5a_blockBreak.m               Do things between trial blocks.
-s5b_drawChangingGraphics.m     Draw graphics that change from trial to trial.
+s5b_drawTrialSpecificGraphics.m  Draw graphics that differ between trials.
 s5c_oneTrial.m                 Course of events in each experimental trial.
 s5d_storeCustomOutputData.m    Save response data not fitting into the
                                default results list ('e.results').

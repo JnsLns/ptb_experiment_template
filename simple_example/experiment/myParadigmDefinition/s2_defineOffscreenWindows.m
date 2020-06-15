@@ -17,9 +17,9 @@
 % There are two ways offscreen windows are used:
 % 
 % (1) Drawing new stimuli to it *each trial*. Draw to such windows
-%     in 'drawChangingGraphics.m', which is executed once at the outset of
-%     every trial. Set 'clearEachTrial' to 'true' for these windows (see
-%     below).
+%     in 's5b_drawTrialSpecificGraphics.m', which is executed once at the
+%     outset of every trial. Set 'clearEachTrial' to 'true' for these
+%     windows (see below).
 %
 % (2) Drawing something to it only once at the outset of the experiment, in 
 %     'drawStaticGraphics.m' and reuse the same image multiple times. Good

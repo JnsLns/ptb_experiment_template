@@ -15,7 +15,7 @@ while curTrialNumber <= size(triallist,1)
     if doBlockBreak
         s5a_blockBreak;
     end
-    s5b_drawChangingGraphics;
+    s5b_drawTrialSpecificGraphics;
     s5c_presentTrial;    
     trialLoopTail;
 end
