@@ -23,7 +23,7 @@ winOn.screen = useScreenNumber;
 winOn.rect = [0 0 e.s.expScreenSize_px];
 [winOn.center(1), winOn.center(2)] = RectCenter(winOn.rect);
 winOn.font = e.s.onscreenWindowTextFont;
-winOn.fontSize = round(vaToPx(e.s.onscreenWindowTextHeight_va, e.s.spatialConfig));
+winOn.fontSize = convert.va2px(e.s.onscreenWindowTextHeight_va);
 [winOn.h, winOn.rect] = ...
     PsychImaging('openWindow', winOn.screen, winOn.bgColor, winOn.rect, ...
     [], [], [], e.s.multisampling);

@@ -49,6 +49,6 @@ assert(all(size(ttp) == [1,3]), ['Assertion failed.', ...
 % Convert to presentation area frame (z-coordinate is not converted since
 % pa-frame does not have a z-axis or, in other words, shares the z-axis of
 % the screen-based frame)
-tipPos_pa = [es.convert.scrMm2PaMm(ttp(1), ttp(2))', ttp(3)];
+tipPos_pa = [es.convert.scrMm2paMm(ttp(1), ttp(2))', ttp(3)];
 
 end

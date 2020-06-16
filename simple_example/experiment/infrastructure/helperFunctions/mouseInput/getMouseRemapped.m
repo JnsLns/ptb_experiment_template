@@ -84,6 +84,6 @@ mouse_xy_ptb_px(2) = newPos(2);
 
 
 % Finally, convert to presentation area frame in visual angle
-mouse_xy_pa_va = converterObj.ptbPx2PaVa(newPos(1), newPos(2))';
+mouse_xy_pa_va = converterObj.ptbPx2paVa(newPos(1), newPos(2))';
 
 end
