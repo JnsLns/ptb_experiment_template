@@ -12,7 +12,8 @@ doSave = true;
 % If a folder path is given here, the result file will be saved there
 % without asking. Can be left empty '' or commented out, in which case a
 % folder select dialog will ask to select a directory upon experiment start.
-% Note: variable 'expRootDir' contains the path of the experiment root dir.
+% Note: variable 'expRootDir' contains the path of the experiment root
+% folder; use it to define a results folder through a relative path.
 savePath = fullfile(expRootDir,'/../results');
 
 % If a path and name of a mat-file is given here, this file is loaded 
@@ -23,15 +24,16 @@ trialFilePath = '';
 
 % Number of screen to use as experimental screen. If this variable is not 
 % defined or emtpy [], the last number yielded by Screen('Screens') is used
-% by default. 
+% by default (use this default if only one screen is connected). 
 useScreenNumber = [];
 
 % Actual screen size in millimeters (extent of visible image). Measure this
-% as accurately as possible, as it determines how accurately the requested
-% stimulus sizes and positions will be realized.
+% as accurately as possible, as it determines how accurately stimulus sizes
+% and positions will be realized, and how precise e.g. recordings of mouse
+% positions are.
 e.s.expScreenSize_mm = [797 333]; 
 
-% Participant's viewing distance from the screen in millimeters
+% Participant's (approximate) viewing distance from screen in millimeters.
 e.s.viewingDistance_mm = 600;
 
 % Degree of antialiasing. Higher values = smoother graphics but worse

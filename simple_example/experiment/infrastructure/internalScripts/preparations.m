@@ -9,7 +9,7 @@ if ~exist('useScreenNumber', 'var') || isempty(useScreenNumber)
     useScreenNumber = max(screens); % use last screen as stimulus display
 end
 
-% Load list of trials and settings from file (load dialog if none specified
+% Load list of trials and settings from file (load-dialog if none specified
 % in settings)
 if exist('trialFilePath', 'var') && ~isempty(trialFilePath) 
     [e.s.trialPath, tmpName, tmpExt] = fileparts(trialFilePath);
@@ -20,21 +20,6 @@ else
         fullfile(expRootDir, 'myTrialFiles', 'select trial file'));
 end
 load(fullfile(e.s.trialPath, e.s.trialFileName));
-
-% Get/store spatial configuration of experimental setup (serves as input
-% to CRF/unit conversion functions)
-tmp = get(useScreenNumber, 'ScreenSize');
-e.s.expScreenSize_px = tmp(3:4);         % get screen res
-e.s.spatialConfig.viewingDistance_mm = e.s.viewingDistance_mm;
-e.s.spatialConfig.expScreenSize_mm = e.s.expScreenSize_mm;
-e.s.spatialConfig.expScreenSize_px = e.s.expScreenSize_px;
-% Default for presentation area extent: [0,0] = origin in screen center
-if ~isfield(t.s, 'presArea_va')
-    pa = [0,0];
-else
-    pa = t.s.presArea_va;
-end
-e.s.spatialConfig.presArea_va = pa;   
 
 % copy experimental setup data (not trials) from trial generation struct
 % (t.s) to experimental output struct (e.s)
@@ -65,6 +50,24 @@ for fn = fieldnames(t.s)'
     e.s.(fn{1}) = t.s.(fn{1});        
 end
  
+% Add spatial configuration properties to 'e.s'. Also initialize converter
+% object with these values and store in 'e.s' as well; but also make
+% available as 'convert' to any following code.
+tmp = get(useScreenNumber, 'ScreenSize');
+e.s.expScreenSize_px = tmp(3:4);                    % screen resolution
+e.s.expScreenSize_mm = e.s.expScreenSize_mm;        % actual size (vis. image)
+e.s.viewingDistance_mm = e.s.viewingDistance_mm;    % patricipant dist.
+% Default for presentation area extent: [0,0] = origin in screen center
+if ~isfield(t.s, 'presArea_va')
+    e.s.presArea_va = [0,0];
+end
+% Make converter object to convert between CRFs and units.
+convert = CoordinateConverter(e.s.viewingDistance_mm, ...
+                              e.s.expScreenSize_mm, ...
+                              e.s.expScreenSize_px, ...
+                              e.s.presArea_va);
+e.s.coordinateConverter = convert;
+
 % Request save path if not specified, or warn in case saving is disabled
 if doSave       
     % add experiment name field if not specified (postfixed to file name)

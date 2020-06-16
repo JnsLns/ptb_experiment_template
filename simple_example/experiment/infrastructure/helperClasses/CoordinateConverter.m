@@ -19,9 +19,9 @@ classdef CoordinateConverter
 %       ptb : Psychtoolbox coordinate frame
 %       scr : screen-based coordinate frame
 %
-%   E.g., paMmToPtbPx -> convert from millimeter coordinates given
+%   E.g., paMm2PtbPx -> convert from millimeter coordinates given
 %   in the presentation-area-based frame to pixel coordinates in
-%   the Psychtoolbox frame. vaToPx -> convert from degree visual angle to
+%   the Psychtoolbox frame. va2Px -> convert from degree visual angle to
 %   pixels.
 %
 % 
@@ -33,9 +33,9 @@ classdef CoordinateConverter
 % Unit-coordinate-frame conversion methods take two input arguments,
 % namely two vectors of length n, which hold the x and y coordinates of n
 % points, respectively. They return a 2-by-n matrix giving converted x and
-% y coordinates in its rows, for each of the n points. This format (x,y
-% coordinats in rows, points in columns) was chose since this is the format
-% that most Psychtoolbox functions expect when drawing.
+% y coordinates in its rows, for each of the n points. This array format
+% (x,y coordinats in rows, points in columns) was chose since it is the
+% format that most Psychtoolbox functions expect.
 %
 %
 %                      ___Coordinate frames___
@@ -97,64 +97,64 @@ classdef CoordinateConverter
             obj.expScreenSize_mm = expScreenSize_mm;
             obj.expScreenSize_px = expScreenSize_px;
             obj.presArea_va = presArea_va;
-            presArea_mm = obj.vaToMm(obj.presArea_va);
+            presArea_mm = obj.va2Mm(obj.presArea_va);
             obj.presMargins_mm = (obj.expScreenSize_mm - presArea_mm)./2;
         end
 
-        function [mm] = pxToMm(obj, px)
+        function [mm] = px2Mm(obj, px)
         % Unit conversion method.
             mm = px ./ mean(obj.expScreenSize_px./obj.expScreenSize_mm);
         end
-        function [mm] = vaToMm(obj, va)   
+        function [mm] = va2Mm(obj, va)   
         % Unit conversion method.
             mm = 2 * pi * obj.viewingDistance_mm * va/360;
         end
-        function [px] = mmToPx(obj, mm)            
+        function [px] = mm2Px(obj, mm)            
         % Unit conversion method.
             px = mm * mean(obj.expScreenSize_px./obj.expScreenSize_mm);
         end
-        function [px] = vaToPx(obj, va)
+        function [px] = va2Px(obj, va)
         % Unit conversion method.
-            px = obj.mmToPx(obj.vaToMm(va));
+            px = obj.mm2Px(obj.va2Mm(va));
         end
-        function [va] = mmToVa(obj, mm)
+        function [va] = mm2Va(obj, mm)
         % Unit conversion method.
             va = mm * 180 / (pi * obj.viewingDistance_mm);
         end
-        function [va] = pxToVa(obj, px)
+        function [va] = px2Va(obj, px)
         % Unit conversion method.
-            va = obj.mmToVa(obj.pxToMm(px));
+            va = obj.mm2Va(obj.px2Mm(px));
         end
                 
-        function xy_ptb_px = paMmToPtbPx(obj, x_pa_mm, y_pa_mm)  
+        function xy_ptb_px = paMm2PtbPx(obj, x_pa_mm, y_pa_mm)  
         % Unit-coordinate-frame conversion method.
         
             % Transform CRF
             x_ptb_mm = x_pa_mm + obj.presMargins_mm(1);
             y_ptb_mm = -y_pa_mm - obj.presMargins_mm(2) + obj.expScreenSize_mm(2);            
             % Convert to pixels
-            x_ptb_px = obj.mmToPx(x_ptb_mm);
-            y_ptb_px = obj.mmToPx(y_ptb_mm);      
+            x_ptb_px = obj.mm2Px(x_ptb_mm);
+            y_ptb_px = obj.mm2Px(y_ptb_mm);      
             % Shape into matrix
             xy_ptb_px = [x_ptb_px(:)'; y_ptb_px(:)'];
         end
                 
-        function xy_ptb_px = paVaToPtbPx(obj, x_pa_va, y_pa_va)
+        function xy_ptb_px = paVa2PtbPx(obj, x_pa_va, y_pa_va)
         % Unit-coordinate-frame conversion method.
         
             % Convert input from visual angle to mm
-            x_pa_mm = obj.vaToMm(x_pa_va);
-            y_pa_mm = obj.vaToMm(y_pa_va);            
+            x_pa_mm = obj.va2Mm(x_pa_va);
+            y_pa_mm = obj.va2Mm(y_pa_va);            
             % Transform to PTB CRF in pixels
-            xy_ptb_px = paMmToPtbPx(x_pa_mm, y_pa_mm);            
+            xy_ptb_px = paMm2PtbPx(x_pa_mm, y_pa_mm);            
         end
         
-        function xy_pa_mm = ptbPxToPaMm(obj, x_ptb_px, y_ptb_px)
+        function xy_pa_mm = ptbPx2PaMm(obj, x_ptb_px, y_ptb_px)
         % Unit-coordinate-frame conversion method.
         
             % Convert to mm
-            x_ptb_mm = obj.pxToMm(x_ptb_px);
-            y_ptb_mm = obj.pxToMm(y_ptb_px);            
+            x_ptb_mm = obj.px2Mm(x_ptb_px);
+            y_ptb_mm = obj.px2Mm(y_ptb_px);            
             % Transform CRF
             x_pa_mm = x_ptb_mm - obj.presMargins_mm(1);
             y_pa_mm = -y_ptb_mm - obj.presMargins_mm(2) + obj.expScreenSize_mm(2);
@@ -162,16 +162,16 @@ classdef CoordinateConverter
             xy_pa_mm = [x_pa_mm(:)'; y_pa_mm(:)'];
         end
         
-        function xy_pa_va = ptbPxToPaVa(obj, x_ptb_px, y_ptb_px)
+        function xy_pa_va = ptbPx2PaVa(obj, x_ptb_px, y_ptb_px)
         % Unit-coordinate-frame conversion method.
         
             % Convert from ptb frame in pixels to pres area frame in mm
-            xy_pa_mm = obj.ptbPxToPaMm(x_ptb_px, y_ptb_px);            
+            xy_pa_mm = obj.ptbPx2PaMm(x_ptb_px, y_ptb_px);            
             % Convert from millimeters to visual angle
-            xy_pa_va = obj.mmToVa(xy_pa_mm);                        
+            xy_pa_va = obj.mm2Va(xy_pa_mm);                        
         end
         
-        function xy_pa_mm = scrMmToPaMm(obj, x_scr_mm, y_scr_mm)
+        function xy_pa_mm = scrMm2PaMm(obj, x_scr_mm, y_scr_mm)
         % Unit-coordinate-frame conversion method.
 
             % Subtract margins
@@ -181,14 +181,14 @@ classdef CoordinateConverter
             xy_pa_mm = [x_pa_mm(:)'; y_pa_mm(:)'];            
         end
         
-        function xy_ptb_px = scrMmToPtbPx(obj, x_scr_mm, y_scr_mm)
+        function xy_ptb_px = scrMm2PtbPx(obj, x_scr_mm, y_scr_mm)
         % Unit-coordinate-frame conversion method.
             
             % Transform CRF
             y_ptb_mm = obj.expScreenSize_mm(2) - y_scr_mm;            
             % Convert to pixels
-            x_ptb_px = obj.mmToPx(x_scr_mm);
-            y_ptb_px = obj.mmToPx(y_ptb_mm);
+            x_ptb_px = obj.mm2Px(x_scr_mm);
+            y_ptb_px = obj.mm2Px(y_ptb_mm);
             % Shape into matrix
             xy_ptb_px = [x_ptb_px(:)'; y_ptb_px(:)'];            
         end
