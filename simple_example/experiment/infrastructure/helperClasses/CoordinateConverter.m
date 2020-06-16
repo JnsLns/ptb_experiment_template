@@ -9,6 +9,8 @@ classdef CoordinateConverter
 % while easily converting to the Psychtoolbox frame when using Psychtoolbox
 % functions. It is also useful when dealing with motion tracking equipment
 % (see below).
+%
+% Note that output values are rounded to integers when converting to pixels.
 % 
 %                       ___Method naming scheme___
 %
@@ -111,11 +113,11 @@ classdef CoordinateConverter
         end
         function [px] = mm2Px(obj, mm)            
         % Unit conversion method.
-            px = mm * mean(obj.expScreenSize_px./obj.expScreenSize_mm);
+            px = round(mm * mean(obj.expScreenSize_px./obj.expScreenSize_mm));
         end
         function [px] = va2Px(obj, va)
         % Unit conversion method.
-            px = obj.mm2Px(obj.va2Mm(va));
+            px = round(obj.mm2Px(obj.va2Mm(va)));
         end
         function [va] = mm2Va(obj, mm)
         % Unit conversion method.
@@ -136,7 +138,7 @@ classdef CoordinateConverter
             x_ptb_px = obj.mm2Px(x_ptb_mm);
             y_ptb_px = obj.mm2Px(y_ptb_mm);      
             % Shape into matrix
-            xy_ptb_px = [x_ptb_px(:)'; y_ptb_px(:)'];
+            xy_ptb_px = round([x_ptb_px(:)'; y_ptb_px(:)']);
         end
                 
         function xy_ptb_px = paVa2PtbPx(obj, x_pa_va, y_pa_va)
@@ -146,7 +148,7 @@ classdef CoordinateConverter
             x_pa_mm = obj.va2Mm(x_pa_va);
             y_pa_mm = obj.va2Mm(y_pa_va);            
             % Transform to PTB CRF in pixels
-            xy_ptb_px = paMm2PtbPx(x_pa_mm, y_pa_mm);            
+            xy_ptb_px = round(paMm2PtbPx(x_pa_mm, y_pa_mm));            
         end
         
         function xy_pa_mm = ptbPx2PaMm(obj, x_ptb_px, y_ptb_px)
@@ -190,7 +192,7 @@ classdef CoordinateConverter
             x_ptb_px = obj.mm2Px(x_scr_mm);
             y_ptb_px = obj.mm2Px(y_ptb_mm);
             % Shape into matrix
-            xy_ptb_px = [x_ptb_px(:)'; y_ptb_px(:)'];            
+            xy_ptb_px = round([x_ptb_px(:)'; y_ptb_px(:)']);            
         end
                 
     end
