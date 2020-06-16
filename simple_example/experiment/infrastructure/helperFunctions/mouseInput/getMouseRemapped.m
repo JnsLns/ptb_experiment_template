@@ -1,9 +1,10 @@
-function [mouse_xy_pa_va, mouse_xy_ptb_px] = getMouseRemapped(rawRatio, desiredRatioXY, spatialConfig)
-% function [mouse_xy_pa_va, mouse_xy_ptb_px] = getMouseRemapped(rawRatio, desiredRatioXY, spatialConfig)
+function [mouse_xy_pa_va, mouse_xy_ptb_px] = getMouseRemapped(rawRatio, desiredRatioXY, converterObj)
+% function [mouse_xy_pa_va, mouse_xy_ptb_px] = getMouseRemapped(rawRatio, desiredRatioXY, converterObj)
 %
-% Wraps GetMouse() from Psychtoolbox to obtain mouse position while changing 
-% the mapping from mouse movement on the desk to cursor movement on the
-% screen, in order to instead satisfy the mapping specified by 'desiredRatioXY'.
+% Wraps GetMouse() from Psychtoolbox to obtain mouse position, but in
+% in addition changes mouse "speed", i.e, how mouse movement on the desk
+% maps to cursor movement on the screen. The mapping is changed such that
+% it satisfies 'desiredRatioXY' (cursor-to-desk distance ratio). 
 % Call this function in a loop where you plot a mouse cursor just as you
 % would GetMouse().
 % The result is returned in degrees visual angle / presentation area frame
@@ -28,7 +29,7 @@ function [mouse_xy_pa_va, mouse_xy_ptb_px] = getMouseRemapped(rawRatio, desiredR
 % rawRatio          Scalar. Ratio of cursor movement distance on the screen
 %                   to mouse movement distance on the desk based on system
 %                   settings (i.e., before adjustment). Needs to be obtained
-%                   in advance via getMouseScreenToDeskRatio.
+%                   in advance via function getMouseScreenToDeskRatio.
 %
 % desiredRatioXY    Two-element row vector [x,y]. Desired ratio of cursor
 %                   movement on the screen to mouse movement on the desk
@@ -39,17 +40,11 @@ function [mouse_xy_pa_va, mouse_xy_ptb_px] = getMouseRemapped(rawRatio, desiredR
 %                   unmodified mapping, values below zero to the cursor
 %                   moving slower than the mouse.
 %
-% spatialConfig     Struct holding information about the spatial setup
-%                   of the experiment. If using the experimental template
-%                   it will be in the workspace by default as 
-%                   'e.s.spatialConfig'. It must have the following fields:
-%
-%                   viewingDistance_mm 	Distance of participant from screen in mm
-%                   expScreenSize_mm    Screen [width, height] in mm (visible image)
-%                   expScreenSize_px    Screen [horz, vert] resolution in pixels
-%                   presArea_va         Presentation area [width, height] in visual angle
-%                                       (usually defined during trial generation and
-%                                       found in t.presArea_va).
+% converterObj      Object of type CoordinateConverter with properties
+%                   set according to the spatial configuration of the
+%                   experiment (see that class' documentation and/or
+%                   Readme.md). That object is usually available through
+%                   the variable 'convert' in the experimental code. 
 %
 %
 %                             ___Output___
@@ -89,9 +84,6 @@ mouse_xy_ptb_px(2) = newPos(2);
 
 
 % Finally, convert to presentation area frame in visual angle
-
-[mouse_xy_pa_va(1), mouse_xy_pa_va(2)] = ...
-    ptbPxToPaVa(mouse_xy_ptb_px(1), mouse_xy_ptb_px(2), spatialConfig);   
-
+mouse_xy_pa_va = converterObj.ptbPx2PaVa(newPos(1), newPos(2))';
 
 end
