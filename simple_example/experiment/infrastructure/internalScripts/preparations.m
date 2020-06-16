@@ -178,8 +178,7 @@ if isfield(e.s, 'desiredMouseScreenToDeskRatioXY')
             'must be defined in generalSettings.m (which is not the case).']);
     end        
     getMouseRM = @() getMouseRemapped(e.s.rawMouseScreenToDeskRatio, ...
-        e.s.desiredMouseScreenToDeskRatioXY, ...
-        e.s.spatialConfig);  
+        e.s.desiredMouseScreenToDeskRatioXY, convert);  
 elseif isfield(e.s, 'rawMouseScreenToDeskRatio')
     e.s = rmfield(e.s, 'rawMouseScreenToDeskRatio'); % unneeded in this case
 end
