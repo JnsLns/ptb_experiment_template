@@ -13,7 +13,7 @@ try
     subdirsToAdd = {'infrastructure', ...
                     'myParadigmDefinition', ...                    
                     'myCustomFiles'};
-    pathsAdded = {};   
+    pathsAdded = {};    
     for pNum = 1:numel(subdirsToAdd) 
         p = subdirsToAdd{pNum};
         p = fullfile(expRootDir, p); 

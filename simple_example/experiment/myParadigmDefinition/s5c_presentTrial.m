@@ -152,7 +152,7 @@ while deltatOnStart <= e.s.durOnStart
     % Convert mouse position back to PTB coordinates, draw cursor           
     mouseXY_ptb = convert.paVa2ptbPx(mouseXY(1), mouseXY(2));
     Screen('DrawDots', winOn.h, mouseXY_ptb, ...
-    convert.va2px(e.s.mouseCursorRadius) * 2, e.s.mouseCursorColor, [], 1);    
+    convert.va2px(e.s.mouseCursorRadius * 2), e.s.mouseCursorColor, [], 3);    
     % Show
     Screen('Flip', winOn.h, []);
     
@@ -219,7 +219,7 @@ while 1
     % Convert mouse position back to PTB coordinates, draw cursor
     mouseXY_ptb = convert.paVa2ptbPx(mouseXY(1), mouseXY(2));
     Screen('DrawDots', winOn.h, mouseXY_ptb, ...
-        convert.va2px(e.s.mouseCursorRadius) * 2, e.s.mouseCursorColor, [], 1);
+        convert.va2px(e.s.mouseCursorRadius * 2), e.s.mouseCursorColor, [], 3);
     % Show
     Screen('Flip', winOn.h, []);
     
@@ -246,5 +246,11 @@ out.trajectory = array2table(trajectory, 'VariableNames', {'x','y','t'});
 % runs faster than the mouse is polled). 
 out.trajectory = remSuccDuplTableRows(out.trajectory,{'x','y'});
 
+
+% DEBUG
+warning('debug active')
+if curTrialNumber == 2
+    out.bla = magic(3);
+end
 
 

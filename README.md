@@ -6,6 +6,9 @@
 - Motion tracking input (later... after Coras experiment)
 - take a look at readme.md in simple_example/experiment and incorporate 
   useful stuff here. 
+- coordinate converter
+- i changed folder structure (did I change it or only add a folder? at least helperClasses added... also renamed settings to basicSetting.m. also added results folder)
+- state where files are loaded from by default and where they are stored... (or leave that to docs in basicSettings)
 
 ## Which files should I edit?
 Here's the main directory and file structure with folders and files marked that you should edit. All others should not be modified. In summary, files in folders starting with ```my``` can be modified. In addition, you need to adjust values in ```builtInSettings.m``` to your hardware setup and finally write some code for trial list generation in ```trialGeneration.m```. Files in ```/experiment/infrastructure/``` should not be changed (but can be called in your own code as described later).
@@ -26,8 +29,7 @@ Here's the main directory and file structure with folders and files marked that 
 
 ## Execution order of script files
 
-The experiment is started by running ```runExperiment```. Experiment files are then executed in the order listed below (the last block of files is located in ```/myParadigmDefinition```) . Under the hood, additional scripts are executed in between, but this need not bother us.[^1] 
-[^1]:If you really must, look at ```/experiment/infrastructure/internalScripts/callExpComponentsInOrder.m``` to see the full program structure.
+The experiment is started by running ```runExperiment```. Experiment files are then executed in the order listed below (the last block of files is located in ```/myParadigmDefinition```) . 
 ```
 runExperiment.m                      
 settings.m
@@ -40,7 +42,7 @@ s4_presentInstructions.m
 	s5c_presentTrial.m              |
 s6_presentGoodbye.m
 ```
-
+Additional scripts are executed in between under the hood, but this need not bother us. If you really must, look at ```/experiment/infrastructure/internalScripts/callExpComponentsInOrder.m``` to see the full program structure.
 
 ## What does each file do?
 

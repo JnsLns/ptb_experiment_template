@@ -54,16 +54,16 @@ vertPos = zeros(1, numel(horzPos));
 % Convert item positions to Psychtoolbox frame and pixels
 xy_ptb = convert.paVa2ptbPx(horzPos, vertPos);
 
-% Convert item radius from °v.a. to pixels (is the same for all items)
-r_px = convert.va2px(e.s.stimRadius);
+% Convert item diameter from °v.a. to pixels (is the same for all items)
+d_px = convert.va2px(e.s.stimRadius * 2);
 
 % Draw the items via Psychtoolbox to stimulus offscreen window 
 Screen('DrawDots', ...
     winsOff.stims.h, ...
     xy_ptb, ...
-    r_px * 2, ...
+    d_px, ...
     colors, ...
-    [], 1);
+    [], 3);
 
 
 

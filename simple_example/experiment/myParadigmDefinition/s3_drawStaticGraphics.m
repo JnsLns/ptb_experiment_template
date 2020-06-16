@@ -29,16 +29,16 @@
 % Convert start marker positions to Psychtoolbox 
 xy_ptb = convert.paVa2ptbPx(e.s.startMarkerPos(1), e.s.startMarkerPos(2));
 
-% Convert size to pixels
-r_px = convert.va2px(e.s.startMarkerRadius);
+% Convert size to pixels (diameter)
+d_px = convert.va2px(e.s.startMarkerRadius * 2);
 
 % Finally, use Psychtoolbox function to plot the start marker:
 Screen('DrawDots', ...
     winsOff.startMarker.h, ...
     xy_ptb, ...
-    r_px * 2, ...
+    d_px, ...
     e.s.startMarkerColor, ...
-    [], 1);
+    [], 3);
 
 
     

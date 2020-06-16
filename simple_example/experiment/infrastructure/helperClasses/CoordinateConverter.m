@@ -148,7 +148,7 @@ classdef CoordinateConverter
             x_pa_mm = obj.va2mm(x_pa_va);
             y_pa_mm = obj.va2mm(y_pa_va);            
             % Transform to PTB CRF in pixels
-            xy_ptb_px = round(paMm2ptbPx(x_pa_mm, y_pa_mm));            
+            xy_ptb_px = round(obj.paMm2ptbPx(x_pa_mm, y_pa_mm));            
         end
         
         function xy_pa_mm = ptbPx2paMm(obj, x_ptb_px, y_ptb_px)
