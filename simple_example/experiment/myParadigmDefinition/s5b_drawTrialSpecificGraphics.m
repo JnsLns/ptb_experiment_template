@@ -51,17 +51,16 @@ colors = cell2mat(e.s.stimColors(colors)')';
 % in out example
 vertPos = zeros(1, numel(horzPos));
 
-% Convert item positions to Psychtoolbox frame and pixels (can be done for
-% all items at once)
-[x_ptb, y_ptb] = paVaToPtbPx(horzPos, vertPos, e.s.spatialConfig);
+% Convert item positions to Psychtoolbox frame and pixels
+xy_ptb = convert.paVa2ptbPx(horzPos, vertPos);
 
 % Convert item radius from °v.a. to pixels (is the same for all items)
-r_px = vaToPx(e.s.stimRadius, e.s.spatialConfig);
+r_px = convert.va2px(e.s.stimRadius);
 
 % Draw the items via Psychtoolbox to stimulus offscreen window 
 Screen('DrawDots', ...
     winsOff.stims.h, ...
-    [x_ptb; y_ptb], ...
+    xy_ptb, ...
     r_px * 2, ...
     colors, ...
     [], 1);
