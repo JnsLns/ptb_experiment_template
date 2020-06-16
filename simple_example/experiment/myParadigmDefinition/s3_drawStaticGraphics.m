@@ -26,20 +26,16 @@
 % position in the presentation-area-frame and in degrees of visual angle
 % during trial generation. So we first need to convert them:
 
-% Convert positions
-x = e.s.startMarkerPos(1);
-y = e.s.startMarkerPos(2);
-[x_ptb, y_ptb] = paVaToPtbPx(x, y, e.s.spatialConfig);
+% Convert start marker positions to Psychtoolbox 
+xy_ptb = convert.paVa2ptbPx(e.s.startMarkerPos(1), e.s.startMarkerPos(2));
 
-% Convert size
-r = e.s.startMarkerRadius;
-r_px = vaToPx(r, e.s.spatialConfig);
+% Convert size to pixels
+r_px = convert.va2px(e.s.startMarkerRadius);
 
 % Finally, use Psychtoolbox function to plot the start marker:
-
 Screen('DrawDots', ...
     winsOff.startMarker.h, ...
-    [x_ptb, y_ptb], ...
+    xy_ptb, ...
     r_px * 2, ...
     e.s.startMarkerColor, ...
     [], 1);
