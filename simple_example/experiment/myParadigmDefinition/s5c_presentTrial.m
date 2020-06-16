@@ -146,16 +146,13 @@ while deltatOnStart <= e.s.durOnStart
         deltatOnStart = 0;
     end
     
-    %%% Re-draw cursor
-    
+    %%% Re-draw cursor    
     % use start marker window as "background" (copy to onscreen win)
-    Screen('CopyWindow', winsOff.startMarker.h, winOn.h);
-    % Convert mouse position back to PTB coordinates, draw cursor
-    [mouseXY_ptb(1), mouseXY_ptb(2)] = ...
-        paVaToPtbPx(mouseXY(1), mouseXY(2), e.s.spatialConfig);
+    Screen('CopyWindow', winsOff.startMarker.h, winOn.h);        
+    % Convert mouse position back to PTB coordinates, draw cursor           
+    mouseXY_ptb = convert.paVa2ptbPx(mouseXY(1), mouseXY(2));
     Screen('DrawDots', winOn.h, mouseXY_ptb, ...
-        vaToPx(e.s.mouseCursorRadius, e.s.spatialConfig) * 2, ...
-        e.s.mouseCursorColor, [], 1);
+    convert.va2px(e.s.mouseCursorRadius) * 2, e.s.mouseCursorColor, [], 1);    
     % Show
     Screen('Flip', winOn.h, []);
     
@@ -220,14 +217,12 @@ while 1
     % use stim window as "background" (copy to onscreen win)
     Screen('CopyWindow', winsOff.stims.h, winOn.h);
     % Convert mouse position back to PTB coordinates, draw cursor
-    [mouseXY_ptb(1), mouseXY_ptb(2)] = ...
-        paVaToPtbPx(mouseXY(1), mouseXY(2), e.s.spatialConfig);
+    mouseXY_ptb = convert.paVa2ptbPx(mouseXY(1), mouseXY(2));
     Screen('DrawDots', winOn.h, mouseXY_ptb, ...
-        vaToPx(e.s.mouseCursorRadius, e.s.spatialConfig) * 2, ...
-        e.s.mouseCursorColor, [], 1);
+        convert.va2px(e.s.mouseCursorRadius) * 2, e.s.mouseCursorColor, [], 1);
     % Show
     Screen('Flip', winOn.h, []);
-        
+    
 end
 
 
