@@ -21,6 +21,7 @@ while curTrialNumber <= size(triallist,1)
 end
 
 % Wrap up after all trials are done
+finalSave;
 s6_presentGoodbye;
 cleanUp;
 
