@@ -49,18 +49,16 @@ for fn = fieldnames(t.s)'
     % copy over
     e.s.(fn{1}) = t.s.(fn{1});        
 end
- 
-% Add spatial configuration properties to 'e.s'. Also initialize converter
-% object with these values and store in 'e.s' as well; but also make
-% available as 'convert' to any following code.
-tmp = get(useScreenNumber, 'ScreenSize');
-e.s.expScreenSize_px = tmp(3:4);                    % screen resolution
-e.s.expScreenSize_mm = e.s.expScreenSize_mm;        % actual size (vis. image)
-e.s.viewingDistance_mm = e.s.viewingDistance_mm;    % patricipant dist.
+
 % Default for presentation area extent: [0,0] = origin in screen center
 if ~isfield(t.s, 'presArea_va')
     e.s.presArea_va = [0,0];
 end
+
+% Get screen resolution and initialize converter object; store in 'e.s',
+% but also make available as 'convert' to any following code.
+tmp = get(useScreenNumber, 'ScreenSize');
+e.s.expScreenSize_px = tmp(3:4);                    % screen resolution
 % Make converter object to convert between CRFs and units.
 convert = CoordinateConverter(e.s.viewingDistance_mm, ...
                               e.s.expScreenSize_mm, ...
