@@ -183,5 +183,5 @@ end
 
 
 % Preparation for the trial loop
-curTrialNumber = 1;
+curTrialNumber = 1; % row in trial list for current trial
 sequNum = 0;

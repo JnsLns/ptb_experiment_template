@@ -26,6 +26,6 @@ if rerunTrialLater
         
     end        
     
-    curTrialNumber = curTrialNumber - 1; % will be incremented again at trial outset.
+    curTrialNumber = curTrialNumber - 1; % will be incremented again before next trial
     
 end
