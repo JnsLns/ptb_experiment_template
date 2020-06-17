@@ -9,8 +9,13 @@ storeResults;
 % redone later at a random time point.
 insertAbortedTrial; 
 
-if doSave
-    save(savePath, 'e');
+if doSave    
+    % Save temporary incomplete file that may be used to resume experiment
+    % in case it is aborted or crashes (final file is saved only at the end)
+    resumeAtTrialNumber = curTrialNumber + 1;  
+    [p,f,ext] = fileparts(savePath);
+    savePathIncomplete = fullfile(p,['INCOMPLETE_', f, ext]);        
+    save(savePathIncomplete, 'e', 'resumeAtTrialNumber', 'triallist');
 end
 
 % go to next trial...
