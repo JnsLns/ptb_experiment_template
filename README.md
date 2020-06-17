@@ -9,16 +9,23 @@
 - coordinate converter
 - i changed folder structure (did I change it or only add a folder? at least helperClasses added... also renamed settings to basicSetting.m. also added results folder)
 - state where files are loaded from by default and where they are stored... (or leave that to docs in basicSettings)
-- DEBUG CAPABILITIES
-	- breakToDebug.m can be included in any file after runExperiment to close PTB windows and return to MATLAB prompt. Execution can be resumed like with any break point and PTB windows will be reopened (and static graphics will be redrawn).
-	- debugOnError
-	- Debuggin through pause key
+
+## Debug capabilities
+
+There are a few debugging capabilities that are particularly useful when dealing with the notoriously unwieldly Psychtoolbox windows – due to which many a good codesmen have been lost in the abyss of the task manager. In other words, these features take care of closing the windows and reopening them after debugging (as well as re-drawing any graphics).
+
+```breakToDebug;``` can be included in any file after ```runExperiment```. It will close PTB windows and return to the MATLAB prompt without terminating the experiment function. Execution can be resumed as with any break point (F5). 
+
+```debugOnError``` is a setting optionally defined in ```basicSettings.m```. If defined and ```true```, any error in the experimental scripts will invoke ```breakToDebug```, thus allowing to inspect the function workspace before terminating.
+
+Finally, the message box invoked by pausing the experiment manually (hold pause key at the start of a trial) has an option which allows to go to the prompt for debugging.
+	
 
 ## resumeExperiment() — completing an interrupted session
 
-Say your triallist has 1000 trials, but the computer crashes after 800 (yes, it happens :). Fortunately, the experimental script routinely saves and updates a preliminary result file, at the selected save file location. That file is replaced by the final file upon experiment completion, but stays around if the experiment gets interrupted. That file will be named something like ```bliblablu_myExperiment.mat.incomplete```. To run the remaining trials, run ```resumeExperiment```. It will ask for an incomplete file instead of a trial file, and simply finish the remaining trial list exactly as if the interruption never happened. Should there be another interruption during the new session, no problem, the ```*.incomplete``` file will hold the new trials as well and you can resume from there again. Upon completion of the experiment, the final result file will be created as usual and the incomplete file is automatically deleted. Note though that a backup of the incomplete file is made in the same folder, to ensure that data is never lost. That backup file can be deleted manually.
+Say your triallist has 1000 trials, but the computer crashes after 800 (yes, it happens :). Fortunately, the experimental script routinely saves and updates a preliminary result file, in the selected save folder. That file is replaced by the final file upon experiment completion, but stays around if the experiment gets interrupted. It will be named something like ```bliblablu_myExperiment.mat.incomplete```. To run the remaining trials, execute ```resumeExperiment```. It will ask for an incomplete file instead of a trial file, and simply finish the remaining trial list exactly as if the interruption never happened. Should there be another interruption during the new session, no problem, the ```*.incomplete``` file will hold the new trials as well and you can resume from there again. Upon completion of the experiment, the final result file will be created as usual and the incomplete file is automatically deleted. Note though that a backup of the incomplete file is made in the same folder, to ensure that data is never lost. That backup file can be deleted manually.
 
-Note that values in struct 'e.s' defined in ```basicSettings.m``` or ```s1_customSettings``` override what is stored in the loaded file. This is intended behavior, as it allows to finish an incomplete session on different hardware and therefore different settings. However, if doing this, be wary about using ```e.s.convert``` during later analysis to convert units, as ```e.s.convert``` stored in the final results will be adjusted to the new settings as well, and might thus not be valid for the older batch of trials. The best workaround for this is to routinely do all necessary conversions already when recording results during the experiment. 
+Note that values set in struct 'e.s' within ```basicSettings.m```, ```s1_customSettings``` or later override what is stored in the loaded file (and what will be saved). This is intended behavior, as it allows to finish an incomplete session on different hardware and therefore different settings. However, if you have to do this, be wary about using ```e.s.convert``` during later analysis to convert units, as ```e.s.convert``` stored in the final result file will be based on the *new* settings, and might thus not be valid for the older batch of trials. The best workaround for this is to routinely do all necessary conversions already when recording results during the experiment. 
 
 ## Which files should I edit?
 Here's the main directory and file structure with folders and files marked that you should edit. All others should not be modified. In summary, files in folders starting with ```my``` can be modified. In addition, you need to adjust values in ```builtInSettings.m``` to your hardware setup and finally write some code for trial list generation in ```trialGeneration.m```. Files in ```/experiment/infrastructure/``` should not be changed (but can be called in your own code as described later).
@@ -28,9 +35,10 @@ Here's the main directory and file structure with folders and files marked that 
 |	+-- infrastructure
 |	+-- myCustomFiles             <-- store any custom files here
 |	+-- myParadigmDefinition      <-- add code in existing files
-|	+-- myTrialFiles 	      <-- put trial files here (*.mat)
-|	settings.m 		      <-- only adjust values, dont modify code
+|	+-- myTrialFiles 	      	  <-- put trial files here (*.mat)
+|	basicSettings.m 		      <-- only adjust values, dont modify code
 |	runExperiment.m 			  
+|   resumeExperiment.m
 |
 +-- trialGeneration 		      
 	trialGeneration.m             <-- add code that generates trial file
@@ -39,10 +47,9 @@ Here's the main directory and file structure with folders and files marked that 
 
 ## Execution order of script files
 
-The experiment is started by running ```runExperiment```. Experiment files are then executed in the order listed below (the last block of files is located in ```/myParadigmDefinition```) . 
+The experiment is started by running ```runExperiment``` or ```resumeExperiment```. Experiment files are then executed in the order listed below (the last block of files is located in ```/myParadigmDefinition```) . 
 ```
-runExperiment.m                      
-settings.m
+basicSettings.m
 s1_customSettings.m
 s2_defineOffscreenWindows.m
 s3_drawStaticGraphics.m
