@@ -27,7 +27,8 @@ if pauseKeyDepressed
             qdlg = questdlg('Are you sure you want to ABORT the experiment?','Sure?', ...
                 strNo, strConfirmAbort, 'No, go back!');
             
-            if strcmp(qdlg, strConfirmAbort)                
+            if strcmp(qdlg, strConfirmAbort)   
+                doNotDebugOnError = true;
                 error('Aborted execution as requested.')            
             end
         

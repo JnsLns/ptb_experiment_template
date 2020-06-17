@@ -9,7 +9,10 @@
 - coordinate converter
 - i changed folder structure (did I change it or only add a folder? at least helperClasses added... also renamed settings to basicSetting.m. also added results folder)
 - state where files are loaded from by default and where they are stored... (or leave that to docs in basicSettings)
+- DEBUG CAPABILITIES
 - breakToDebug.m can be included in any file after runExperiment to close PTB windows and return to MATLAB prompt. Execution can be resumed like with any break point and PTB windows will be reopened (and static graphics will be redrawn).
+- debugOnError
+- Debuggin through pause key
 
 ## Which files should I edit?
 Here's the main directory and file structure with folders and files marked that you should edit. All others should not be modified. In summary, files in folders starting with ```my``` can be modified. In addition, you need to adjust values in ```builtInSettings.m``` to your hardware setup and finally write some code for trial list generation in ```trialGeneration.m```. Files in ```/experiment/infrastructure/``` should not be changed (but can be called in your own code as described later).

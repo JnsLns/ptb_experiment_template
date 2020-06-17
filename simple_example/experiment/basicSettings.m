@@ -52,6 +52,11 @@ pauseKey = 'Pause';
 % helperFunctions/mouseInput/.
 e.s.rawMouseScreenToDeskRatio = 48.3;
 
-
+% The default behavior if an error occurs in the experimental function is to
+% to terminate it and remove temporary directories from the the MATLAB path.
+% If 'debugOnError' exists and is 'true', the program will instead just
+% close all Psychtoolbox windows and go to MATLAB prompt without
+% terminating the function, thus allowing to examine its workspace. 
+debugOnError = false;
 
  
