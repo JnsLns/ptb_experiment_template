@@ -5,11 +5,6 @@
 
 
 
-
-
-
-*In addition to this documentation, each modifiable code file itself contains relatively detailed instructions on how to use it.*
-
 # TODO
 - mouse stuff documentation... new anonymous function getMouseRM...
 - Motion tracking input 
