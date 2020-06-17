@@ -30,13 +30,15 @@ if ~resumeMode
                     ' to e.s, but already exists in e.s']);
             else
                 if ~overrideWarningHasFired
+                    waitfor(...
                     warndlg(['Note that ''e.s.expScriptSettingsOverrideTrialGenSettings'' is ', ...
                         'true, which is intended for testing and debugging. It means ', ...
                         'that any fields in struct ''e.s'' that are defined in the ', ...
                         'experimental scripts override the values of fields with the ', ...
                         'same name in struct ''t.s'' (from trial generation) instead ', ...
                         'of throwing an error. This should be remedied before running ', ...
-                        'the final experiment.'])
+                        'the final experiment.'])...
+                        );                    
                     overrideWarningHasFired = true;
                 end
                 continue; % use value that is already in 'e.s'
@@ -47,7 +49,7 @@ if ~resumeMode
     end
     
     % Default for presentation area extent: [0,0] = origin in screen center
-    if ~isfield(t.s, 'presArea_va')
+    if ~isfield(e.s, 'presArea_va')
         e.s.presArea_va = [0,0];
     end
     
@@ -61,9 +63,6 @@ end % ~resumeMode condition
 % Psychtoolbox settings
 PsychDefaultSetup(2);               % some default Psychtoolbox settings
 Screen('Preference', 'VisualDebuglevel', 3); % suppress PTB splash screen
-
-% Hide mouse cursor
-HideCursor;
 
 % Determine experimental screen
 screens = Screen('Screens');        % get all connected screens
@@ -251,3 +250,9 @@ end
 
 defineAnonymousFunctions;
 
+
+
+%%% Hide mouse cursor
+
+
+HideCursor;

@@ -2,7 +2,7 @@
 %                                                                         
 % Run this file to execute the experiment. Do not modify this file.       
 %                                                                          
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %%%%% %%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  
  
 function runExperiment(resumeMode)  
