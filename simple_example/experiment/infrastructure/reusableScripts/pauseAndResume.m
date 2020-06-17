@@ -5,26 +5,44 @@
 
 pauseKeyCheck;
 
-if pauseKeyDepressed
+if pauseKeyDepressed        
+    
+    strDebug = 'Debug (break & go to prompt)';
+    strNo = 'No, go back!';
+    strAbort = 'ABORT experiment';
+    strConfirmAbort = 'Yes, ABORT the experiment.'; 
     
     % Close all PTB windows
     Screen('CloseAll')
          
     % Show dialogbox, wait for selection
-    qdlg = 'No, go back!';
-    while strcmp(qdlg,'No, go back!')
+    qdlg = strNo;
+    while strcmp(qdlg, strNo)
+        
         qdlg = questdlg('Experiment paused.','Pause', ...
-            'ABORT experiment','Resume experiment','Resume experiment');
-        if strcmp(qdlg,'ABORT experiment')
+            strAbort, strDebug, 'Resume experiment','Resume experiment');
+                        
+        if strcmp(qdlg, strAbort)
+            
             qdlg = questdlg('Are you sure you want to ABORT the experiment?','Sure?', ...
-                'No, go back!','Yes, ABORT the experiment.', 'No, go back!');
-            if strcmp(qdlg,'Yes, ABORT the experiment.')
-                return;
+                strNo, strConfirmAbort, 'No, go back!');
+            
+            if strcmp(qdlg, strConfirmAbort)                
+                error('Aborted execution as requested.')            
             end
+        
+        elseif strcmp(qdlg, strDebug)
+                
+            breakToDebug;            
+            break; 
+            
         end
+        
     end
-    
-    restorePsychWindows;
+        
+    if ~strcmp(qdlg, strDebug) % debug script already restores windows.
+        restorePsychWindows;
+    end
     
 end
 
