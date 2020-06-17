@@ -69,6 +69,8 @@ end
 if ~isempty(whichScreen)
     ss = get(whichScreen,'ScreenSize');
     screenResXY_px = ss(3:4);
+else 
+    ss = [1, 1, screenResXY_px];
 end
 
 % Compute ratio of pixels to physical size
@@ -106,8 +108,7 @@ while 1
     y = java.awt.MouseInfo.getPointerInfo().getLocation().getY();                
     if KbCheck || any(x == [0,scrSz(3)])  || any(y == [0,scrSz(4)])        
         distScreen_px = distScreen_px + norm(([start_x, start_y] - [x,y]));                        
-        robot.mouseMove(start_x, start_y);
-        disp(distScreen_px)
+        robot.mouseMove(start_x, start_y);        
         if KbCheck
             break;
         end      
