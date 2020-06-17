@@ -29,3 +29,4 @@ winOn.fontSize = convert.va2px(e.s.onscreenWindowTextHeight_va);
     [], [], [], e.s.multisampling);
 Screen('TextFont', winOn.h, winOn.font);
 Screen('TextSize', winOn.h, winOn.fontSize); 
+

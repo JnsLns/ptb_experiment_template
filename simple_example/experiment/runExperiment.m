@@ -12,9 +12,9 @@ try
     [expRootDir,~,~] = fileparts(mfilename('fullpath'));
     subdirsToAdd = {'infrastructure', ...
                     'myParadigmDefinition', ...                    
-                    'myCustomFiles'};
+                    'myCustomFiles'}; 
     pathsAdded = {};    
-    for pNum = 1:numel(subdirsToAdd) 
+    for pNum = 1:numel(subdirsToAdd)  
         p = subdirsToAdd{pNum};
         p = fullfile(expRootDir, p); 
         withSubfolders = genpath(p);

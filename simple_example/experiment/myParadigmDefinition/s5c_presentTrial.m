@@ -247,10 +247,4 @@ out.trajectory = array2table(trajectory, 'VariableNames', {'x','y','t'});
 out.trajectory = remSuccDuplTableRows(out.trajectory,{'x','y'});
 
 
-% DEBUG
-warning('debug active')
-if curTrialNumber == 2
-    out.bla = magic(3);
-end
-
 
