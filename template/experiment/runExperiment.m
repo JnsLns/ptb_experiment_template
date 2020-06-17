@@ -15,7 +15,8 @@ try
     [expRootDir,~,~] = fileparts(mfilename('fullpath')); 
     subdirsToAdd = {'infrastructure', ...
                     'myParadigmDefinition', ...                    
-                    'myCustomFiles'}; 
+                    'myCustomFiles', ...
+                    'myTrialFiles'}; 
     pathsAdded = {};     
     for pNum = 1:numel(subdirsToAdd)  
         p = subdirsToAdd{pNum}; 

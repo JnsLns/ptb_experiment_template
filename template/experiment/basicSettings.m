@@ -17,14 +17,14 @@ doSave = true;
 savePath = fullfile(expRootDir,'/../results');
 
 % If a path and name of a mat-file is given here, this file is loaded 
-% automatically as trial file. Can be left empty '' or commented out, in
-% which case a load dialog will ask to select a trial file upon experiment
-% start.
-trialFilePath = '';
+% automatically as trial file. If the file is located in the 'myTrialFiles'
+% folder, the file name suffices. Can be left empty '' or commented out, in
+% which case a load dialog will ask to select a trial file.
+trialFilePath = 'exampleTrials.mat';
 
 % Number of screen to use as experimental screen. If this variable is not 
 % defined or emtpy [], the last number yielded by Screen('Screens') is used
-% by default (use this default if only one screen is connected). 
+% by default (use default if only one screen is connected). 
 useScreenNumber = [];
 
 % Actual screen size in millimeters (extent of visible image). Measure this
@@ -34,7 +34,7 @@ useScreenNumber = [];
 e.s.expScreenSize_mm = [797 333]; 
 
 % Participant's (approximate) viewing distance from screen in millimeters.
-e.s.viewingDistance_mm = 800;
+e.s.viewingDistance_mm = 600;
 
 % Degree of antialiasing. Higher values = smoother graphics but worse
 % performance. Reduce if bad performance or graphics memory problems occur.
@@ -49,10 +49,11 @@ pauseKey = 'Pause';
 % getMouseRM to stream/remap mouse movement (see Readme.md). No effect
 % otherwise. To determine this value for the current hardware, run
 % getMouseScreenToDesk(), located in /experiment/infrastructure/
-% helperFunctions/mouseInput/.
+% helperFunctions/mouseInput/. It is absolutely vital for mouse tracking
+% precision that this value is correct!!! 
 e.s.rawMouseScreenToDeskRatio = 48.3;
 
-% The default behavior if an error occurs in the experimental function is to
+% The default behavior if an error occurs in the experimental function is 
 % to terminate it and remove temporary directories from the the MATLAB path.
 % If 'debugOnError' exists and is 'true', the program will instead just
 % close all Psychtoolbox windows and go to MATLAB prompt without
