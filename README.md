@@ -1,9 +1,18 @@
 
+
+
+*I recently made huge changes to the code base. Since then, the docs are in disarray. They will be cleaned up in the next days. However, in addition to this documentation, each modifiable code file itself contains relatively detailed instructions on how to use it, and that should be OK already.*
+
+
+
+
+
+
 *In addition to this documentation, each modifiable code file itself contains relatively detailed instructions on how to use it.*
 
 # TODO
 - mouse stuff documentation... new anonymous function getMouseRM...
-- Motion tracking input (later... after Coras experiment)
+- Motion tracking input 
 - take a look at readme.md in simple_example/experiment and incorporate 
   useful stuff here. 
 - coordinate converter
