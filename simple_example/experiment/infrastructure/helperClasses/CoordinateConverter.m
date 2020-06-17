@@ -1,7 +1,7 @@
 classdef CoordinateConverter
 % Instantiate an object of this class at the outset of an experiment, feed-
 % ing it the specifics of the spatial setup of the experiment (see
-% Constructor method documentation). Then use it within experimental code
+% constructor method documentation). Then use it within experimental code
 % to convert between different coordinate frames and units using the
 % provided methods. The goal of this class is to enable the user to think
 % (almost) exclusively in degrees of visual angle and within the

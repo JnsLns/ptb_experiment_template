@@ -12,7 +12,7 @@ function [extendedTbl, addedVars] = addUnsharedTableVars(extendTbl, sourceTbl)
 %
 %                           ___Inputs___
 %
-% extendTbl     Table to add variables to.
+% extendTbl    Table to add variables to.
 %
 % sourceTbl    Table to provide the full set of desired variables.
 %
@@ -21,9 +21,9 @@ function [extendedTbl, addedVars] = addUnsharedTableVars(extendTbl, sourceTbl)
 %
 % extendedTbl  Table extended with new variables.
 %
-% addedVars     Cell array of the variables names that have been added
-%               (i.e., variables that are in 'sourceTbl' but not in
-%               'extendTbl')
+% addedVars    Cell array of the variables names that have been added
+%              (i.e., variables that are in 'sourceTbl' but not in
+%              'extendTbl')
 
 % Find variables that are in sourceTbl but not in extendTbl
 sourceTblVars = sourceTbl.Properties.VariableNames;

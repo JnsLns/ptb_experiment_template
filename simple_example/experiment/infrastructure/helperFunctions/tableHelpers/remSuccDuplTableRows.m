@@ -2,8 +2,8 @@ function tblOut = remSuccDuplTableRows(tbl, varNames)
 % function tblOut = remSuccDuplTableRows(tbl, varNames)
 %
 % Remove rows from table that are directly successive and identical with
-% respect to a given set of table variables. Only the first of these rows
-% is retained. Variable types 
+% respect to a given set of table variables. For each separate batch of
+% matching rows only the first row is retained in the output table.
 %
 %                               ___Input___
 %
