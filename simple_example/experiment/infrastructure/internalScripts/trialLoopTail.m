@@ -13,8 +13,6 @@ insertAbortedTrial;
 % in case it is aborted or crashes (final file is saved only at the end)
 if doSave    
     resumeAtTrialNumber = curTrialNumber + 1;  
-    [p,f,ext] = fileparts(savePath);
-    savePathIncomplete = fullfile(p,['INCOMPLETE_', f, ext]);        
     save(savePathIncomplete, 'e', 'resumeAtTrialNumber', 'triallist');
 end
 

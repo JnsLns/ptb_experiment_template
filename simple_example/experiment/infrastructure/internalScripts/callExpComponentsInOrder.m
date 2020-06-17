@@ -1,3 +1,5 @@
+loadFileToResume; % only effective if 'resumeMode' is true.
+
 basicSettings;
 s1_customSettings;
 
@@ -7,8 +9,12 @@ openOnscreenWindow;
 s2_defineOffscreenWindows;
 openOffscreenWindows;
 s3_drawStaticGraphics;
+if ~resumeMode
 s4_presentInstructions;
-
+elseif resumeMode
+showResumeInstruction;
+end
+    
 % Iterate over trials
 while curTrialNumber <= size(triallist,1)
     trialLoopHead;

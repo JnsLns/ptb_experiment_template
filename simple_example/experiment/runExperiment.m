@@ -5,11 +5,14 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %%%%% %%%%%%%%%%%%%%%%%%
  
  
-function runExperiment 
-try      
+function runExperiment(resumeMode)  
+if nargin == 0
+    resumeMode = false;
+end
+try          
     % Add som e subdirectories (including subfold ers) of the current folder
     % to MATLAB path (will be removed again when the experiment ends).
-    [expRootDir,~,~] = fileparts(mfilename('fullpath'));
+    [expRootDir,~,~] = fileparts(mfilename('fullpath')); 
     subdirsToAdd = {'infrastructure', ...
                     'myParadigmDefinition', ...                    
                     'myCustomFiles'}; 
@@ -20,7 +23,7 @@ try
         withSubfolders = genpath(p); 
         addpath(withSubfolders)  
         pathsAdded{pNum} = withSubfolders;  
-    end    
+    end        
     callExpComponentsInOrder; % this calls all experiment scripts in order.
 catch ME    
     errorDebug;   

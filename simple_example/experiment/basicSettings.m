@@ -34,7 +34,7 @@ useScreenNumber = [];
 e.s.expScreenSize_mm = [797 333]; 
 
 % Participant's (approximate) viewing distance from screen in millimeters.
-e.s.viewingDistance_mm = 600;
+e.s.viewingDistance_mm = 800;
 
 % Degree of antialiasing. Higher values = smoother graphics but worse
 % performance. Reduce if bad performance or graphics memory problems occur.
@@ -58,5 +58,9 @@ e.s.rawMouseScreenToDeskRatio = 48.3;
 % close all Psychtoolbox windows and go to MATLAB prompt without
 % terminating the function, thus allowing to examine its workspace. 
 debugOnError = false;
+
+
+
+
 
  

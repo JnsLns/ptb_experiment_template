@@ -14,6 +14,10 @@
 	- debugOnError
 	- Debuggin through pause key
 
+## resumeExperiment
+
+Say your triallist has 100 trials, but the computer crashes after 80 trials (yes, it happens :). To still finish the session, run ```resumeExperiment.m```. Fortunately, when running the experimental script routinely saves and updates a preliminary result file to the selected save file location. That file is replaced by the final file upon experiment completion, but stays around if the experiment gets interrupted. That file will be named something like ```bliblablu_myExperiment.mat.incomplete```. To run the remaining trials, run ```resumeExperiment```. It will ask for an incomplete file instead of a trial file, and simply finish the remaining trial list exactly as if the interruption never happened. Should there be another interruption during the new session, no problem, the ```*.incomplete``` file will hold the new trials as well and you can resume from there again. Upon completion of the experiment, the final result file will be created as usual and the incomplete file is automatically deleted. Note though that a backup of the incomplete file is made in the same folder when you start resuming, to ensure that data is never lost. That backup file can be deleted manually.
+
 ## Which files should I edit?
 Here's the main directory and file structure with folders and files marked that you should edit. All others should not be modified. In summary, files in folders starting with ```my``` can be modified. In addition, you need to adjust values in ```builtInSettings.m``` to your hardware setup and finally write some code for trial list generation in ```trialGeneration.m```. Files in ```/experiment/infrastructure/``` should not be changed (but can be called in your own code as described later).
 ```
