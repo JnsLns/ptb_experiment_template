@@ -24,6 +24,17 @@ function [mouse_xy_pa_va, mouse_xy_ptb_px] = getMouseRemapped(rawRatio, desiredR
 % generation and 'e.s.rawMouseScreenToDeskRatio' in generalSettings.m.
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
+% Note on how this function works: In short, it integrates true mouse
+% movement across calls and uses a scaled version to steer a fake cursor.
+% Each time it is called, the function resets the true cursor to the screen
+% center. Before that, it assesses the vector between current position of
+% the true mouse cursor and the screen center (that is the distance moved
+% since last call). This vector is scaled by a multiplier determined from
+% the ratios, and added to the position of the fake cursor, whose position
+% is retained across function calls. Resetting the true cursor to the
+% screen center prevents it from reaching the screen border, which would
+% jeopardize assessing the moved distance. 
+%
 %                               ___Input___
 %
 % rawRatio          Scalar. Ratio of cursor movement distance on the screen
@@ -60,8 +71,8 @@ function [mouse_xy_pa_va, mouse_xy_ptb_px] = getMouseRemapped(rawRatio, desiredR
 
 % First get position of mouse pointer in ptb frame, pixels
 
-% Store reference mouse position across calls of this funciton
-persistent oldPos;
+% Position of visible mouse pointer
+persistent fakeCursorPos;
 
 if ~all(size(desiredRatioXY) == [1,2])
     error('Desired ratio must be a two-element row vector.'  )
@@ -70,20 +81,29 @@ end
 % Compute required multiplier 
 multiplier = (1/rawRatio) * desiredRatioXY;
 
-[newPos(1),newPos(2)] = GetMouse();
+% Get position of screen center (use last screen)
+screenCenter = get(max(Screen('Screens')), 'ScreenSize');
+screenCenter = round(screenCenter(3:4)/2);
 
-if ~isempty(oldPos) && ~all(oldPos==newPos)    
-    mov = newPos - oldPos;   
-    newPos = oldPos + mov .* multiplier;                    
-    SetMouse(ceil(newPos(1)),ceil(newPos(2)));
+% initialize persisten var on first call
+if isempty(fakeCursorPos)
+    fakeCursorPos = screenCenter;
 end
 
-oldPos = newPos;
-mouse_xy_ptb_px(1) = newPos(1);
-mouse_xy_ptb_px(2) = newPos(2);
+% Get current position of true cursor
+[newTruePos(1),newTruePos(2)] = GetMouse();
 
+% Get movement vector since last call and update cursor pos accordingly
+movVec = newTruePos - screenCenter;       
+fakeCursorPos = fakeCursorPos + movVec .* multiplier;                                        
+
+mouse_xy_ptb_px(1) = fakeCursorPos(1);
+mouse_xy_ptb_px(2) = fakeCursorPos(2);
 
 % Finally, convert to presentation area frame in visual angle
-mouse_xy_pa_va = converterObj.ptbPx2paVa(newPos(1), newPos(2))';
+mouse_xy_pa_va = converterObj.ptbPx2paVa(fakeCursorPos(1),fakeCursorPos(2))';
+
+% Move true mouse pointer to middle of screen
+SetMouse(screenCenter(1), screenCenter(2));
 
 end
