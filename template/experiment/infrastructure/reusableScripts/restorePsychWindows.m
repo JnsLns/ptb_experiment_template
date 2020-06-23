@@ -4,20 +4,25 @@
 % graphics in the offscreen windows.
 
 % Reopen onscreen window
-[winOn.h, winOn.rect] = ...
-    PsychImaging('openWindow', winOn.screen, winOn.bgColor, ...
-    winOn.rect, [], [], [], e.s.multisampling);
-Screen('TextFont', winOn.h, winOn.font);
-Screen('TextSize', winOn.h, winOn.fontSize);
-
-% Reopen offscreen windows
-for osw = fieldnames(winsOff)'
-    osw = osw{1};
-    [winsOff.(osw).h, winsOff.(osw).rect] = ...
-        Screen('OpenOffScreenWindow', winsOff.(osw).screen, ...
-        winsOff.(osw).bgColor, winsOff.(osw).rect, ...
-        [], [], e.s.multisampling);
+if exist('winOn','var')
+    [winOn.h, winOn.rect] = ...
+        PsychImaging('openWindow', winOn.screen, winOn.bgColor, ...
+        winOn.rect, [], [], [], e.s.multisampling);
+    Screen('TextFont', winOn.h, winOn.font);
+    Screen('TextSize', winOn.h, winOn.fontSize);
+HideCursor;
 end
 
-HideCursor;
+% Reopen offscreen windows
+if exist('winsOff','var')
+    for osw = fieldnames(winsOff)'
+        osw = osw{1};
+        [winsOff.(osw).h, winsOff.(osw).rect] = ...
+            Screen('OpenOffScreenWindow', winsOff.(osw).screen, ...
+            winsOff.(osw).bgColor, winsOff.(osw).rect, ...
+            [], [], e.s.multisampling);
+    end
 s3_drawStaticGraphics;
+end
+
+
