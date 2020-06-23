@@ -1,5 +1,4 @@
-**Usage: Create a new project in your github by pressing the "Use this template" button for each new experiment you implement. This will shield experimental code from being updated, making sure the experiment can be re-run in the exact same form any time.**
-
+**Usage: Create a new project in your github for each new experiment you implement. Do this not by forking but by pressing the "Use this template" button. This way you will have a fresh repo independent of this one. Keeping each experiment's code separate from the origin makes sure it won't be affected by later updates, so that it can be replicated in the exact same form later.**
 
 *Note: I recently made huge changes to the code base. Since then, the docs are in disarray. They will be cleaned up in the next days. However, in addition to this documentation, each modifiable code file itself contains relatively detailed instructions on how to use it, and that should be OK already.*
 
