@@ -6,7 +6,7 @@ Holds all files that define your experiment.
 **Note that only files should be added/modified to/in the following subfolders**
 
 * `myTrialFiles` : should contain one or multiple mat-files holding a trial list created during trial generation.
-* `myParadigmnDefinition` : contains multiple files in which you define your paradigm.
+* `myParadigmnDefinition` : contains multiple files in which you define your paradigm. These are called in order when the experiment is run.
 * `myCustomFiles` : initially empty, meant to store any custom functions or script files that you need to call from the files in `myParadigmnDefinition`.
 
 `basicSettings.m` holds important settings that you need to adjust to your hardware setup. However, do not remove or add code or variables there, just adjust the values.
