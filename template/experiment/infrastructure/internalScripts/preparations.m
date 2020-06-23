@@ -165,8 +165,8 @@ if ~resumeMode
     end
     if e.s.useTrialBlocks
         blockNums = [rand(); triallist.block];
-        uniqueBlockNums = unique(blockNums);
-        if any(sum(abs(diff(blockNums == uniqueBlockNums'))) > 2)
+        uniqueBlockNums = unique(blockNums);  
+        if any(sum(abs(diff(bsxfun(@eq, blockNums, uniqueBlockNums')))) > 2)
             error('Found trials with shared block number in non-consecutive trial list rows!')
         end
     end
