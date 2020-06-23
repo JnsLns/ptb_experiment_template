@@ -1,7 +1,7 @@
+**Usage: Create a new project in your github by pressing the "Use this template" button for each new experiment you implement. This will shieldexperimental code from being updated, making sure the experiment can be re-run in the exact same form any time.***
 
 
-
-*I recently made huge changes to the code base. Since then, the docs are in disarray. They will be cleaned up in the next days. However, in addition to this documentation, each modifiable code file itself contains relatively detailed instructions on how to use it, and that should be OK already.*
+*Note: I recently made huge changes to the code base. Since then, the docs are in disarray. They will be cleaned up in the next days. However, in addition to this documentation, each modifiable code file itself contains relatively detailed instructions on how to use it, and that should be OK already.*
 
 
 
