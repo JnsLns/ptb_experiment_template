@@ -11,7 +11,7 @@ Holds all files that define your experiment.
 
 `basicSettings.m` holds important settings that you need to adjust to your hardware setup. However, do not remove or add code or variables there, just adjust the values.
 
-`infrasturcture` contains, well, internally used infrastructure code that shouldn't be modified. But it can't hurt to take a look at it, since some functions there might be useful to you as well (especially the `CoordinateConverter` class).
+`infrastructure` contains, well, internally used infrastructure code that shouldn't be modified. But it can't hurt to take a look at it, since some bits and pieces there might be useful to you as well (especially the `CoordinateConverter` class).
 
 `runExperiment.m` and `resumeExperiment.m` shouldn't be modified either - just run them to execute the experiment or finish an existing but incomplete results file, respectively.
 
