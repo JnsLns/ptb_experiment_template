@@ -33,7 +33,7 @@ In short, trial generation must output a `*.mat` file containg a struct `t` hold
 ### Trial generation: struct `t`
 
 The *.mat file created in trial generation must contain a struct `t` with fields
-* `t.s`, with sub-fields that specify any paradigm-level settings (e.g., for maximum allowed response time you could define a field `t.s.maxResponseTime = 1000`). It's up to you how you use these settings in your experimental code. There are however some reserved field names with built-in functionality (see below).
+* `t.s`, with sub-fields that specify any paradigm-level settings (e.g., for maximum allowed response time you could define a field `t.s.maxResponseTime = 1000`). It's up to you how you use these settings in your experimental code. There are however some reserved field names with built-in functionality (described [here](#reserved-field-names-in-ts-and-es).
 * `t.triallist`, a MATLAB table object. Each row holding one trial and columns corresponding to trial properties, such as stimulus positions or colors. It is again up to you how the experimental code uses what is stored in the table, except for a few reserved column names with built-in funtionality (see below).
 
 ### Experiment: struct `e`
@@ -389,7 +389,7 @@ The results of the two methods differ somewhat, and this difference increases wi
 
 ### Reserved field names in `t.s` (and `e.s`)
 
-There is a number of field names in these two structs that have predefined functionality. **These are meant to be set during trial generation** (it is possible to define them during the experiment, but not recommended). Anyhow, defining any of these fields is **OPTIONAL**. The default behavior for undefined fields is indicated below. If a field *is* defined, however, it should be used only for the intended functionality (in other words, don't use these field names for custom purposes or something might break). So, here are the fields:
+There is a number of field names in these two structs that have predefined functionality. **These are meant to be set during trial generation** (though it is possible to define them during the experiment, it is not recommended). Defining any of these fields is **OPTIONAL**. The default behavior for undefined fields is indicated below. If a field *is* defined, however, it should be used only for the intended functionality (in other words, don't use these field names for custom purposes or something might break). So, here are the fields:
 
 #### `t.s.experimentName`
 Assign a string. That string will be appended to the results file name automatically. Default if undefined is an empty string.
@@ -407,7 +407,7 @@ Assign Boolean. Default if undefined: `false`. If `true`, the order of trials in
 Assign Boolean. Default if undefined: `false`. If set to true, the order of blocks in the triallist will be shuffled at the outset of the experimental script, so that each participant will see a different block order. Only comes to effect if blocks are enabled (see `t.s.useTrialBlocks` above).
 
 #### `t.s.bgColor`
-Assign RGB triplet ([0,0,0] to [1,1,1]). Default background color for all Psychtoolbox windows. Can also be one of the strings 'black', 'white', or 'grey'. Default if undefined: 'grey'.
+Assign RGB triplet ([0,0,0] to [1,1,1]). Default background color for all Psychtoolbox windows. Can also be one of the strings 'black', 'white', or 'grey' (in which case it is converted to an RGB triplet, see [here](#Using-strings-black-white-or-grey-in-es-or-ts-field-names)). Default if undefined: 'grey'.
                                         
 #### `t.s.onscreenWindowTextFont`
 Assign string. Default if undefined: 'Arial'. Default font for text in onscreen window. 
