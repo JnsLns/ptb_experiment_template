@@ -1,11 +1,19 @@
 %%%%%%% Prepare graphics that stay the same over the experiment %%%%%%%%%%%
 %
-% Draw graphics that remain unchanged over trials to the prepared offscreen
-% windows, such as a fixation cross. Use the window pointers stored in
-% struct 'winsOff.myWindow.h'.
+% Draw graphics that are reused across trials, such as a fixation cross,
+% to the prepared offscreen windows.
+% Window pointers are stored in struct 'winsOff.myWindow.h'.
 % The coordinate frame for drawing is the Psychtoolbox frame, units are
-% pixels. Use functions 'vaToPx' and 'paVaToPtbPx' to convert from visual
-% angle to that frame. See folder 'helperFuntions/unitConversion' for these
+% pixels. Use methods of the CoordinateConverter object that is available
+% here in the the variable 'convert' to convert between reference frames
+% and units: For instance
+%
+%   convert.va2Px(x) % convert x from visual angle to pixels
+%object
+% to convert BETWEEN 
+
+%from the presentation area frame to that frame and from visual angle to pixels.
+%See folder 'helperFuntions/unitConversion' for these
 % functions' documentations and other conversion functions you may use.
 %
 %

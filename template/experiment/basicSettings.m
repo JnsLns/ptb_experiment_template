@@ -48,7 +48,7 @@ pauseKey = 'Pause';
 % on the desk, as arising from mouse system settings. Required for using
 % getMouseRM to stream/remap mouse movement (see Readme.md). No effect
 % otherwise. To determine this value for the current hardware, run
-% getMouseScreenToDesk(), located in /experiment/infrastructure/
+% getMouseScreenToDeskRatio(), located in /experiment/infrastructure/
 % helperFunctions/mouseInput/. It is absolutely vital for mouse tracking
 % precision that this value is correct!!! 
 e.s.rawMouseScreenToDeskRatio = 48.3;

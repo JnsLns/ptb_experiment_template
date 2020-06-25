@@ -13,7 +13,7 @@
 % custom trial generation.
 %
 % The example code generates a list of six trials in two blocks and defines
-% some overarching settings. The file is saved to
+% some overarching paradigm-level settings. The file is saved to
 % '../experiment/trialFiles/exampleTrials.m' and can be loaded and
 % presented by the example experiment code. 
 
