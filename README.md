@@ -149,7 +149,7 @@ Finally, some things and settings make sense only in millimeters or pixels. For 
 
 ## Spatial reference frames and units
 
-There are three coordinate reference frames (CRF) relevant here (see figure below). But don't worry, you mostly only need to think in the **presentation-area frame**, as all positions for drawing and similar things should be specified in that frame. The second one is the **Psychtoolbox frame** which Psychtoolbox functions expect spatial locations to be supplied in. The third is the **screen-based frame** which is meant for working with motion capturing equipment, so you don't need to worry about that one if you don't do that. In any case, converting between these frames and between units (millimeters, pixels, degrees of visual angle) is made easy an object of the class `CoordinateConverter` that is available in the experimental code through the variable `convert`. That object provides various methods for conversion.
+There are three coordinate reference frames (CRF) relevant here (see figure below). But don't worry, you mostly only need to think in the **presentation-area frame**, as all positions for drawing and similar things should be specified in that frame. The second one is the **Psychtoolbox frame** which Psychtoolbox functions expect spatial locations to be supplied in. The third is the **screen-based frame** which is meant for working with motion capturing equipment, so you don't need to worry about that one if you don't do that. In any case, converting between these frames and between units (millimeters, pixels, degrees of visual angle) is made easy by an object of the class `CoordinateConverter` that is available in the experimental code through the variable `convert`. That object provides various methods for conversion.
 
 Here's an illustration of each coordinate frame. Note that optionally the presentation-area frame's origin can be shifted by setting `t.s.presArea_va` during trial generation, but it is in the screen center by default (and that should usually be the most convenient setup). More details on the three frames below.
 
@@ -165,52 +165,71 @@ conversion functions.
 
 ## Using `convert` to convert between units and coordinate frames
 
-% Instantiate an object of this class at the outset of an experiment, feed-
-% ing it the specifics of the spatial setup of the experiment (see
-% constructor method documentation). Then use it within experimental code
-% to convert between different coordinate frames and units using the
-% provided methods. The goal of this class is to enable the user to think
-% (almost) exclusively in degrees of visual angle and within the
-% presentation-area-based coordinate frame when specifying stimuli and such,
-% while easily converting to the Psychtoolbox frame when using Psychtoolbox
-% functions. It is also useful when dealing with motion tracking equipment
-% (see below).
-%
-% Note that output values are rounded to integers when converting to pixels.
-% 
-%                       ___Method naming scheme___
-%
-%       va  : degrees of visual angle
-%       mm  : millimeters
-%       px  : pixels
-%       pa  : presentation-area coordinate frame
-%       ptb : Psychtoolbox coordinate frame
-%       scr : screen-based coordinate frame
-%
-%   E.g., paMm2ptbPx -> convert from millimeter coordinates given
-%   in the presentation-area-based frame to pixel coordinates in
-%   the Psychtoolbox frame. va2px -> convert from degree visual angle to
-%   pixels.
-%
-% 
-%                ___Method summary / input / output___
-%
-% Unit conversion methods expect a numeric array as input and return an 
-% array of the same size holding converted values. 
-%
-% Unit-coordinate-frame conversion methods take two input arguments,
-% namely two vectors of length n, which hold the x and y coordinates of n
-% points, respectively. They return a 2-by-n matrix giving converted x and
-% y coordinates in its rows, for each of the n points. This array format
-% (x,y coordinats in rows, points in columns) was chose since it is the
-% format that most Psychtoolbox functions expect.
+The variable `convert` is in the work space when the experimental script executes the files in `/myParadigmDefinition` so that it can be referenced by the code in these files. It contains an object of the class `CoordinateConverter`, which provides various methods for conversion between units and between reference frames. The goal of this class is to enable the user to think (almost) exclusively in degrees of visual angle and within the presentation-area-based coordinate frame when specifying stimuli and such, while easily converting to the Psychtoolbox frame to use Psychtoolbox functions in the experimental code. 
 
+There are two types of methods: **unit-conversion-methods** and **unit-coordinate-frame conversion methods**.
 
+#### Unit-conversion-methods
+Convert between units. They expect a numeric array as input and return an array of the same size holding converted values. Example:
+```MATLAB
+>> foo = magic(3);
+>> convert.mm2px(foo)
 
+ans =
 
-#### A note about visual angle conversion 
+    26     3    19
+    10    16    23
+    13    29     6
+```
 
-The method to do calculations with visual angle and the conversion to other units by `CoordinateConverter` (see TODO) is slightly different from the standard way. In short, the method used here does not account for eccentricity, as explained in detail in the following.
+#### Unit-coordinate-frame conversion methods
+Convert from one coordiunate frame to the other and at the same time from one type of units to the other (since it is mostly useful to do this in one go). They take two input arguments, namely two vectors of length n, which hold the x and y coordinates of n points, respectively. They return a 2-by-n matrix with converted x and y coordinates in its rows, for each of the n points. Arrays of this format can be passed directly to most Psychtoolbox functions. Example:
+```MATLAB
+>> x_paVa = 2;	  % in presentation area frame & deg. visual angle
+>> y_paVa = 1.5;  % in presentation area frame & deg. visual angle
+>> xy_ptbPx = convert.paVa2ptbPx(x_paVa,y_paVa)  % output in Psychtoolbox frame and pixels
+
+xy_ptbPx =
+
+        1354
+         487
+```
+
+### Method reference
+
+#### Naming scheme
+
+The methods are all named according to the same scheme, using the same abbreviations for units and frames:
+
+* **va**  : degrees of visual angle
+* **mm** : millimeters
+* **px**  : pixels
+* **pa**  : presentation-area coordinate frame
+* **ptb** : Psychtoolbox coordinate frame
+* **scr** : screen-based coordinate frame
+
+E.g., `convert.paMm2ptbPx` converts from millimeter coordinates given in the presentation-area-based frame to pixel coordinates in the Psychtoolbox frame and `convert.va2px` converts from degrees of visual angle to pixels.
+
+#### List of methods of the `CoordinateConverter` class
+```
+px2mm
+va2mm
+mm2px
+va2px
+mm2va
+px2va
+
+paMm2ptbPx
+paVa2ptbPx
+ptbPx2paMm
+ptbPx2paVa
+scrMm2paMm
+scrMm2ptbPx
+```
+
+### A note about visual angle conversion 
+
+The method to do calculations with visual angle and the conversion to other units by `CoordinateConverter` is slightly different from the standard way. In short, the method used here does not account for eccentricity, as explained in detail in the following.
 
 The method mostly used to convert between visual angle and sizes or distances on a flat screen is Method 1 in the figure below (where *d* is viewing distance, *s* is stimulus size or distance, and *theta* is the visual angle in degrees). This method is exact insofar that stimulus sizes or distances between stimuli depend on eccentricity, as can be seen from the different lengths of the green lines in the figure. It is however often not clear when people provide stimulus sizes or distances whether they computed them as if the stimulus was in the center of vision, or whether they accounted for its eccentricity (looking at the literature, that does not appear to be the case in most instances). 
 
@@ -223,10 +242,7 @@ The results of the two methods differ somewhat, and this difference increases wi
 ![Angle computation method difference](doc_images/readme_angle_method_comparison.jpg)
 
 
-
-
-
-## Built-in functionality
+## Other built-in functionality
 
 ### Reserved field names in `t.s` (and `e.s`)
 
