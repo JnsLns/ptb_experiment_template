@@ -1,13 +1,6 @@
 
 # Experiment Template for MATLAB & Psychtoolbox 3
 
-# TODO
-
-**include `convert` in each file'S docs as a preexisting variable**
-
-	
-
-
 ## Overview
 
 This template is designed to speed up the development of psychophsics experiments with MATLAB and Psychtoolbox 3. It handles some common aspects of experiment scripts, such as loading a list of trials, reading data from it, presenting  instructions, iterating over trials, generating and saving a table of results, and converting between different spatial reference frames and units to interface between stimulus specification and Psychtoolbox drawing functions (e.g., millimeters, degrees of visual angle, and pixels).
@@ -133,82 +126,51 @@ Do anything you like before any trials are presented. Typically used to display 
 * `s6_presentGoodbye.m`
 This file is executed once after all trials, just before the experimental script exits. Typically used to display a goodbye message or gather post-experiment questionnaire data . 
 
-## Coordinate frame and units
+## Trial generation
 
-First off, a recommendation: Always try to specify locations and distances within the presentation-area-coordinate-frame explained below (it's origin is in the screen center by default) and in degrees of visual angle. The reason is two-fold: (1) That's what is the decisive measure for most psychophysics studies and, more importantly, (2) it allows easily migrating the experiment to different screens or changing other aspects of the spatial setup such as viewing distance, while retaining the perceptual size of all visual stimuli to the participant (as long as you properly adjust `basicSettings.m` to the new situation!).
+Please see the example code in `trialGeneration.m` to get an idea how to go about this. Essentially, as described [above](#trial-generation-struct-t), all you need to do is specify a trial list (`t.triallist`) in the form of a MATLAB table, and some paradigmn-level settings (in sub-fields of `t.s`), save struct `t` to a `*.mat` file, which can later be loaded by the experimental code. You are essentially free in how to do all this, what columns to define in the trial list, and what sub-fields of `t.s`, since when you write the experimental code that uses all these data, it is basically up to you what to do with it. There are just a few reserved field names of `t.s.` with built-in functionality (listed [here](#reserved-field-names-in-ts-and-es)). Take a look at these, they might prove useful!
 
-A drawback is that both that reference frame and those units are completely different from what Psychtoolbox functions expect as input. However, it is easy to convert to the Psychtoolbox frame by using the variable `convert` that can be accessed in the experimental code (it's an object of the `CoordinateConverter` class). Just as a quick heads-up (details below): Say you specified x,y stimulus coordinates relative to the presentation-area-frame origin (by default at [0,0]) and in visual angle, you can convert it to the Psychtoolbox frame by simply invoking the appropriate method of `convert`:
+As concerns paradigm-level settings in `t.s`, the idea is to **specify all those non-trial-specific properties of the paradigm already during trial generation that you want to remain consistent across participants**. Having these settings fixed in the trial file prevents them from being changed accidentally when you're halfway through participants. (While the files `basicSettings.m` and `s1_customSettings.m` are intended to add further settings, these are meant for settings that you might need to change between participants, say, due to switching screens or using a new mouse).
+
+### Specifying positions and sizes
+
+Here as well you are free in what to do **but my recommendation is to specify locations and distances within the presentation-area-coordinate-frame and in degrees of visual angle**.  As described [here](#spatial-reference-frames-and-units), the origin of that coordinate frame is in the screen center by default, the x-axis points right, and the y-axis points upward.
+
+The reason is two-fold: (1) Degrees of visual angle are the decisive measure in most contexts of visual psychophysics and, more importantly, (2) it makes it easy to migrate the experiment to different screens or to change other aspects of the spatial setup, such as viewing distance, without changing the perceptual size of visual stimuli to the participant (as long as you properly adjust `basicSettings.m` to the new situation!).
+
+A drawback is that both that reference frame and those units are completely different from what Psychtoolbox functions expect as input (described [here](#spatial-reference-frames-and-units)). However, it is easy to convert to the Psychtoolbox frame by using the variable `convert` that can be accessed in the experimental code (it's an object of the `CoordinateConverter` class). Just as a quick heads-up (details TODO): Say you specified x,y stimulus coordinates relative to the presentation-area-frame origin and in visual angle, and you are now writing experimental code. You can convert the location data to the Psychtoolbox frame and pixel units by simply invoking the appropriate method of `convert`:
 ```MATLAB
-xy_converted = convert.paVa2ptbPx(xy(1), xy(2));
+xy_converted = convert.paVa2ptbPx(xy(1), xy(2));  
 ```
 You can then pass the conversion result to a Psychtoolbox function to, say, draw a stimulus at that position.
 
+Finally, admittedly there are things and settings that make sense only in millimeters or pixels. For instance, if you use a motion capturing system to track hand position relative to the screen, then the z-axis (distance from screen surface) cannot be sensibly expressed in degrees of visual angle. If you have to specify a location along that axis, e.g., a 3D position where the hand has to go before each trial, you'll probably do it in millimeters. No problem. Anyway, I suggest postfixing field or column names with units in such cases, to disambiguate which units you used for a given property or setting (I use postfixes `_va` for visual angle, `_mm`, and `px`).
+
+
 ## Spatial reference frames and units
+
+There are three coordinate reference frames (CRF) relevant here (see figure below). But don't worry, you mostly only need to think in the "presentation-area-based frame", as all positions for drawing and similar things should be specified in that frame. The second one is used by Psychtoolbox and relevant when using Psychtoolbox functions. The third is the "screen-based" frame which is meant for working with motion capturing equipment, so you don't need to worry about that one if you don't do that. In any case, an object of the class `CoordinateConverter` is available in the experimental code through the variable `convert`, which provides various methods for converting between units (millimeters, pixels, degrees of visual angle) and the three coordinate frames easily.
+
+Here's an illustration of each coordinate frame. Note that optionally the presentation-area frame's origin can be shifted by setting `t.s.presArea_va` during trial generation, but it is in the screen center by default (and that should usually be the most convenient setup). More details on the three frames below.
 
 ![spatial reference frames](doc_images/readme_spatial_setup.jpg)
 
-#### Short version
 
-All input and output to and from the experimental script should be in the
-presentation-area-based frame and in degrees visual angle except for
-settings that make sense only in millimeters (like physical screen
-size; these are postfixed '\_mm') or pixels (like screen resolution;
-postfixed '\_px'). When calling Psychtoolbox functions,
-use conversion functions in `common_functions` to convert to the Psychtoolbox
-frame.
+* *__Presentation-area-based frame (pa):__* Should be used for all input to and ideally also for output from the experimental script (although that is up to you), that is, in trial generation (struct `t` loaded from trial file) and for
+results output (i.e., values you assign to struct `out` during a trial). The origin is at the bottom left of the presentation
+area, the x-axis increases to the right, and the y-axis increases upward. Units typically used in conjunction with this frame are degrees of visual angle (va). Note that optionally the presentation-area frame's origin can be shifted by setting `t.s.presArea_va` during trial generation. That setting takes a two-element row vector. The values determine the horizontal and vertical extent of the "presentation area"  but it is in the screen center by default (and that should usually be the most convenient setup).
 
-#### Detailed version
+% Presentation-area  : Origin at bottom left of presentation area, x-axis
+% (pa)                 increasing to the right, y-axis increasing upward.
+%                      Note that where the bottom left of the presentation
+%                      area is is determined by setting 'presArea_va'
+%                      (which gives the [horz, vert] length of each side of
+%                      the rectangular presentation area that in turn is
+%                      always centered in the screen; thus, if presArea_va
+%                      is [0 0], the origin is in the screen center).
 
-There are two coordinate reference frames (CRF) relevant here (see figure above).
-In most cases you really only need to think about the first one, as all positions
-for drawing and similar things should be specified in that frame. The second one
-is used by Psychtoolbox and only relevant when using Psychtoolbox functions. On top
-of this, there are convenient conversion functions in the `common_functions` folder
-that allow switching between frames easily.
-
-* *__Presentation-area-based frame (pa):__* Should be used for all input to and
-ideally also for output from the experimental script (although that is up to you)
-, that is, in trial generation (struct `tg` loaded from trial file) and for
-results output (`e.results`). The origin is at the bottom left of the presentation
-area (rectangular area whose size is defined in `tg.presArea_va` and which is inset
-in and centered within the screen), x-axis increases to the right, y-axis increases
-upward. Units used in conjunction with this frame are degrees of visual angle (va),
-except for a few settings that make sense only in millimeters or pixels; these
-settings are clearly marked by the postfix '_mm' or '_px' in the fieldnames of `e.s`.
-
-* *__Psychtoolbox frame (ptb):__* Used only in the internals of the experimental 
-script and when drawing to Psychtoolbox-windows. The origin is at the top left of
-the screen, x-axis increasing to the right, y-axis increasing downward. Units used
-in conjunction with this frame are pixels. The Psychtoolbox drawing functions expect
-data to be in this frame. Thus, when using Psychtoolbox functions, use conversion
-functions (see next section) to convert any data to this frame first. Note that
-Psychtoolbox output like mouse position from functions like `GetMouse` are also in
-this frame. To map these back to other frames and/or units you can as well use
-conversion functions.
-
-#### Functions for CRF and unit conversion
-
-The `common_functions` folder contains functions that allow converting between the
-different reference frames, by passing the values to be converted 
-plus the struct `e.s.spatialConfig` (which is created at the outset of the
-experimental script and holds all relevant information about the spatial
-setup, such as viewing distance, screen extent etc).
-
-All of these functions follow the same naming scheme (see the individual
-functions' documentations for more info). Naming examples:
-
-* `paVaToPtbPx()`: convert from presentation-area-based frame (pa) in 
-degrees visual angle (va) to Psychtoolbox frame (ptb) in pixels (px).
-
-* `pxToMm()`: convert from pixels (px) to millimeters (mm).
-
-Since `e.s.spatialConfig` is stored with the results data, these functions
-can also be used during later analysis (so it does not restrict analysis if 
-you initially save results data only in one frame).
-
-
-
-#### Units
+(rectangular area whose size is defined in `tg.presArea_va` and which is inset
+in and centered within the screen)
 
 One concept used in the scripts is that of a "presentation area". This is a rectangular
 area whose extent is specified during trial generation in `tg.s.presArea_va`
@@ -229,66 +191,45 @@ reference frames. When drawing things in the experimental script, use the conver
 functions in the `common_functions` folder to convert from that reference frame
 to the frame used by Psychtoolbox.
 
-## Presentation area
-
 The presentation area is an imagined rectangle centered within the screen.
 Its side lengths are set in degrees of visual angle during trial
 generation, through 'tg.s.presArea_va'. For instance:
 
-tg.s.presArea_va = [20, 10];    % [horizontal, vertical] 
+* *__Psychtoolbox frame (ptb):__* Used only in the internals of the experimental 
+script and when drawing to Psychtoolbox-windows. The origin is at the top left of
+the screen, x-axis increasing to the right, y-axis increasing downward. Units used
+in conjunction with this frame are pixels. The Psychtoolbox drawing functions expect
+data to be in this frame. Thus, when using Psychtoolbox functions, use conversion
+functions (see next section) to convert any data to this frame first. Note that
+Psychtoolbox output like mouse position from functions like `GetMouse` are also in
+this frame. To map these back to other frames and/or units you can as well use
+conversion functions.
 
-It serves as a coordinate frame in which stimulus positions should be
-defined during trial generation. The origin is at the bottom left
-corner, the positive x-axis points to the right and the positive
-y-axis points upward. Degrees of visual angle should be used as units.
-
-Using the presentation area as coordinate frame means that stimuli
-positions are defined relative to the screen center rather than in 
-relation to screen borders, making stimulus positioning independent from
-screen size. Thus, different screens can easily be used for the same 
-experiment while keeping stimulus positions constant. The only thing
-that needs to be adjusted when switching screens is the physical screen
-size ('e.s.expScreenSize_mm' in generalSettings.m).
-
-If the field 'presArea_va' is not defined during trial generation, the
-default [0,0] will be used. This means that the coordinate origin for
-stimulus definition will be in the screen center, which should be
-convenient in most cases. 
-
-## Units and frames in trial generation
-
-% My suggestion is to specify locations and sizes in degrees of visual
-% angle and based on the "presentation area coordinate frame". By default,
-% this frame has its origin in the screen center. The positive x-axis
-% points to the right and the positive y-axis points upward. 
+% Psychtoolbox       : Origin at top left of the visible image of the
+% (ptb)                screen, x-axis increasing to the right, y-axis
+%                      increasing downward. Expected by all Psychtoolbox
+%                      functions.
 %
-% This is different from what Psychtoolbox functions expect (pixel units,
-% origin in upper left screen corner, top-down y-axis). However, in the 
-% experiment scripts you can use the function paVaToPtbPx (located in
-% '/helperFunctions/unitConversion') to easily convert from values in the
-% presentation area frame (pa) and °visual angle (Va) to the Psychtoolbox
-% frame (Ptb) in pixels (Px). The output of this function can be then be
-% passed to the Psychtoolbox functions.  
-%
-% The advantage of using the presentation-area frame in trial specification
-% is that experiments will be more easily portable, e.g., to different
-% screens, and similar flexibility issues. Also, stimulus size in degrees
-% of visual angle is what really matters in most vision-based experiments.
-%
-% However, it can be sensible to mix units in some cases, for instance, using
-% degrees of visual angle for some values, and absolute distances (e.g., in
-% millimeters) for others. For instance, when using motion tracking of hand
-% position, hand starting distance from the screen would be specified in
-% millimeters while stimulus positions on the screen would still be speci-
-% fied in degrees of visual angle. 
-% When mixing units, it is a good idea to disambiguate measures in the
-% trial list by postfixing fields in 'tg.s.triallistCols' or 'tg.s' 
-% accordingly. E.g., add "_va" for degrees visual angle and "_mm" for
-% millimeters.
-%
-% Note that there are more functions to easily convert back and forth
-% between the different units and coordinate frames in the folder
-% '/helperFunctions/unitConversion'.
+
+
+* *__Screen-based frame (scr):__* TODO
+% Screen-based       : Origin at bottom left of the visible image of the
+% (scr)                screen, x-axis increasing to the right, y-axis
+%                      increasing upward. This frame is intended for use
+%                      with motion tracking equipment. The idea is to have
+%                      markers mounted on the screen and assess others
+%                      markers' positions within a coordinate frame defined
+%                      by those mounted markers. The markers should be
+%                      mounted such that the coordinate frame is congruent
+%                      with the screen-based frame, thus enabling usage of
+%                      this class to convert from marker positions as
+%                      returned by the motion tracking equipment to the
+%                      other frames (e.g., for drawing a pointer on the
+%                      screen or recording trajectories in relation to
+%                      stimuli).
+
+
+## Using `convert` to convert between units and coordinate frames
 
 % Instantiate an object of this class at the outset of an experiment, feed-
 % ing it the specifics of the spatial setup of the experiment (see
@@ -329,39 +270,8 @@ convenient in most cases.
 % y coordinates in its rows, for each of the n points. This array format
 % (x,y coordinats in rows, points in columns) was chose since it is the
 % format that most Psychtoolbox functions expect.
-%
-%
-%                      ___Coordinate frames___
-%
-%
-% Presentation-area  : Origin at bottom left of presentation area, x-axis
-% (pa)                 increasing to the right, y-axis increasing upward.
-%                      Note that where the bottom left of the presentation
-%                      area is is determined by setting 'presArea_va'
-%                      (which gives the [horz, vert] length of each side of
-%                      the rectangular presentation area that in turn is
-%                      always centered in the screen; thus, if presArea_va
-%                      is [0 0], the origin is in the screen center).
-%
-% Psychtoolbox       : Origin at top left of the visible image of the
-% (ptb)                screen, x-axis increasing to the right, y-axis
-%                      increasing downward. Expected by all Psychtoolbox
-%                      functions.
-%
-% Screen-based       : Origin at bottom left of the visible image of the
-% (scr)                screen, x-axis increasing to the right, y-axis
-%                      increasing upward. This frame is intended for use
-%                      with motion tracking equipment. The idea is to have
-%                      markers mounted on the screen and assess others
-%                      markers' positions within a coordinate frame defined
-%                      by those mounted markers. The markers should be
-%                      mounted such that the coordinate frame is congruent
-%                      with the screen-based frame, thus enabling usage of
-%                      this class to convert from marker positions as
-%                      returned by the motion tracking equipment to the
-%                      other frames (e.g., for drawing a pointer on the
-%                      screen or recording trajectories in relation to
-%                      stimuli).
+
+
 
 
 #### A note about visual angle conversion 
@@ -377,9 +287,6 @@ The results of the two methods differ somewhat, and this difference increases wi
 ![Visual angle conversion](doc_images/readme_visual_angle.jpg)
 
 ![Angle computation method difference](doc_images/readme_angle_method_comparison.jpg)
-
-
-
 
 
 
@@ -453,7 +360,7 @@ Note that `getMouseRM()` is simply a wrapper for `getMouseRemapped()` which can 
 
 
 
-## Additional functionality
+### Additional functionality
 
 #### Pausing an experiment
 
@@ -478,28 +385,5 @@ Say your triallist has 1000 trials, but the computer crashes after 800. Fortunat
 #### Setting mouse speed beyond what the OS permits
 
 See [getMouseRM()](#getmouserm).
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
