@@ -310,15 +310,11 @@ Call `xy = getMouseRM()` within the experimental code to get the current mouse p
 
 Note that `getMouseRM()` is simply a wrapper for `getMouseRemapped()` which can be found in `/experiment/infrastructure/helperFunctions/mouseInput/`. See that function for more documentation.
 
-
-
-### Additional functionality
-
-#### Pausing an experiment
+### Pausing an experiment
 
 You can pause an experiment by holding the pause button at the start of a trial (typically, you need to start pressing before a trial ends). Psychtoolbox windows will close and a message box pop up with options to resume, abort, or debug (see below). If you choose to abort you can later resume the experiment using the incomplete result file (see below).
 
-#### Debugging capabilities
+### Debugging capabilities
 
 There are a few debugging capabilities that are particularly useful when dealing with the notoriously unwieldly Psychtoolbox windows – due to which many a good codesmen have been lost in the abyss of the task manager. In other words, these features take care of closing the windows and reopening them after debugging (as well as re-drawing any graphics), so that you can pause, examine the workspace or change variables, and then resume the experiment.
 
@@ -328,13 +324,13 @@ There are a few debugging capabilities that are particularly useful when dealing
 
 * Finally, the message box invoked by pausing the experiment manually (hold pause key at the start of a trial) has an option which allows to go to the prompt for debugging.
 
-#### Completing an interrupted session using  `resumeExperiment.m`
+### Completing an interrupted session using  `resumeExperiment.m`
 
 Say your triallist has 1000 trials, but the computer crashes after 800. Fortunately, the experimental script routinely saves and updates a preliminary result file in the selected save folder. That file is usually removed and replaced by the final file upon experiment completion, but is retained if the experiment is interrupted. It will be named something like `ptsNumber_myExperiment.mat.incomplete`. To run the pending trials, execute `resumeExperiment.m`. It will ask for an `*.incomplete` file instead of a trial file, and simply finish the remaining trial list exactly as if the interruption never happened. Should there be another interruption during the new session, the ```*.incomplete``` file will have been updated with the new trials and you can resume from there again. Upon completion of the experiment, the final result file will be created as usual and the incomplete file is deleted. There will however be a backup copy of the incomplete file before the update in the same folder, which you can delete manually.
 
 **Warning:** Values in `e.s` set in `basicSettings.m`, `s1_customSettings` or later override what is stored in the resumed file and what will be saved. This is intended behavior, as it allows to finish an incomplete session on different hardware and therefore different settings. However, if you have to do this, be wary about using ```e.s.convert``` during later analysis to convert units, as ```e.s.convert``` stored in the final result file will be based on the *new* settings, and might thus not be valid for the older batch of trials. The best workaround for this is to routinely do all necessary conversions already when recording results during the experiment, so that you don't need to do any conversions during analysis. 
 
-#### Setting mouse speed beyond what the OS permits
+### Setting mouse speed beyond what the OS permits
 
 See [getMouseRM()](#getmouserm).
 
