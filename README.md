@@ -69,7 +69,7 @@ Note: I haven't gotten around to adjusting existing analysis scripts to the form
 ### Accessing trial properties within the experimental code
 
 * Within the experimental code contained in files in `/myParadigmDefinition` the trial list is accessible simply as the variable `triallist`.
-*  Within the trial loop (files `/myParadigmDefinition/s5...`) properties of the current trial are also directly available through `currentTrial` (a one-row table). Also, the row number of the current trial *in the trial list* is available as `curTrialNumber`. Note that this is not necessarily the row number in the result list `e.results`, because trials might get repeated under certain circumstance, and even aborted trials are recordded in the results list. 
+*  Within the trial loop (files `/myParadigmDefinition/s5...`) properties of the current trial are also directly available through `currentTrial` (a one-row table). Also, the row number of the current trial *in the trial list* is available as `curTrialNumber`. Note that this is not necessarily the row number in the result list `e.results`, because trials might get repeated under certain circumstances and each repetition will be recorded in the results list. 
 
 
 ## Directory structure 
@@ -273,6 +273,8 @@ The results of the two methods differ somewhat, and this difference increases wi
 
 
 ## Other built-in functionality
+
+Note that apart from the functionality listed here, some additional functions are documented only in the experimental code files where they may become relevant.
 
 ### Reserved field names in `t.s` (and `e.s`)
 
