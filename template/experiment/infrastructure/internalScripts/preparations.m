@@ -251,8 +251,3 @@ end
 defineAnonymousFunctions;
 
 
-
-%%% Hide mouse cursor
-
-
-HideCursor;

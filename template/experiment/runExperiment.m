@@ -19,7 +19,7 @@ try
                     'myTrialFiles'}; 
     pathsAdded = {};     
     for pNum = 1:numel(subdirsToAdd)  
-        p = subdirsToAdd{pNum}; 
+        p = subdirsToAdd{pNum};  
         p = fullfile(expRootDir, p); 
         withSubfolders = genpath(p); 
         addpath(withSubfolders)  

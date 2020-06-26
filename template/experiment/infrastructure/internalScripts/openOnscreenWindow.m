@@ -30,3 +30,5 @@ winOn.fontSize = convert.va2px(e.s.onscreenWindowTextHeight_va);
 Screen('TextFont', winOn.h, winOn.font);
 Screen('TextSize', winOn.h, winOn.fontSize); 
 
+%%% Hide mouse cursor
+HideCursor;

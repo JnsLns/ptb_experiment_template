@@ -2,6 +2,10 @@
 function str = colStruct(fieldname, nCols, str)
 % function str = colStruct(fieldname, nCols, str)
 %
+%
+% Note: This is a legacy function that is not needed anymore since all
+% scripts now use tables instead of arrays. 
+%
 % Create/extend a struct that in each of its fields holds a column number,
 % or a row vector of column numbers, that address into a data matrix. In
 % context of experiments these data matrices would be things like trial

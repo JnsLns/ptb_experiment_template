@@ -38,7 +38,7 @@ e.s.viewingDistance_mm = 600;
 
 % Degree of antialiasing. Higher values = smoother graphics but worse
 % performance. Reduce if bad performance or graphics memory problems occur.
-e.s.multisampling = 5;
+e.s.multisampling = 3;
 
 % Name of the key to press to pause the experiment (to pause, the key
 % needs to be depressed at the start of a trial)
