@@ -1,24 +1,25 @@
 %%%%%%% Prepare graphics that stay the same over the experiment %%%%%%%%%%%
 %
-% Draw graphics that are reused across trials, such as a fixation cross,
+% Draw graphics that are reused across trials (such as a fixation cross)
 % to the prepared offscreen windows.
-% Window pointers are stored in struct 'winsOff.myWindow.h'.
-% The coordinate frame for drawing is the Psychtoolbox frame, units are
-% pixels. Use methods of the CoordinateConverter object that is available
-% here in the the variable 'convert' to convert between reference frames
-% and units: For instance
 %
-%   convert.va2Px(x) % convert x from visual angle to pixels
-%object
-% to convert BETWEEN 
-
-%from the presentation area frame to that frame and from visual angle to pixels.
-%See folder 'helperFuntions/unitConversion' for these
-% functions' documentations and other conversion functions you may use.
+% Window pointers are stored in struct 'winsOff.myWindow.h'.
+%
+% Psychtoolbox drawing functions expect the Psychtoolbox coordinate frame
+% and pixels as units. Use methods of the CoordinateConverter object that
+% is accessible as the variable 'convert' here to convert between reference
+% frames and units. Examples:
+%
+% x = convert.va2Px(x)             % convert x from visual angle to pixels
+% xy = convert.vaPa2PtbPx(x, y)    % convert x and y from presentation area
+%                                  % frame and degrees of visual angle to 
+%                                  % Psychtoolbox frame and pixels.
 %
 %
 %      ___Useful variables that exist at the outset of this file___
 %
+% convert    object of CoordinateConverter class. Use to convert between 
+%            units and reference frames. (see Readme.md)   
 % e.s        struct. Experiment settings
 % winsOff    struct. offscreen windows (pointers: 'winsOff.myWindow.h')
 % winOn      struct. onscreen window (pointer: 'winOn.h')
