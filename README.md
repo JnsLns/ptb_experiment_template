@@ -165,7 +165,7 @@ conversion functions.
 
 ## Using `convert` to convert between units and coordinate frames
 
-**IMPORTANT: The accuracy of conversion depends on the correctness and precision of the values in `basicSettings.m`! These need to be adjusted to your hardware and spatial setup as accurately as possible and must be update when switching hardware.**
+**IMPORTANT: The accuracy of conversion depends on the correctness and precision of the values in `basicSettings.m`! These need to be adjusted to your hardware and spatial setup as accurately as possible and must be updated when these change.**
 
 The variable `convert` is in the work space when the experimental script executes the files in `/myParadigmDefinition` so that it can be referenced by the code in these files. It contains an object of the class `CoordinateConverter`, which provides various methods for conversion between units and between reference frames. The goal of this class is to enable the user to think (almost) exclusively in degrees of visual angle and within the presentation-area-based coordinate frame when specifying stimuli and such, while easily converting to the Psychtoolbox frame to use Psychtoolbox functions in the experimental code. 
 
