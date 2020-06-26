@@ -8,8 +8,10 @@
 %
 %
 %        ___Useful variables that exist at the outset of this file___
-%            
-% e.s   experiment settings
+%          
+% e.s        experiment settings
+% convert    object of CoordinateConverter class. Use to convert between 
+%            units and reference frames. (see Readme.md)   
 %
 %            
 %                __What offscreen windows are needed for__

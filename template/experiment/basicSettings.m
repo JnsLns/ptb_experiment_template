@@ -24,7 +24,7 @@ trialFilePath = 'exampleTrials.mat';
 
 % Number of screen to use as experimental screen. If this variable is not 
 % defined or emtpy [], the last number yielded by Screen('Screens') is used
-% by default (use default if only one screen is connected). 
+% by default (use this default if only one screen is connected). 
 useScreenNumber = [];
 
 % Actual screen size in millimeters (extent of visible image). Measure this

@@ -5,9 +5,18 @@
 % In here, you should implement the sequential structure of the trial by
 % presenting things to the participant, wait for a specific time or for
 % participant actions, and then proceed to the next phase, and so on.
+%
 % Use the offscreen windows that you drew to earlier, by copying them to
 % the onscreen window when needed. Use info about the current trial to
-% customize what happens ('currentTrial' holds all that info).
+% customize what happens.
+%
+% The coordinate frame for drawing is the Psychtoolbox frame, units are
+% pixels. Use the methods provided by the object in variable 'convert'
+% to convert to that frame for drawing (e.g., 'convert.paVa2PtbPx'). Here's 
+% a list of available conversion methods (see Readme.md for more help):
+%
+% px2mm, va2mm, mm2px, va2px, mm2va, px2va, paMm2ptbPx, paVa2ptbPx,
+% ptbPx2paMm, ptbPx2paVa, scrMm2paMm, scrMm2ptbPx.
 %
 %
 %            ___Variables that exist at the outset of this file___
@@ -25,6 +34,8 @@
 % out              struct. Re-initialized before each trial to be empty.
 %                  Fields become variables in the results table (see below).                 
 % e.s              Experiment settings
+% convert          object of CoordinateConverter class. Use to convert
+%                  between units and reference frames. (see Readme.md)   
 %
 % ... and which you probably won't need in this script file:
 %
@@ -32,11 +43,6 @@
 % curTrialNumber   double. Row number of the current trial in 'triallist'.                 
 % winsOff          struct. offscreen windows (pointers: 'winsOff.myWindow.h')
 % winOn            struct. onscreen window (pointer: 'winOn.h')
-%
-%
-%              __Accessing the current trial's properties__
-%
-% currentTrial.whateverYouAreLookingFor
 %
 %
 %             __Copying to onscreen window and presenting__
@@ -62,10 +68,10 @@
 %
 %                   __Store things in results table__
 %
-% To writing things to the results table and thus store them in the output 
+% To write things to the results table and thus store them in the output 
 % file, assign data to the pre-existing struct 'out'. This struct will be
-% initialized automatically before each trial, so never delete or empty
-% 'out' manually.
+% initialized and emptied automatically before each trial, so never delete
+% or empty 'out' manually.
 %
 % During the trial simply assign any object to a field of 'out' that you
 % want stored in the results table. Field names can be chosen freely,
@@ -74,10 +80,10 @@
 % out.responseTime = RT;
 %
 % After the trial, this will automatically write the value of 'RT' to the
-% table 'e.results', into a new row and into the table variable named
-% 'responseTime'. If there is no variable in 'e.results' that has the same
-% name as a given field of 'out', such a variable is added to 'e.results'
-% automatically.
+% table 'e.results', namely into a new row and into the table variable
+% (i.e., column) named 'responseTime'. If there is no variable of that name
+% in 'e.results', such a variable is added to 'e.results' automatically.
+%
 % If a new field name is used only in later trials, existing rows in
 % 'e.results' will be padded with NaN (for numeric and logical data) or
 % with empty cell arrays (for any other data). Once a field name has been
@@ -101,6 +107,7 @@
 % 'out.abortCode' that keeps track of which rows in 'e.results' correspond
 % to aborted trials. Note that 'rerunTrialLater' is automatically reset to
 % 'false' before each trial.
+
 
 
 % Initialize empty matrix for mouse trajectory data. It will be used to 

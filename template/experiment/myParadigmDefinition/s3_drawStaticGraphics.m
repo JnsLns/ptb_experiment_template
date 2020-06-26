@@ -11,7 +11,7 @@
 % frames and units. Examples:
 %
 % x = convert.va2Px(x)             % convert x from visual angle to pixels
-% xy = convert.vaPa2PtbPx(x, y)    % convert x and y from presentation area
+% xy = convert.vaPa2PtbPx(x,y)     % convert x and y from presentation area
 %                                  % frame and degrees of visual angle to 
 %                                  % Psychtoolbox frame and pixels.
 %

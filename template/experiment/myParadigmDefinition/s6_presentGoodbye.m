@@ -12,9 +12,20 @@
 % (in 'helperFuns/miscellaneous') to show centered text and wait for a
 % button press.
 %
+%
+%            ___Variables that exist at the outset of this file___
+%
+% e.s              Experiment settings
+% convert          object of CoordinateConverter class. Use to convert
+%                  between units and reference frames. (see Readme.md)   
+% winsOff          struct. offscreen windows (pointers: 'winsOff.myWindow.h')
+% winOn            struct. onscreen window (pointer: 'winOn.h')
+%
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 % Show goodbye message and wait for button press
 ShowTextAndWait(...
-    'Experiment complete. Thank you for your participation!', ...
+    'Experiment complete. Thanks for participating!', ...
     [0 0 0], winOn.h, 0.5, true);

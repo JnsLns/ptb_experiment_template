@@ -3,7 +3,6 @@
 % The code in this file will be executed before each trial block, (except
 % the first one by default. Can be used, for instance, to implement breaks.
 %
-%
 % For instance, use the custom convenience function ShowTextAndWait
 % (in private dir) to show centered text and wait for a button press.
 % Or draw directly to the onscreen window. The window pointer for the
@@ -41,6 +40,8 @@
 % out              struct. Empty, re-initialized before each trial. Add
 %                  fields to write to results matrix (see below).                 
 % e.s              Experiment settings
+% convert          object of CoordinateConverter class. Use to convert
+%                  between units and reference frames. (see Readme.md)   
 % triallist        table. List of all trials (rows are trials).
 % curTrialNumber   double. Row number of the current trial in 'triallist'.                 
 % winsOff          struct. offscreen windows (pointers: 'winsOff.myWindow.h')

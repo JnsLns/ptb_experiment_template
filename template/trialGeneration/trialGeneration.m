@@ -34,33 +34,33 @@ t.s.desiredMouseScreenToDeskRatioXY = [1,1]; % modifies mouse "speed"
 % Custom field names. These can be defined here as needed and used inside
 % custom experiment code.
 
-t.s.stimColors = {[1 0 0], [0 1 0]};  % red and green
+t.s.stimColors = {[1 0 0], [0 1 0]};  % red, green RGB vectors, for color 1 and 2
 t.s.stimRadius = 0.2;           % radius of dot stimuli (°visual angle)
-t.s.mouseCursorColor = [0 0 0]; % color of mouse cursor
+t.s.mouseCursorColor = 'white'; % color of mouse cursor
 t.s.mouseCursorRadius = 0.2;    % size of mouse cursor
 t.s.startMarkerPos = [0, -10];  % this is the position of the start marker
-                                 % where participants will have to move the
-                                 % mouse to start a trial.                                 
+                                % where participants will have to move the
+                                % mouse to start a trial.                                 
 t.s.startMarkerRadius = 0.5;    % ...and its radius
 t.s.startMarkerColor = [0 0 0]; % ...and its color
 t.s.durOnStart = 1;             % Consecutive seconds mouse cursor needs
-                                 % to be on start marker for stimuli
-                                 % to be shown.
+                                % to be on start marker for stimuli
+                                % to be shown.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%% Define some trials %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 t.triallist = table();                     % The trial list must be a table 
 
-row = 0;                                    % We'll add trials row by row
-                                            % for demonstration...
+row = 0;                                   % We'll add trials row by row
+                                           % for demonstration...
 
 row = row+1;
 t.triallist.colors(row,:) = [1, 2, 1];     % use color 1, 2, and 1 (target has color 2)
 t.triallist.horzPos(row,:) = [-1, 0, 1];   % horizontal stimulus positions
-t.triallist.target(row,:) = 2;             % dot 2 is the target
+t.triallist.target(row,:) = 2;             % dot 2 is the target this trial
 t.triallist.block(row,:) = 1;              % Label this trial as belonging
-                                            % to block 1
+                                           % to block 1
 row = row+1;
 t.triallist.colors(row,:) = [1, 1, 2];
 t.triallist.horzPos(row,:) = [-2, 0, 2];
@@ -74,7 +74,8 @@ t.triallist.target(row,:) = 1;
 t.triallist.block(row,:) = 1;              
 
 % Copy the trials from above to form an additional block of trials. To tell
-% the experiment that these are a different block, change block number.
+% the experiment that these are a different block, change block number for
+% these rows.
 trialsSecondBlock = t.triallist;
 trialsSecondBlock.block(:) = 2;
 
@@ -82,10 +83,10 @@ trialsSecondBlock.block(:) = 2;
 % to the right by three degrees of visual angle.
 trialsSecondBlock.horzPos = trialsSecondBlock.horzPos + 3;
 
-% Then simply append to first block of trials
+% Then simply append the copied table rows to the first block of trials
 t.triallist = [t.triallist; trialsSecondBlock];
 
-% Add an ID to uniquely identify trials
+% Add an ID to uniquely identify trials (you'll thank me later)
 t.triallist.trialID = (1:size(t.triallist,1))';
 
 
