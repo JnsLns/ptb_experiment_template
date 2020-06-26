@@ -210,7 +210,7 @@ The methods are all named according to the same scheme, using the same abbreviat
 
 E.g., `convert.paMm2ptbPx` converts from millimeter coordinates given in the presentation-area-based frame to pixel coordinates in the Psychtoolbox frame and `convert.va2px` converts from degrees of visual angle to pixels.
 
-#### List of methods of the `CoordinateConverter` class
+#### List of methods
 ```
 px2mm
 va2mm
