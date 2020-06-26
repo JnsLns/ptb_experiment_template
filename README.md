@@ -1,9 +1,37 @@
 
 # Experiment Template for MATLAB & Psychtoolbox 3
 
-## Overview
-
 This template is designed to speed up the development of psychophsics experiments with MATLAB and Psychtoolbox 3. It handles some common aspects of experiment scripts, such as loading a list of trials, reading data from it, presenting  instructions, iterating over trials, generating and saving a table of results, and converting between different spatial reference frames and units to interface between stimulus specification and Psychtoolbox drawing functions (e.g., millimeters, degrees of visual angle, and pixels).
+
+* [Overview](#overview)
+* [Input / output of trial generation and experiment code](#input--output-of-trial-generation-and-experiment-code)
+	* [Trial generation: struct `t`](#trial-generation-struct-t)
+	* [Experiment: struct `e`](#experiment-struct-e)
+* [Accessing trial properties within the experimental code](#accessing-trial-properties-within-the-experimental-code)
+* [Directory structure](#directory-structure)
+* [File execution order](#file-execution-order)
+* [What does each file do?](#what-does-each-file-do)
+* [Trial generation](#trial-generation)
+	* [Specifying positions and sizes](#specifying-positions-and-sizes)
+*  [Spatial reference frames and units](#spatial-reference-frames-and-units)
+*  [Using `convert` to convert between units and coordinate frames](#using-convert-to-convert-between-units-and-coordinate-frames)
+	* [Method reference](#method-reference)
+	* [A note about visual angle conversion](#a-note-about-visual-angle-conversion)
+* [Other built-in functionality](#other-built-in-functionality)
+	* [Reserved field names in `t.s` (and `e.s`)](#reserved-field-names-in-ts-and-es)                       
+	* [Color fields in `e.s` or `t.s.`](#color-fields-in-es-or-ts)
+	* [Pre-existing variables in experimental code files](#pre-existing-variables-in-experimental-code-files)
+	* [Reusable script files](#reusable-script-files)
+	* [Helper functions](#helper-functions)
+	* [Pre-existing anonymous functions in experimental code files](#pre-existing-anonymous-functions-in-experimental-code-files)
+		* [getMouseRM()](#getmouserm)
+	* [Pausing an experiment](#pausing-an-experiment)
+	* [Debugging capabilities](#debugging-capabilities)
+	* [Completing an interrupted session using  `resumeExperiment.m`](#completing-an-interrupted-session-using--resumeexperimentm)
+	* [Setting mouse speed beyond what the OS permits](#setting-mouse-speed-beyond-what-the-os-permits)
+
+
+## Overview
 
 Roughly, a typical work flow to implement an experiment is as follows:
 * **Create a new project** in your github for the new experiment. Do this by pressing the "Use this template" button, not by forking. Having a fresh independent repo will keep each experiment's code separate from the origin, making sure it won't be affected by later updates. The experiment can thus be replicated later in the exact same form at any time.
