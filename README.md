@@ -281,9 +281,9 @@ Setting this makes available an anonymous function `getMouseRM()` in the experim
 #### `t.s.presArea_va`
 Assign a two-element row vector, giving the horizontal and vertical extent of the presentation area (explained [here](#presentation-area)) in degrees of visual angle. Default if undefined: [0,0], meaning that **the origin of the presentation area will be in the screen center by default**. Basically, changing this moves around the origin of the coordinate system in which it is recommended to specify positions during trial generation.                                       
 
-### Using strings "black", "white", or "grey" in `e.s` or `t.s.` field names
+### Color fields in `e.s` or `t.s.`
 
-For any field name in `e.s` (and by extension in `t.s`) that ends with "color" (e.g. `t.s.stimulusColor`) it will be checked whether that field contains any of the strings listed. The string will be replaced by the corresponding color value in the Psychtoolbox color lookup table.
+For any field name in `e.s` (and by extension in `t.s`) that ends with "Color" (e.g. `t.s.stimulusColor`) it will be checked whether that field contains any of the strings `black`, `white`, or `grey`. The string will be replaced by the corresponding color value from the Psychtoolbox color lookup table (where grey is white/2).
 
 ### Pre-existing variables in experimental code files
 
