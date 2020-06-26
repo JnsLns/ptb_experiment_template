@@ -7,7 +7,7 @@ This template is designed to speed up the development of psychophsics experiment
 * [Input / output of trial generation and experiment code](#input--output-of-trial-generation-and-experiment-code)
 	* [Trial generation: struct `t`](#trial-generation-struct-t)
 	* [Experiment: struct `e`](#experiment-struct-e)
-* [Accessing trial properties within the experimental code](#accessing-trial-properties-within-the-experimental-code)
+	* [Accessing trial properties within the experimental code](#accessing-trial-properties-within-the-experimental-code)
 * [Directory structure](#directory-structure)
 * [File execution order](#file-execution-order)
 * [What does each file do?](#what-does-each-file-do)
