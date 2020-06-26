@@ -289,7 +289,7 @@ For any field name in `e.s` (and by extension in `t.s`) that ends with "Color" (
 
 The documentation at the top of each file in  `template/experiment/myParadigmDefinition/` includes a list of variables that pre-exist in the workspace when the experimental script arrives at that file. These variables can thus be referenced and used in the respective file and include things like the current trial number, the struct `out` to store output data in, or `e.s`, the struct holding all paradigm-level settings. 
 
-### Reusable script snippets
+### Reusable script files
 
 Found under `template/experiment/infrastructure/reusableScripts`. These are used internally but each of them can simply be called by its file name (omitting the m-extension) within the experimental code. Just take a look at the files, they have speaking names and a brief documentation each.
 
