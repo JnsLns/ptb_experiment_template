@@ -1,7 +1,7 @@
 
 # Experiment Template for MATLAB & Psychtoolbox 3
 
-This template is designed to speed up the development of psychophsics experiments with MATLAB and Psychtoolbox 3. It handles some common aspects of experiment scripts, such as loading a list of trials, reading data from it, presenting  instructions, iterating over trials, generating and saving a table of results, and converting between different spatial reference frames and units to interface between stimulus specification and Psychtoolbox drawing functions (e.g., millimeters, degrees of visual angle, and pixels).
+This template is designed to speed up the development of psychophysics experiments with MATLAB and Psychtoolbox 3. It handles some common aspects of experiment scripts, such as loading a list of trials, reading data from it, presenting  instructions, iterating over trials, generating and saving a table of results, and converting between different spatial reference frames and units to interface between stimulus specification and Psychtoolbox drawing functions (e.g., millimeters, degrees of visual angle, and pixels).
 
 * [Overview](#overview)
 * [Input / output of trial generation and experiment code](#input--output-of-trial-generation-and-experiment-code)
