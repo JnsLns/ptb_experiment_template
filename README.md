@@ -81,22 +81,22 @@ template
 |	|
 |	+-- infrastructure            <-- things used internally, don't modify! 
 | 	|	|
-| 	|	+-- helperClasses         <-- might be useful beyond internal use
-| 	|	+-- helperFunctions       <-- might be useful beyond internal use
-| 	|	+-- internalScripts       <-- purely internal
-| 	|	+-- reusableScripts       <-- might be useful beyond internal use
+| 	|	+-- helperClasses     <-- might be useful beyond internal use
+| 	|	+-- helperFunctions   <-- might be useful beyond internal use
+| 	|	+-- internalScripts   <-- purely internal
+| 	|	+-- reusableScripts   <-- might be useful beyond internal use
 |	|
 |	+-- myCustomFiles             <-- store any custom files here
 |	+-- myParadigmDefinition      <-- add code in existing files
-|	+-- myTrialFiles 	      	  <-- put trial files here (*.mat)
-|	basicSettings.m 		      <-- only adjust values, dont modify code
-|	runExperiment.m 			  <-- run to execute experiment
-|   resumeExperiment.m 			  <-- run to finish an incomplete result file
+|	+-- myTrialFiles 	      <-- put trial files here (*.mat)
+|	basicSettings.m		      <-- only adjust values, dont modify code
+|	runExperiment.m 	      <-- run to execute experiment
+|   resumeExperiment.m 		      <-- run to finish an incomplete result file
 |
 +-- trialGeneration 		      
 |	trialGeneration.m             <-- add code that generates trial file
 |
-+-- results 				      <-- to store results 
++-- results 			      <-- to store results 
 ```
 
 ## File execution order
